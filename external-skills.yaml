@@ -1,0 +1,43 @@
+# External Skills Manifest
+#
+# Skills fetched from external sources (git repos, etc.).
+# Internal (in-repo) and machine-specific skills belong in local.yaml.
+#
+# Run `scripts/sync.sh` to fetch/update.
+# Run `scripts/build-plugin.sh` to package all skills into a plugin ZIP.
+#
+# Types:
+#   - git: Clone from remote repo
+#   - symlink: Create symlink to local path
+#
+# Structure: All skills sync to skills/<name>/
+
+skills:
+  - name: skill-creator
+    type: git
+    description: Anthropic's official skill creator for building Claude skills
+    source: https://github.com/anthropics/skills.git
+    branch: main
+    path: skills/skill-creator
+    target: skills/skill-creator
+
+  # === Internal skills (in-repo, no sync needed) ===
+  - name: ai-client-config
+    type: internal
+    description: AI coding client configuration paths and setup
+
+  - name: ai-repo-management
+    type: internal
+    description: AI repository structure management and validation
+
+  - name: skill-promotion
+    type: internal
+    description: Promote validated memory observations into reusable skills
+
+  # - name: mcp-builder
+  #   type: git
+  #   description: MCP server builder skill
+  #   source: https://github.com/anthropics/skills.git
+  #   branch: main
+  #   path: skills/mcp-builder
+  #   target: skills/mcp-builder

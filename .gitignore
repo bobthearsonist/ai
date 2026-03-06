@@ -1,0 +1,18 @@
+# Worktrees
+.worktrees/
+
+# External skills cache
+.external-cache/
+
+# Build output
+dist/
+
+# Memory
+memory/memory.jsonl
+
+# Local config
+local.yaml
+
+# Synced skills and agents (use git add -f for shared items)
+skills/
+agents/

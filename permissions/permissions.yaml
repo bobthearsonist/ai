@@ -1,0 +1,549 @@
+# Unified AI Tool Permissions Configuration
+#
+# Canonical source of truth for MCP servers and command permissions across:
+#   - Claude Code (~/.claude/settings.json)
+#   - GitHub Copilot (VSCode mcp.json + settings.json)
+#   - OpenCode (~/.config/opencode/opencode.json)
+#   - Cline (VSCode globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json)
+#   - Kilo Code (VSCode globalStorage/kilocode.kilo-code/settings/mcp_settings.json + settings)
+#
+# This file contains ONLY commands already configured in your existing tools.
+
+# =============================================================================
+# MCP SERVERS
+# =============================================================================
+
+mcp_servers:
+  memory:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-memory"]
+    env:
+      MEMORY_FILE_PATH: "{{HOME}}/ai/memory/memory.jsonl"
+    description: Persistent memory for cross-session context
+    auto_approve:
+      - create_entities
+      - create_relations
+      - add_observations
+      - delete_entities
+      - delete_observations
+      - delete_relations
+      - read_graph
+      - search_nodes
+      - open_nodes
+
+  sequential-thinking:
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    description: Structured thinking for complex problem solving
+    auto_approve:
+      - sequentialthinking
+
+  context7:
+    command: npx
+    args: ["-y", "@upstash/context7-mcp"]
+    description: Documentation context provider
+    auto_approve:
+      - resolve-library-id
+      - query-docs
+
+  azure-devops:
+    command: npx
+    args: ["-y", "@azure-devops/mcp", "{{ADO_ORG}}"]
+    description: Azure DevOps integration for work org
+    auto_approve: []
+
+  kapture:
+    description: Browser DevTools via Kapture MCP extension
+    auto_approve:
+      - "*"
+
+  agentgateway:
+    description: Agent gateway proxy for multiple MCP servers
+    auto_approve:
+      - "context7_resolve-library-id"
+      - "context7_query-docs"
+      - "memory_*"
+      - "sequential-thinking_*"
+      - "hass-mcp_*"
+      - "playwright_*"
+      - "browser-use_*"
+
+  chrome-devtools:
+    command: npx
+    args: ["-y", "@executeautomation/chrome-devtools-mcp"]
+    description: Chrome DevTools for browser automation
+    disabled: true
+    auto_approve: []
+
+# =============================================================================
+# DIRECTORIES
+# =============================================================================
+
+additional_directories:
+  - "C:\\Repositories"
+
+# =============================================================================
+# FILE ACCESS PERMISSIONS
+# =============================================================================
+# Path-based permissions for read/glob/grep operations outside workspace.
+# Uses {{HOME}} placeholder expanded per-platform (~, $HOME, %USERPROFILE%).
+#
+# Client support:
+#   - Claude Code: permissions.allow/ask/deny with Tool(path) syntax
+#   - OpenCode: workspaces + file permissions in opencode.json
+#   - Cline/Kilo: alwaysAllowReadOnly + custom instructions
+#   - Copilot: limited (workspace-scoped by default)
+
+file_access:
+  # ---------------------------------------------------------------------------
+  # ALLOW - Auto-approve reads in these locations
+  # ---------------------------------------------------------------------------
+  allow:
+    - "{{HOME}}/**"                    # All user files
+
+  # ---------------------------------------------------------------------------
+  # ASK - Prompt before accessing (sensitive but sometimes needed)
+  # ---------------------------------------------------------------------------
+  ask:
+    # --- Credentials & Keys ---
+    - "{{HOME}}/.ssh/**"               # SSH keys
+    - "{{HOME}}/.gnupg/**"             # GPG keys
+    - "{{HOME}}/.aws/**"               # AWS credentials
+    - "{{HOME}}/.azure/**"             # Azure credentials
+    - "{{HOME}}/.kube/config"          # Kubernetes config
+    - "{{HOME}}/.netrc"                # Network credentials
+    - "{{HOME}}/.npmrc"                # npm auth tokens
+    - "{{HOME}}/.pypirc"               # PyPI auth tokens
+    - "{{HOME}}/.docker/config.json"   # Docker auth
+
+    # --- Environment & Secrets (any location) ---
+    - "**/.env"                        # Environment files
+    - "**/.env.*"                      # Environment variants
+    - "**/credentials*"                # Anything named credentials
+    - "**/secrets/**"                  # Secrets directories
+    - "**/*.pem"                       # Certificates/keys
+    - "**/*.key"                       # Private keys
+    - "**/id_rsa*"                     # SSH private keys
+    - "**/id_ed25519*"                 # SSH ED25519 keys
+
+  # ---------------------------------------------------------------------------
+  # DENY - Never allow access (uncomment to hard-block)
+  # ---------------------------------------------------------------------------
+  # deny:
+  #   - "{{HOME}}/.password-store/**"  # Pass password manager
+  #   - "{{HOME}}/.gnupg/private-keys-v1.d/**"
+
+# =============================================================================
+# TOOL PERMISSIONS (Claude Code, OpenCode)
+# =============================================================================
+
+tools:
+  read: allow
+  write: ask
+  edit: ask
+  glob: allow
+  grep: allow
+  task: allow
+  skill: allow
+  web_fetch: allow
+  web_search: allow
+  todo_write: allow
+  notebook_edit: ask
+  external_directory: allow
+
+# =============================================================================
+# COMMAND PERMISSIONS
+# =============================================================================
+# Union of commands from: Claude Code, Copilot, OpenCode, Kilo
+# ask/deny categories from OpenCode (only client with explicit categories)
+
+commands:
+  # ---------------------------------------------------------------------------
+  # DENY - From OpenCode
+  # ---------------------------------------------------------------------------
+  deny:
+    - "shutdown*"
+    - "reboot*"
+    - "poweroff*"
+    - "halt*"
+    - "init 0*"
+    - "init 6*"
+    - "format*"
+    - "mkfs*"
+    - "dd*"
+    - "fdisk*"
+    - "diskpart*"
+
+  # ---------------------------------------------------------------------------
+  # ASK - From OpenCode
+  # ---------------------------------------------------------------------------
+  ask:
+    - "gsudo*"
+    - "sudo*"
+    - "rm*"
+    - "rmdir*"
+    - "del*"
+    - "rd*"
+    - "mv*"
+    - "move*"
+    - "cp*"
+    - "copy*"
+    - "mkdir*"
+    - "touch*"
+    - "chmod*"
+    - "chown*"
+    - "chgrp*"
+    - "kill*"
+    - "pkill*"
+    - "killall*"
+    - "taskkill*"
+
+  # ---------------------------------------------------------------------------
+  # ALLOW - Union from all configs
+  # ---------------------------------------------------------------------------
+  allow:
+    # --- Basic utilities (Claude, OpenCode, Kilo) ---
+    - "ls*"
+    - "cat*"
+    - "pwd*"
+    - "head*"
+    - "tail*"
+    - "wc*"
+    - "file*"
+    - "which*"
+    - "where*"
+    - "whereis*"
+    - "type*"
+    - "echo*"
+    - "printf*"
+    - "cd*"
+
+    # --- Environment/system info (OpenCode) ---
+    - "date*"
+    - "whoami*"
+    - "hostname*"
+    - "uname*"
+    - "env*"
+    - "printenv*"
+    - "set*"
+    - "export*"
+    - "alias*"
+    - "history*"
+    - "man*"
+    - "help*"
+    - "info*"
+
+    # --- Text processing (Claude, OpenCode, Kilo) ---
+    - "diff*"
+    - "grep*"
+    - "egrep*"
+    - "fgrep*"
+    - "jq*"
+    - "yq*"
+    - "cmp*"
+    - "comm*"
+    - "sort*"
+    - "uniq*"
+    - "cut*"
+    - "tr*"
+    - "sed*"
+    - "awk*"
+    - "xargs*"
+    - "tee*"
+    - "less*"
+    - "more*"
+
+    # --- File finding (Claude, OpenCode, Kilo) ---
+    - "find*"
+    - "locate*"
+    - "tree*"
+    - "fd*"
+    - "rg*"
+    - "fzf*"
+    - "bat*"
+
+    # --- File info (OpenCode) ---
+    - "du*"
+    - "df*"
+    - "stat*"
+    - "realpath*"
+    - "basename*"
+    - "dirname*"
+    - "readlink*"
+    - "test*"
+    - "[*"
+    - "true*"
+    - "false*"
+
+    # --- Git read operations (Claude, OpenCode, Copilot, Kilo) ---
+    - "git status*"
+    - "git log*"
+    - "git diff*"
+    - "git show*"
+    - "git branch*"
+    - "git remote*"
+    - "git tag*"
+    - "git rev-parse*"
+    - "git rev-list*"
+    - "git ls-files*"
+    - "git ls-tree*"
+    - "git ls-remote*"
+    - "git blame*"
+    - "git config*"
+    - "git config --get*"
+    - "git config --list*"
+    - "git check-ignore*"
+    - "git submodule*"
+    - "git sparse-checkout*"
+    - "git describe*"
+    - "git shortlog*"
+    - "git stash list*"
+    - "git stash show*"
+    - "git reflog*"
+    - "git cat-file*"
+    - "git name-rev*"
+    - "git symbolic-ref*"
+    - "git var*"
+    - "git init*"
+    - "git merge-base*"
+    - "git fetch*"
+    - "git worktree*"
+
+    # --- GitHub CLI (Claude, OpenCode, Kilo) ---
+    - "gh repo*"
+    - "gh repo view*"
+    - "gh repo list*"
+    - "gh pr view*"
+    - "gh pr list*"
+    - "gh pr status*"
+    - "gh pr diff*"
+    - "gh pr checks*"
+    - "gh issue view*"
+    - "gh issue list*"
+    - "gh issue status*"
+    - "gh run view*"
+    - "gh run list*"
+    - "gh workflow view*"
+    - "gh workflow list*"
+    - "gh api*"
+
+    # --- Node.js (Claude, OpenCode, Copilot, Kilo) ---
+    - "node*"
+    - "node --version*"
+    - "node -v*"
+    - "npm --version*"
+    - "npm -v*"
+    - "npm list*"
+    - "npm ls*"
+    - "npm view*"
+    - "npm show*"
+    - "npm info*"
+    - "npm outdated*"
+    - "npm search*"
+    - "npm config list*"
+    - "npm config get*"
+    - "npm install*"
+    - "npm test*"
+    - "npx*"
+    - "npx --version*"
+    - "npx -v*"
+    - "nvm*"
+    - "source*"
+
+    # --- pnpm/yarn (OpenCode) ---
+    - "pnpm --version*"
+    - "pnpm -v*"
+    - "pnpm list*"
+    - "pnpm ls*"
+    - "yarn --version*"
+    - "yarn -v*"
+    - "yarn list*"
+    - "yarn info*"
+
+    # --- Python (Claude, OpenCode, Copilot) ---
+    - "python*"
+    - "python3*"
+    - "python --version*"
+    - "python -V*"
+    - "python -c*"
+    - "python3 --version*"
+    - "python3 -V*"
+    - "python -m pytest*"
+    - "pytest*"
+    - "pip --version*"
+    - "pip list*"
+    - "pip show*"
+    - "pip freeze*"
+
+    # --- .NET (Claude, OpenCode, Copilot) ---
+    - "dotnet build*"
+    - "dotnet run*"
+    - "dotnet test*"
+    - "dotnet restore*"
+    - "dotnet nuget*"
+    - "dotnet nuget list*"
+    - "dotnet package search*"
+    - "dotnet --version*"
+    - "dotnet --list-sdks*"
+    - "dotnet --list-runtimes*"
+    - "dotnet --info*"
+    - "dotnet sln list*"
+    - "dotnet list*"
+    - "nswag*"
+    - "~/.dotnet/tools/nswag*"
+
+    # --- Other languages (OpenCode) ---
+    - "cargo --version*"
+    - "cargo -V*"
+    - "rustc --version*"
+    - "rustc -V*"
+    - "go version*"
+    - "go env*"
+    - "go list*"
+    - "java --version*"
+    - "java -version*"
+    - "javac --version*"
+    - "javac -version*"
+
+    # --- Docker (Claude, OpenCode, Copilot) ---
+    - "docker logs*"
+    - "docker inspect*"
+    - "docker exec*"
+    - "docker compose*"
+    - "docker-compose*"
+    - "docker-compose ps*"
+    - "docker-compose config*"
+    - "docker-compose logs*"
+    - "docker --version*"
+    - "docker -v*"
+    - "docker version*"
+    - "docker info*"
+    - "docker ps*"
+    - "docker images*"
+    - "docker image ls*"
+    - "docker container ls*"
+    - "docker volume ls*"
+    - "docker network ls*"
+    - "docker stats*"
+    - "docker top*"
+
+    # --- Kubernetes (OpenCode) ---
+    - "kubectl version*"
+    - "kubectl get*"
+    - "kubectl describe*"
+    - "kubectl logs*"
+    - "kubectl config view*"
+    - "kubectl config get*"
+    - "kubectl cluster-info*"
+
+    # --- Cloud CLIs (OpenCode, Copilot) ---
+    - "az*"
+    - "az --version*"
+    - "az account show*"
+    - "az account list*"
+    - "az group list*"
+    - "az resource list*"
+    - "aws --version*"
+    - "aws sts get-caller-identity*"
+
+    # --- Network (Claude, OpenCode) ---
+    - "curl*"
+    - "lsof*"
+    - "wget --spider*"
+    - "ping -c*"
+    - "nslookup*"
+    - "dig*"
+    - "host*"
+    - "netstat*"
+    - "ss*"
+    - "ip addr*"
+    - "ip route*"
+    - "ifconfig*"
+    - "ipconfig*"
+    - "traceroute*"
+    - "tracert*"
+
+    # --- Build tools (Claude, Copilot) ---
+    - "make*"
+
+    # --- Package managers (Windows) ---
+    - "choco list*"
+    - "choco search*"
+    - "choco info*"
+    - "choco --version*"
+    - "winget list*"
+    - "winget search*"
+    - "winget show*"
+    - "winget --version*"
+
+    # --- macOS specific (Copilot) ---
+    - "brew info*"
+    - "brew search*"
+    - "brew list*"
+    - "brew --version*"
+    - "brew deps*"
+    - "brew uses*"
+    - "xcrun*"
+    - "xcodebuild*"
+    - "open*"
+    - "code*"
+    - "soffice*"
+    - "magick*"
+
+    # --- Misc (Copilot) ---
+    - "./run_with_venv.sh*"
+    - "todoread*"
+    - "dev*"
+
+    # --- PowerShell cmdlets (Claude, Copilot) ---
+    - "Get-Service*"
+    - "Get-Process*"
+    - "Get-Item*"
+    - "Get-ChildItem*"
+    - "Get-IISSite*"
+    - "Get-IISAppPool*"
+    - "Get-Website*"
+    - "Get-WebApplication*"
+    - "Get-WinEvent*"
+    - "Get-EventLog*"
+    - "Get-NetConnectionProfile*"
+    - "Get-Help*"
+    - "Get-Command*"
+    - "Test-Path*"
+    - "Import-Module*"
+    - "ConvertFrom-Json*"
+    - "ConvertTo-Json*"
+    - "New-Item*"
+    - "ForEach-Object*"
+
+    # --- PowerShell via exe (OpenCode) ---
+    - "powershell.exe*Get-*"
+    - "powershell.exe*Select-*"
+    - "powershell.exe*Where-*"
+    - "powershell.exe*Format-*"
+    - "powershell.exe*Sort-*"
+    - "powershell.exe*Group-*"
+    - "powershell.exe*Measure-*"
+    - "powershell.exe*Compare-*"
+    - "powershell.exe*Test-*"
+    - "powershell.exe*Resolve-*"
+    - "powershell.exe*ConvertTo-*"
+    - "powershell.exe*ConvertFrom-*"
+    - "powershell.exe*Out-*"
+    - "powershell.exe*Write-*"
+    - "powershell.exe*Read-*"
+    - "pwsh*Get-*"
+    - "pwsh*Select-*"
+    - "pwsh*Where-*"
+    - "pwsh*Format-*"
+    - "pwsh*Sort-*"
+    - "pwsh*Group-*"
+    - "pwsh*Measure-*"
+    - "pwsh*Compare-*"
+    - "pwsh*Test-*"
+    - "pwsh*Resolve-*"
+    - "pwsh*ConvertTo-*"
+    - "pwsh*ConvertFrom-*"
+    - "pwsh*Out-*"
+    - "pwsh*Write-*"
+    - "pwsh*Read-*"

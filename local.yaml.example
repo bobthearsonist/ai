@@ -1,0 +1,54 @@
+# Local AI Configuration Template
+#
+# Copy this to local.yaml and customize for your machine.
+# local.yaml is gitignored - do not commit it.
+
+paths:
+  # Home directory
+  home: /Users/YourUsername
+
+obsidian:
+  # Root path to the Obsidian vault on this machine
+  vault_path: /path/to/your/obsidian/vault
+
+  # Folder name (relative to vault_path) for personal daily notes
+  personal_daily_folder: 0 Daily Notes
+
+  # Folder name (relative to vault_path) for work daily notes
+  work_daily_folder: 0 Work/Captains Log
+
+# Skill and agent collections — each maps a local repo to symlinks.
+# The sync script creates symlinks under skills/ and agents/ for each entry.
+#
+# `path` points to the repo root. By default, skills are found at
+# {path}/skills/{name} and agents at {path}/agents/{name}.
+# Override with `skills_dir` or `agents_dir` (e.g., skills_dir: "" for flat repos).
+#
+# Items can be:
+#   - A string: source dir name = symlink name (e.g., "my-skill")
+#   - An object with `source` and `name` when they differ:
+#       - source: directory-in-repo
+#         name: symlink-name
+#
+# Collections whose path doesn't exist are silently skipped,
+# so you can define both private and work on all machines.
+
+collections:
+  # Private collection — your personal ai-private repo
+  private:
+    path: /path/to/your/ai-private
+    skills:
+      - my-skill
+      - another-skill
+    agents:
+      - my-agent
+
+  # Work collection — your company's repo (uncomment on work machine)
+  # work:
+  #   path: /path/to/company-ai
+  #   skills:
+  #     - company-api
+  #     - source: dotnet           # dir name in repo
+  #       name: company-dotnet     # symlink name in skills/
+  #   agents:
+  #     - company-agent
