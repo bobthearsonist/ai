@@ -74,7 +74,7 @@ Search Qdrant indexes before broad codebase exploration:
 | Collection | Tool | Content |
 |---|---|---|
 | `code` | `qdrant-code_qdrant-find` | Indexed Git repo source code |
-| `work` | `qdrant-work_qdrant-find` | Obsidian work work notes |
+| `work` | `qdrant-work_qdrant-find` | Obsidian work notes |
 
 **When to search**:
 - Before broad grep/glob searches across unfamiliar code -- search `qdrant-code` first to narrow scope
