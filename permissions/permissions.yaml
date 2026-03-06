@@ -49,7 +49,7 @@ mcp_servers:
   azure-devops:
     command: npx
     args: ["-y", "@azure-devops/mcp", "{{ADO_ORG}}"]
-    description: Azure DevOps integration for work org
+    description: Azure DevOps integration (org from local.yaml work.ado_org)
     auto_approve: []
 
   kapture:

@@ -10,7 +10,7 @@ Canonical source of truth for AI tool permissions at `~/ai/permissions/permissio
 ## File Location
 
 ```
-{{HOME}}\ai\permissions\permissions.yaml
+~/ai/permissions/permissions.yaml
 ```
 
 ## Structure Overview
