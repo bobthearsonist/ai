@@ -7,5 +7,5 @@ cd "$(git rev-parse --show-toplevel)" || exit 0
 # Only sync if manifest exists
 if [ -f external-skills.yaml ]; then
     echo "🔄 Syncing external skills..."
-    ./scripts/sync-external-skills.sh
+    ./scripts/sync.sh
 fi
