@@ -2,6 +2,9 @@
 # Sync external skills and agents from manifest and local collections
 set -e
 
+# Enable native symlinks on Windows (Git Bash/MSYS2). Ignored on macOS/Linux.
+export MSYS=winsymlinks:nativestrict
+
 cd "$(dirname "$0")/.."
 CACHE=".external-cache"
 MANIFEST="external-skills.yaml"
@@ -121,6 +124,8 @@ for collection in $collection_names; do
 
     sync_collection_items "$collection" "skills" "$skills_dir" "skills"
     sync_collection_items "$collection" "agents" "$agents_dir" "agents"
+    # Root-level directory/file symlinks (no subdir prefix)
+    sync_collection_items "$collection" "links" "" "."
 done
 
 echo "Done!"

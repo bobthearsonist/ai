@@ -16,3 +16,6 @@ local.yaml
 # Synced skills and agents (use git add -f for shared items)
 skills/
 agents/
+
+# Synced config directories
+claude/
