@@ -75,6 +75,18 @@ mcp_servers:
     disabled: true
     auto_approve: []
 
+  qdrant-work:
+    type: remote
+    url: "http://localhost:7020/servers/qdrant-work/sse"
+    description: Qdrant vector DB for work items and ADO knowledge (via Docker mcp-proxy)
+    auto_approve: []
+
+  qdrant-code:
+    type: remote
+    url: "http://localhost:7020/servers/qdrant-code/sse"
+    description: Qdrant vector DB for repository/code indexing (via Docker mcp-proxy)
+    auto_approve: []
+
 # =============================================================================
 # DIRECTORIES
 # =============================================================================

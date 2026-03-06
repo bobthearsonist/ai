@@ -67,6 +67,24 @@ Use the persistent memory system actively.
 
 ---
 
+## RAG Search (Qdrant)
+
+Search Qdrant indexes before broad codebase exploration:
+
+| Collection | Tool | Content |
+|---|---|---|
+| `code` | `qdrant-code_qdrant-find` | Indexed Git repo source code |
+| `work` | `qdrant-work_qdrant-find` | Obsidian work work notes |
+
+**When to search**:
+- Before broad grep/glob searches across unfamiliar code -- search `qdrant-code` first to narrow scope
+- When looking for architecture decisions, meeting notes, or project context -- search `qdrant-work`
+- When the user asks about a feature, component, or pattern you haven't seen yet
+
+**How to search**: Use semantic natural language queries, not exact keyword matches. Example: "authentication middleware for REST API" not "auth".
+
+---
+
 ## Commit Messages
 
 Use [Conventional Commits](https://www.conventionalcommits.org/). Constraints:
