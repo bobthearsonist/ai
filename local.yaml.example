@@ -17,6 +17,15 @@ obsidian:
   # Folder name (relative to vault_path) for work daily notes
   work_daily_folder: 0 Work/Captains Log
 
+# Qdrant RAG collections available on this machine.
+# Key is the collection name, value describes the content.
+# Only list collections that are indexed and available locally.
+qdrant:
+  collections:
+    code: Indexed Git repo source code
+    # work: Obsidian work notes
+    # personal: Obsidian personal notes
+
 # Skill and agent collections — each maps a local repo to symlinks.
 # The sync script creates symlinks under skills/ and agents/ for each entry.
 #

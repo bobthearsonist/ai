@@ -41,15 +41,16 @@ Create a task list for any work with 2+ steps. Rules:
 
 ## Memory
 
-Use the persistent memory system actively.
+Use both the **MCP memory knowledge graph** and any built-in memory system actively. The MCP memory knowledge graph is the **primary** memory — it persists across all agents and providers. Built-in agent memory (e.g., Copilot `/memories/`) may be used as a supplement but must not replace the MCP memory.
 
 | Trigger | Action |
 |---|---|
-| Start of any conversation | Search for relevant context |
-| User states a preference | Store immediately |
-| You learn something reusable | Store it |
-| You solve a tricky problem | Store the solution pattern |
-| End of significant work | Store learnings |
+| Start of any conversation | Search the knowledge graph for relevant context |
+| User states a preference | Create an entity and add observations immediately |
+| You learn something reusable | Add observations to the relevant entity |
+| You solve a tricky problem | Store the solution pattern as observations |
+| Entities are related | Create relations to link them |
+| End of significant work | Store learnings in the knowledge graph |
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
@@ -69,19 +70,7 @@ Use the persistent memory system actively.
 
 ## RAG Search (Qdrant)
 
-Search Qdrant indexes before broad codebase exploration:
-
-| Collection | Tool | Content |
-|---|---|---|
-| `code` | `qdrant-code_qdrant-find` | Indexed Git repo source code |
-| `work` | `qdrant-work_qdrant-find` | Obsidian work notes |
-
-**When to search**:
-- Before broad grep/glob searches across unfamiliar code -- search `qdrant-code` first to narrow scope
-- When looking for architecture decisions, meeting notes, or project context -- search `qdrant-work`
-- When the user asks about a feature, component, or pattern you haven't seen yet
-
-**How to search**: Use semantic natural language queries, not exact keyword matches. Example: "authentication middleware for REST API" not "auth".
+Search Qdrant indexes before broad codebase exploration. Load the `qdrant-search` skill for collection details, search guidelines, and machine-specific configuration.
 
 ---
 
