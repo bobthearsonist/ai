@@ -27,7 +27,9 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Guess at CLI/infrastructure commands | Check skills first - they contain tested syntax |
 | Run broad glob patterns (`**/*.ts` from root) | Ask user to narrow scope or use grep instead |
 | Tail or stream long-running commands (builds, tests, docker) | Pipe to a temp file and read it after completion (see Long-Running Commands) |
-| Redirect to `/dev/null` or `$null` (triggers file-write approval prompts) | Omit the redirect (output is useful context), or use `--quiet`/`-q` flags |
+| Redirect to `/dev/null`, `$null`, or use `2>/dev/null` (triggers file-write approval prompts) | Omit the redirect entirely — output is useful context. Use `--quiet`/`-q` flags if available |
+| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `&>`, `tee`) | Prefer single commands; if piping is necessary, keep targets as stdout only |
+| Wrap commands in `bash -c "..."` or other sub-shells | Run commands directly — sub-shells obscure intent and may trigger approval |
 
 ## Task Management
 
@@ -94,7 +96,15 @@ feat!: drop support for Node 14
 
 ## Worktree Directory
 
-Create worktrees at c:/Repositories/<project-name>.worktrees/<branch-name>
+Create worktrees inside each repository at `.worktrees/<branch-name>`.
+
+Examples:
+```
+git worktree add .worktrees/feature/my-feature feature/my-feature
+git worktree add .worktrees/fix/bug-123 fix/bug-123
+```
+
+**Gitignore**: `.worktrees/` is in `~/.gitignore_global` (covers all repos). For non-fork repos where the user is the owner, also add `.worktrees/` to the repo's `.gitignore`.
 
 ---
 
