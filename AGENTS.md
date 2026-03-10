@@ -17,19 +17,19 @@ This applies even if a session summary is provided. Summaries may be stale.
 
 ## Anti-Patterns
 
-| Never do this | Do this instead |
-|---|---|
-| Skip startup steps because "I have context" | Always run the checklist - todo state may differ from summary |
-| Debug without sequential thinking | Think systematically before acting |
-| Let task list go stale | Update status immediately after each step |
-| Suggest `--interactive` or browser-spawning in elevated PowerShell | These freeze the shell - use non-interactive alternatives |
-| Repeat a failed approach | Stop after first failure, rethink, try a different approach |
-| Guess at CLI/infrastructure commands | Check skills first - they contain tested syntax |
-| Run broad glob patterns (`**/*.ts` from root) | Ask user to narrow scope or use grep instead |
-| Tail or stream long-running commands (builds, tests, docker) | Pipe to a temp file and read it after completion (see Long-Running Commands) |
+| Never do this                                                                                 | Do this instead                                                                              |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Skip startup steps because "I have context"                                                   | Always run the checklist - todo state may differ from summary                                |
+| Debug without sequential thinking                                                             | Think systematically before acting                                                           |
+| Let task list go stale                                                                        | Update status immediately after each step                                                    |
+| Suggest `--interactive` or browser-spawning in elevated PowerShell                            | These freeze the shell - use non-interactive alternatives                                    |
+| Repeat a failed approach                                                                      | Stop after first failure, rethink, try a different approach                                  |
+| Guess at CLI/infrastructure commands                                                          | Check skills first - they contain tested syntax                                              |
+| Run broad glob patterns (`**/*.ts` from root)                                                 | Ask user to narrow scope or use grep instead                                                 |
+| Tail or stream long-running commands (builds, tests, docker)                                  | Pipe to a temp file and read it after completion (see Long-Running Commands)                 |
 | Redirect to `/dev/null`, `$null`, or use `2>/dev/null` (triggers file-write approval prompts) | Omit the redirect entirely — output is useful context. Use `--quiet`/`-q` flags if available |
-| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `&>`, `tee`) | Prefer single commands; if piping is necessary, keep targets as stdout only |
-| Wrap commands in `bash -c "..."` or other sub-shells | Run commands directly — sub-shells obscure intent and may trigger approval |
+| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `&>`, `tee`)                | Prefer single commands; if piping is necessary, keep targets as stdout only                  |
+| Wrap commands in `bash -c "..."` or other sub-shells                                          | Run commands directly — sub-shells obscure intent and may trigger approval                   |
 
 ## Task Management
 
@@ -45,14 +45,14 @@ Create a task list for any work with 2+ steps. Rules:
 
 Use both the **MCP memory knowledge graph** and any built-in memory system actively. The MCP memory knowledge graph is the **primary** memory — it persists across all agents and providers. Built-in agent memory (e.g., Copilot `/memories/`) may be used as a supplement but must not replace the MCP memory.
 
-| Trigger | Action |
-|---|---|
-| Start of any conversation | Search the knowledge graph for relevant context |
-| User states a preference | Create an entity and add observations immediately |
-| You learn something reusable | Add observations to the relevant entity |
-| You solve a tricky problem | Store the solution pattern as observations |
-| Entities are related | Create relations to link them |
-| End of significant work | Store learnings in the knowledge graph |
+| Trigger                      | Action                                            |
+| ---------------------------- | ------------------------------------------------- |
+| Start of any conversation    | Search the knowledge graph for relevant context   |
+| User states a preference     | Create an entity and add observations immediately |
+| You learn something reusable | Add observations to the relevant entity           |
+| You solve a tricky problem   | Store the solution pattern as observations        |
+| Entities are related         | Create relations to link them                     |
+| End of significant work      | Store learnings in the knowledge graph            |
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
@@ -85,6 +85,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/). Constraints:
 - `BREAKING CHANGE:` footer or `!` after type for breaking changes
 
 Examples:
+
 ```
 feat(auth): add OAuth2 login flow
 fix: resolve null reference in user lookup
@@ -99,6 +100,7 @@ feat!: drop support for Node 14
 Create worktrees inside each repository at `.worktrees/<branch-name>`.
 
 Examples:
+
 ```
 git worktree add .worktrees/feature/my-feature feature/my-feature
 git worktree add .worktrees/fix/bug-123 fix/bug-123
@@ -123,6 +125,7 @@ Load `permissions-yaml` skill, update `~/ai/permissions/permissions.yaml`, and r
 **Trigger**: Approaching token limits, user requests compact, or agent suggests it.
 
 Before compacting:
+
 - Save new learnings, patterns, and solutions to memory
 - Complete or document any open thinking chains
 - Update todo list (mark completed, note progress on in-progress items, capture blockers)
