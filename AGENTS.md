@@ -8,7 +8,7 @@ Complete these steps IN ORDER before responding to any request:
 2. **Check memory** - Search for relevant stored context
 3. **Evaluate skill promotion** - Entity has 10+ observations? Load `skill-promotion` skill and suggest promoting
 4. **Check skills** - Before infrastructure/CLI commands, search skills for documented procedures
-5. **Create/update task list** - If request involves 2+ steps or any code changes
+5. **Create/update task list** - For every request, including single-step tasks
 6. **Use sequential thinking** - For debugging, architecture, or multi-file changes
 
 This applies even if a session summary is provided. Summaries may be stale.
@@ -17,23 +17,24 @@ This applies even if a session summary is provided. Summaries may be stale.
 
 ## Anti-Patterns
 
-| Never do this                                                                                 | Do this instead                                                                              |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Skip startup steps because "I have context"                                                   | Always run the checklist - todo state may differ from summary                                |
-| Debug without sequential thinking                                                             | Think systematically before acting                                                           |
-| Let task list go stale                                                                        | Update status immediately after each step                                                    |
-| Suggest `--interactive` or browser-spawning in elevated PowerShell                            | These freeze the shell - use non-interactive alternatives                                    |
-| Repeat a failed approach                                                                      | Stop after first failure, rethink, try a different approach                                  |
-| Guess at CLI/infrastructure commands                                                          | Check skills first - they contain tested syntax                                              |
-| Run broad glob patterns (`**/*.ts` from root)                                                 | Ask user to narrow scope or use grep instead                                                 |
-| Tail or stream long-running commands (builds, tests, docker)                                  | Pipe to a temp file and read it after completion (see Long-Running Commands)                 |
-| Redirect to `/dev/null`, `$null`, or use `2>/dev/null` (triggers file-write approval prompts) | Omit the redirect entirely — output is useful context. Use `--quiet`/`-q` flags if available |
-| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `&>`, `tee`)                | Prefer single commands; if piping is necessary, keep targets as stdout only                  |
-| Wrap commands in `bash -c "..."` or other sub-shells                                          | Run commands directly — sub-shells obscure intent and may trigger approval                   |
+| Never do this                                                             | Do this instead                                                              |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Skip startup steps because "I have context"                               | Always run the checklist - todo state may differ from summary                |
+| Debug without sequential thinking                                         | Think systematically before acting                                           |
+| Let task list go stale                                                    | Update status immediately after each step                                    |
+| Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                    |
+| Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                  |
+| Delete branches or remove worktrees without user validation               | Ask the user to validate/confirm immediately before destructive cleanup      |
+| Guess at CLI/infrastructure commands                                      | Check skills first - they contain tested syntax                              |
+| Run broad glob patterns (`**/*.ts` from root)                             | Ask user to narrow scope or use grep instead                                 |
+| Tail or stream long-running commands (builds, tests, docker)              | Pipe to a temp file and read it after completion (see Long-Running Commands) |
+| Redirect to `/dev/null` or `$null` (triggers file-write approval prompts) | Omit the redirect (output is useful context), or use `--quiet`/`-q` flags   |
+| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `tee`) | Prefer single commands; if piping is necessary, keep targets as stdout only  |
+| Wrap commands in `bash -c "..."` or other sub-shells                      | Run commands directly — sub-shells obscure intent and may trigger approval   |
 
 ## Task Management
 
-Create a task list for any work with 2+ steps. Rules:
+Create a task list for every task, including single-step work. Rules:
 
 - Create todos BEFORE starting work
 - Only ONE todo `in-progress` at a time
@@ -45,14 +46,13 @@ Create a task list for any work with 2+ steps. Rules:
 
 Use both the **MCP memory knowledge graph** and any built-in memory system actively. The MCP memory knowledge graph is the **primary** memory — it persists across all agents and providers. Built-in agent memory (e.g., Copilot `/memories/`) may be used as a supplement but must not replace the MCP memory.
 
-| Trigger                      | Action                                            |
-| ---------------------------- | ------------------------------------------------- |
-| Start of any conversation    | Search the knowledge graph for relevant context   |
-| User states a preference     | Create an entity and add observations immediately |
-| You learn something reusable | Add observations to the relevant entity           |
-| You solve a tricky problem   | Store the solution pattern as observations        |
-| Entities are related         | Create relations to link them                     |
-| End of significant work      | Store learnings in the knowledge graph            |
+| Trigger                      | Action                      |
+| ---------------------------- | --------------------------- |
+| Start of any conversation    | Search for relevant context |
+| User states a preference     | Store immediately           |
+| You learn something reusable | Store it                    |
+| You solve a tricky problem   | Store the solution pattern  |
+| End of significant work      | Store learnings             |
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
@@ -67,12 +67,6 @@ Use both the **MCP memory knowledge graph** and any built-in memory system activ
 - Answering "why" or "how" questions requiring analysis
 - Architecture or design decisions
 - Any task requiring 3+ logical steps
-
----
-
-## RAG Search (Qdrant)
-
-Search Qdrant indexes before broad codebase exploration. Load the `qdrant-search` skill for collection details, search guidelines, and machine-specific configuration.
 
 ---
 
@@ -136,4 +130,4 @@ After compacting: read memory, check todo list, resume work.
 
 **Trigger**: All todos completed, user says "done"/"wrapping up", or context compact is imminent.
 
-Load `obsidian-notes` skill and append a session summary. When the last todo is marked completed, always trigger this - do not skip.
+Ask the user if they want a session summary saved to Obsidian. If yes, load `obsidian-notes` skill and append the summary. When the last todo is marked completed, always ask - do not skip.
