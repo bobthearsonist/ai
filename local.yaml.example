@@ -3,8 +3,18 @@
 # Copy this to local.yaml and customize for your machine.
 # local.yaml is gitignored - do not commit it.
 
+work:
+  # Display name for the work domain (used in prompts/documentation)
+  name: YourCompany
+
+  # Path to work-specific skills repository
+  skills_path: /path/to/yourcompany-ai/skills/
+
+  # Root directory for work repositories
+  repositories_root: /path/to/repositories/
+
 paths:
-  # Home directory
+  # Home directory (for {{HOME}} expansion)
   home: /Users/YourUsername
 
 obsidian:

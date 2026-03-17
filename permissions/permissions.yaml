@@ -152,7 +152,9 @@ file_access:
 tools:
   read: allow
   write: ask
+  write_scoped: "allow(~/Repositories/**)"  # auto-approve writes in repos
   edit: ask
+  edit_scoped: "allow(~/Repositories/**)"  # auto-approve edits in repos
   glob: allow
   grep: allow
   task: allow
@@ -268,11 +270,15 @@ commands:
     # --- File finding (Claude, OpenCode, Kilo) ---
     - "find*"
     - "locate*"
+    - "mdfind*"
     - "tree*"
     - "fd*"
     - "rg*"
     - "fzf*"
     - "bat*"
+
+    # --- Database tools (read-only) ---
+    - "sqlite3 -readonly*"
 
     # --- File info (OpenCode) ---
     - "du*"
