@@ -8,7 +8,7 @@ Complete these steps IN ORDER before responding to any request:
 2. **Check memory** - Search for relevant stored context
 3. **Evaluate skill promotion** - Entity has 10+ observations? Load `skill-promotion` skill and suggest promoting
 4. **Check skills** - Before infrastructure/CLI commands, search skills for documented procedures
-5. **Create/update task list** - For every request, including single-step tasks
+5. **Create/update task list** - If request involves 2+ steps or any code changes
 6. **Use sequential thinking** - For debugging, architecture, or multi-file changes
 
 This applies even if a session summary is provided. Summaries may be stale.
@@ -34,7 +34,7 @@ This applies even if a session summary is provided. Summaries may be stale.
 
 ## Task Management
 
-Create a task list for every task, including single-step work. Rules:
+Create a task list for any work with 2+ steps. Rules:
 
 - Create todos BEFORE starting work
 - Only ONE todo `in-progress` at a time
@@ -130,4 +130,4 @@ After compacting: read memory, check todo list, resume work.
 
 **Trigger**: All todos completed, user says "done"/"wrapping up", or context compact is imminent.
 
-Ask the user if they want a session summary saved to Obsidian. If yes, load `obsidian-notes` skill and append the summary. When the last todo is marked completed, always ask - do not skip.
+Load `obsidian-notes` skill and append a session summary. When the last todo is marked completed, always trigger this - do not skip.
