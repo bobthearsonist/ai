@@ -103,6 +103,55 @@ Where each client stores its MCP server configuration. All paths shown as Window
 
 `~/ai/permissions/permissions.yaml` — centralized auto-approve list for MCP tools, synced to all clients.
 
+## Context Lens (LLM Context Inspector)
+
+Reverse proxy that intercepts AI coding agent API traffic and visualizes context window composition. Runs as Docker containers from `ai-infrastructure/platform/context-lens/`.
+
+### Ports
+
+| Port | Service | Purpose |
+|------|---------|---------|
+| 4040 | Context Lens Proxy | LLM API interception (base URL override) |
+| 4041 | Context Lens Web UI | Treemap visualization of context composition |
+| 8080 | mitmproxy | HTTPS interception for clients that can't override base URL |
+
+### How Clients Connect
+
+| Client | Method | Configuration |
+|--------|--------|---------------|
+| Claude Code (terminal) | `context-lens claude` | Wraps CLI, sets `ANTHROPIC_BASE_URL` automatically |
+| Claude Code (VS Code) | Base URL override | `"claudeCode.environmentVariables": {"ANTHROPIC_BASE_URL": "http://localhost:4040/claude"}` in VS Code settings |
+| OpenCode | `context-lens oc` | Wraps CLI, routes through proxy |
+| GitHub Copilot | mitmproxy (:8080) | HTTPS proxy interception via `mitm_addon.py` |
+
+### Startup
+
+```bash
+# Docker (recommended — runs both containers)
+docker compose -f ~/ai-infrastructure/platform/context-lens/docker-compose.yml up -d
+
+# Background mode (native, no Docker)
+context-lens background start --no-open
+
+# Check status
+context-lens background status
+context-lens doctor
+```
+
+### Analysis
+
+```bash
+context-lens analyze ~/.context-lens/data/claude-<id>.lhar
+context-lens analyze <file>.lhar --json
+context-lens analyze <file>.lhar --composition=pre-compaction
+```
+
+### Known Issues
+
+- `--no-open` required on Windows Git Bash (`start` command doesn't exist in MSYS2)
+- If Context Lens is not running, Claude Code in VS Code fails to connect (remove `ANTHROPIC_BASE_URL` env var)
+- Windows: `spawn` without `shell: true` causes ENOENT for npm-installed tools — local patch needed in `dist/cli.js`
+
 ## Unified Symlink Strategy
 
 Share skills across all clients from a single canonical location:

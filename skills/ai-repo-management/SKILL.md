@@ -1,6 +1,6 @@
 ---
 name: ai-repo-management
-description: AI repository structure management and validation. Use when creating skills or agents, organizing AI skills/agents/rules/prompts in ~/AI/, validating repository structure, syncing external skills, checking manifest integrity, editing external-skills.yaml, or understanding the AI component architecture. Triggers on patterns like "create skill", "new agent", "ai repo", "validate skill", "check structure", "external-skills", "sync skills".
+description: AI repository structure management and validation. Use when creating skills or agents, organizing AI skills/agents/rules/prompts in ~/AI/, validating repository structure, syncing external skills, checking manifest integrity, editing external-skills.yaml, or understanding the AI component architecture. Triggers on patterns like "create skill", "new agent", "ai repo", "validate skill", "check structure", "external-skills", "sync skills", "manifest", "check manifest", "skill manifest".
 ---
 
 # AI Repository Management
