@@ -371,6 +371,31 @@ This repository uses a **hybrid approach**:
 └── docs/                       # Architecture documentation
 ```
 
+## Shell Integration
+
+The repo includes `init.bash` and `init.ps1` at the root for shell-level integrations. Source them from your shell profile:
+
+**Bash / Zsh** (add to `~/.bashrc` or `~/.zshrc`):
+```bash
+[ -f "$HOME/AI/init.bash" ] && source "$HOME/AI/init.bash"
+```
+
+**PowerShell** (add to `$PROFILE`):
+```powershell
+. (Join-Path $HOME AI/init.ps1)
+```
+
+### What They Provide
+
+| Feature | Command | Description |
+|---------|---------|-------------|
+| OpenCode Build Switcher | `opencode --use list` | Switch between npm release and local dev worktree builds |
+| | `opencode --use <name>` | Activate a specific worktree build (partial name match) |
+| | `opencode --use reset` | Return to npm release build |
+| Context Lens Routing | (automatic) | Routes OpenCode through mitmproxy if running on :8080 |
+
+See [New Machine Setup](docs/new-machine-setup.md) for installation instructions.
+
 ## When to Use What
 
 | Use        | When                                                       |
@@ -463,8 +488,10 @@ Simple markdown files, no skill structure needed:
 
 ## Documentation
 
+- [New Machine Setup](docs/new-machine-setup.md)
 - [Skills & Agents Architecture](docs/skills-agents-architecture.md)
 - [Migration Guide](docs/migration-guide.md)
+- [Context Lens Setup](docs/context-lens-setup.md)
 - [Schema Definitions](docs/schemas/)
 - [How Cline Uses Rules](HOW_CLINE_USES_RULES.md)
 
