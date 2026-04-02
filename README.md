@@ -336,6 +336,20 @@ This configures git hooks for automatic external skill syncing and performs init
 
 **Requirements:** `yq` (install with `brew install yq`)
 
+## New Machine Setup
+
+Checklist for setting up on a fresh machine:
+
+1. **Prerequisites** — Install Git, Node.js, Docker. Set up SSH key for GitHub (`ssh -T git@github.com`)
+2. **Clone** — `git clone git@github.com:bobthearsonist/ai.git ~/AI`
+3. **Run setup** — `cd ~/AI && ./setup.sh` (requires `yq`)
+4. **Create symlinks** — See [Symlinks Setup](#symlinks-setup) above
+5. **Configure local.yaml** — `cp local.yaml.example local.yaml` and edit for your machine
+6. **Source shell integration** — See [Shell Integration](#shell-integration) below
+7. **MCP servers** — Load the `ai-client-config` skill for per-client MCP configuration paths
+8. **Context Lens** — See [Context Lens Setup](docs/context-lens-setup.md) for proxy + session capture
+9. **Verify** — Open any AI client and ask it to "list available skills"
+
 ## Architecture
 
 This repository uses a **hybrid approach**:
@@ -393,8 +407,6 @@ The repo includes `init.bash` and `init.ps1` at the root for shell-level integra
 | | `opencode --use <name>` | Activate a specific worktree build (partial name match) |
 | | `opencode --use reset` | Return to npm release build |
 | Context Lens Routing | (automatic) | Routes OpenCode through mitmproxy if running on :8080 |
-
-See [New Machine Setup](docs/new-machine-setup.md) for installation instructions.
 
 ## When to Use What
 
@@ -488,7 +500,6 @@ Simple markdown files, no skill structure needed:
 
 ## Documentation
 
-- [New Machine Setup](docs/new-machine-setup.md)
 - [Skills & Agents Architecture](docs/skills-agents-architecture.md)
 - [Migration Guide](docs/migration-guide.md)
 - [Context Lens Setup](docs/context-lens-setup.md)
