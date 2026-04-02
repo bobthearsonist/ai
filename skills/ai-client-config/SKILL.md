@@ -152,6 +152,30 @@ context-lens analyze <file>.lhar --composition=pre-compaction
 - If Context Lens is not running, Claude Code in VS Code fails to connect (remove `ANTHROPIC_BASE_URL` env var)
 - Windows: `spawn` without `shell: true` causes ENOENT for npm-installed tools — local patch needed in `dist/cli.js`
 
+## Shell Integration (init.bash / init.ps1)
+
+The AI repo includes shell integration scripts at `~/AI/init.bash` and `~/AI/init.ps1` that provide:
+
+1. **OpenCode Build Switcher** — `opencode --use list|<num>|<name>|reset` to switch between npm release and local dev worktree builds of OpenCode
+2. **Context Lens Auto-Routing** — Automatically routes OpenCode through mitmproxy on `:8080` if running, with TLS workarounds for Bun on Windows
+
+### Setup
+
+Source the init file from your shell profile (one line each):
+
+| Shell | Profile File | Line to Add |
+|-------|-------------|-------------|
+| Bash / Zsh | `~/.bashrc` or `~/.zshrc` | `[ -f "$HOME/AI/init.bash" ] && source "$HOME/AI/init.bash"` |
+| PowerShell 7 | `$PROFILE` | `. (Join-Path $HOME AI/init.ps1)` |
+| PowerShell 5.1 | `$PROFILE` | `. (Join-Path $HOME AI/init.ps1)` |
+
+### Notes
+
+- Init files are standalone — NOT connected to `setup.sh`, `sync.sh`, or the skills system
+- Bash helpers use underscore prefix (e.g., `_opencode_use`), PowerShell uses `Invoke-` verb
+- Config persisted in `~/.opencode-local`
+- Follows the nvm/oh-my-zsh source-from-profile pattern
+
 ## Unified Symlink Strategy
 
 Share skills across all clients from a single canonical location:
