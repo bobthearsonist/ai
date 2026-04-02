@@ -327,6 +327,9 @@ commands:
     - "git fetch*"
     - "git worktree*"
 
+    # --- Git with custom editor (interactive rebase via VS Code) ---
+    - 'GIT_SEQUENCE_EDITOR="code-insiders --wait" git*'
+
     # --- Git -C read operations (cross-directory without compound cd && git) ---
     - "git -C * status*"
     - "git -C * log*"

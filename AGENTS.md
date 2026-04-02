@@ -56,6 +56,16 @@ Use both the **MCP memory knowledge graph** and any built-in memory system activ
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
+### Tool Disambiguation
+
+| Purpose | Use These Tools | NOT These |
+|---------|----------------|-----------|
+| Session memory / knowledge graph (startup memory check, storing preferences, learnings) | `memory_search_nodes`, `memory_read_graph`, `memory_create_entities`, `memory_add_observations`, `memory_open_nodes` | `qdrant-find`, `qdrant-store` |
+| Search Obsidian work notes (past sessions, project docs, meeting notes) | `qdrant-work_qdrant-find` | `memory_*` tools |
+| Search indexed source code (implementations, patterns, examples) | `qdrant-code_qdrant-find` | `memory_*` tools |
+
+**⚠️ WARNING**: The Qdrant tools may describe themselves as "memory" tools — this is misleading. Qdrant tools are RAG (semantic search) indexes, not the knowledge graph. When the startup checklist says "Check memory," use `memory_*` tools ONLY. Use Qdrant tools for deeper contextual search when you need to find specific past work, code patterns, or project documentation.
+
 ---
 
 ## Sequential Thinking
@@ -91,16 +101,22 @@ feat!: drop support for Node 14
 
 ## Worktree Directory
 
-Create worktrees inside each repository at `.worktrees/<branch-name>`.
+Create each worktree as a **flat sibling** to the repo — not nested inside it or inside a container directory. This avoids issues with relative paths, directory structure dependencies, and build tool assumptions.
 
-Examples:
+**Pattern**: `{repo}-{short-descriptive-name}` at the same level as the main repo.
+
+Examples (from inside the repo):
 
 ```
-git worktree add .worktrees/feature/my-feature feature/my-feature
-git worktree add .worktrees/fix/bug-123 fix/bug-123
+git worktree add ../$(basename "$PWD")-my-feature feature/my-feature
+git worktree add ../$(basename "$PWD")-fix-bug-123 fix/bug-123
 ```
 
-**Gitignore**: `.worktrees/` is in `~/.gitignore_global` (covers all repos). For non-fork repos where the user is the owner, also add `.worktrees/` to the repo's `.gitignore`.
+Or with absolute paths:
+
+```
+git worktree add /c/Repositories/matching-spike-container spike/container
+```
 
 ---
 
