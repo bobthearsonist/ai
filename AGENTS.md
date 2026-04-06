@@ -31,6 +31,7 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Redirect to `/dev/null` or `$null` (triggers file-write approval prompts) | Omit the redirect (output is useful context), or use `--quiet`/`-q` flags   |
 | Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `tee`) | Prefer single commands; if piping is necessary, keep targets as stdout only  |
 | Wrap commands in `bash -c "..."` or other sub-shells                      | Run commands directly — sub-shells obscure intent and may trigger approval   |
+| `cd` into a repo to run git commands                                      | Use `git -C <path>` to target repos without changing working directory       |
 
 ## Task Management
 
