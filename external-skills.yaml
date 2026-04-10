@@ -30,10 +30,6 @@ skills:
     type: internal
     description: AI repository structure management and validation
 
-  - name: design-patterns
-    type: internal
-    description: Analyze codebase for GoF design patterns - detection, suggestions, evaluation (language-agnostic)
-
   - name: skill-promotion
     type: internal
     description: Promote validated memory observations into reusable skills
