@@ -41,3 +41,44 @@ skills:
   #   branch: main
   #   path: skills/mcp-builder
   #   target: skills/mcp-builder
+
+  # === AntVis Infographic skills (external, git-synced) ===
+  - name: infographic-creator
+    type: git
+    description: Generate complete infographic HTML files with AntVis engine
+    source: https://github.com/antvis/Infographic.git
+    branch: main
+    path: skills/infographic-creator
+    target: skills/infographic-creator
+
+  - name: infographic-syntax-creator
+    type: git
+    description: Convert descriptions to AntVis infographic DSL syntax
+    source: https://github.com/antvis/Infographic.git
+    branch: main
+    path: skills/infographic-syntax-creator
+    target: skills/infographic-syntax-creator
+
+  - name: infographic-structure-creator
+    type: git
+    description: Design custom infographic structural layouts
+    source: https://github.com/antvis/Infographic.git
+    branch: main
+    path: skills/infographic-structure-creator
+    target: skills/infographic-structure-creator
+
+  - name: infographic-item-creator
+    type: git
+    description: Generate custom infographic component designs
+    source: https://github.com/antvis/Infographic.git
+    branch: main
+    path: skills/infographic-item-creator
+    target: skills/infographic-item-creator
+
+  - name: infographic-template-updater
+    type: git
+    description: Extend the AntVis infographic template library
+    source: https://github.com/antvis/Infographic.git
+    branch: main
+    path: skills/infographic-template-updater
+    target: skills/infographic-template-updater
