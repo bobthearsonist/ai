@@ -1,0 +1,18 @@
+{
+  "status_classes": {
+    "completed": { "description": "Task finished successfully", "color_light": "#a6e3a1", "border_light": "#40a02b", "color_dark": "#a6e3a1", "border_dark": "#40a02b" },
+    "active": { "description": "Currently being worked on", "color_light": "#f9e2af", "border_light": "#df8e1d", "color_dark": "#f9e2af", "border_dark": "#df8e1d" },
+    "context": { "description": "Background system or component providing context", "color_light": "#89b4fa", "border_light": "#1e66f5", "color_dark": "#89b4fa", "border_dark": "#1e66f5" },
+    "blocked": { "description": "Cannot proceed — dependency or blocker", "color_light": "#f38ba8", "border_light": "#d20f39", "color_dark": "#f38ba8", "border_dark": "#d20f39" }
+  },
+  "type_classes": {
+    "system": { "shape": "round-rectangle", "description": "A system, service, or component" },
+    "task": { "shape": "ellipse", "description": "An action, outcome, or work item" },
+    "decision": { "shape": "diamond", "description": "A choice point, tradeoff, or branch" }
+  },
+  "edge_classes": {
+    "strong-edge": { "description": "Primary causal or dependency relationship", "width": 3, "style": "solid" },
+    "default": { "description": "Standard relationship", "width": 2, "style": "solid" },
+    "weak-edge": { "description": "Cross-domain or tangential connection", "width": 1, "style": "dashed" }
+  }
+}
