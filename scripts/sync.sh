@@ -124,6 +124,8 @@ for collection in $collection_names; do
 
     sync_collection_items "$collection" "skills" "$skills_dir" "skills"
     sync_collection_items "$collection" "agents" "$agents_dir" "agents"
+    hooks_dir=$(yq e ".collections.$collection.hooks_dir // \"hooks\"" "$LOCAL_CONFIG")
+    sync_collection_items "$collection" "hooks" "$hooks_dir" "hooks"
     # Root-level directory/file symlinks (no subdir prefix)
     sync_collection_items "$collection" "links" "" "."
 done
