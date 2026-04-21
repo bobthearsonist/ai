@@ -1,0 +1,17 @@
+{
+  "name": "bobthearsonist",
+  "description": "Personal plugin marketplace for AI tooling",
+  "owner": {
+    "name": "bobthearsonist"
+  },
+  "plugins": [
+    {
+      "name": "ai-private",
+      "description": "Personal AI skills, hooks, and agents for daily workflow automation",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/bobthearsonist/ai-private.git"
+      }
+    }
+  ]
+}
