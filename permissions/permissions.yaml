@@ -60,32 +60,31 @@ mcp_servers:
   agentgateway:
     description: Agent gateway proxy for multiple MCP servers
     auto_approve:
-      - "context7_resolve-library-id"
-      - "context7_query-docs"
-      - "memory_*"
-      - "sequential-thinking_*"
-      - "hass-mcp_*"
-      - "playwright_*"
-      - "browser-use_*"
+      - "*"  # All gateway tools — use bare server name (mcp__mcpx) in Claude Code settings
 
   chrome-devtools:
     command: npx
     args: ["-y", "@executeautomation/chrome-devtools-mcp"]
     description: Chrome DevTools for browser automation
     disabled: true
-    auto_approve: []
+    auto_approve:
+      - "*"
 
   qdrant-work:
     type: remote
     url: "http://localhost:7020/servers/qdrant-work/sse"
     description: Qdrant vector DB for work items and ADO knowledge (via Docker mcp-proxy)
-    auto_approve: []
+    auto_approve:
+      - qdrant-find
+      - qdrant-store
 
   qdrant-code:
     type: remote
     url: "http://localhost:7020/servers/qdrant-code/sse"
     description: Qdrant vector DB for repository/code indexing (via Docker mcp-proxy)
-    auto_approve: []
+    auto_approve:
+      - qdrant-find
+      - qdrant-store
 
 # =============================================================================
 # DIRECTORIES
@@ -211,6 +210,50 @@ commands:
     - "pkill*"
     - "killall*"
     - "taskkill*"
+    # --- Obsidian CLI (destructive/dangerous commands) ---
+    - "obsidian delete*"
+    - "obsidian move*"
+    - "obsidian rename*"
+    - "obsidian eval*"
+    - "obsidian command*"
+    - "obsidian plugin:disable*"
+    - "obsidian plugin:enable*"
+    - "obsidian plugin:install*"
+    - "obsidian plugin:uninstall*"
+    - "obsidian plugin:reload*"
+    - "obsidian theme:install*"
+    - "obsidian theme:set*"
+    - "obsidian theme:uninstall*"
+    - "obsidian snippet:disable*"
+    - "obsidian snippet:enable*"
+    - "obsidian sync:restore*"
+    - "obsidian history:restore*"
+    - "obsidian restart*"
+    - "obsidian reload*"
+    - "obsidian dev:cdp*"
+    - "obsidian dev:debug*"
+    - "obsidian dev:mobile*"
+    - "obsidian devtools*"
+    # --- Docker (destructive commands) ---
+    - "docker rm*"
+    - "docker rmi*"
+    - "docker image rm*"
+    - "docker image prune*"
+    - "docker container rm*"
+    - "docker container prune*"
+    - "docker volume rm*"
+    - "docker volume prune*"
+    - "docker network rm*"
+    - "docker network prune*"
+    - "docker stop*"
+    - "docker kill*"
+    - "docker system prune*"
+    - "docker builder prune*"
+    - "docker push*"
+    - "docker compose down*"
+    - "docker compose rm*"
+    - "docker-compose down*"
+    - "docker-compose rm*"
 
   # ---------------------------------------------------------------------------
   # ALLOW - Union from all configs
@@ -458,27 +501,8 @@ commands:
     - "javac --version*"
     - "javac -version*"
 
-    # --- Docker (Claude, OpenCode, Copilot) ---
-    - "docker logs*"
-    - "docker inspect*"
-    - "docker exec*"
-    - "docker compose*"
-    - "docker-compose*"
-    - "docker-compose ps*"
-    - "docker-compose config*"
-    - "docker-compose logs*"
-    - "docker --version*"
-    - "docker -v*"
-    - "docker version*"
-    - "docker info*"
-    - "docker ps*"
-    - "docker images*"
-    - "docker image ls*"
-    - "docker container ls*"
-    - "docker volume ls*"
-    - "docker network ls*"
-    - "docker stats*"
-    - "docker top*"
+    # --- Docker (blanket allow + destructive overrides in ask) ---
+    - "docker*"
 
     # --- Kubernetes (OpenCode) ---
     - "kubectl version*"
@@ -547,6 +571,14 @@ commands:
     - "./run_with_venv.sh*"
     - "todoread*"
     - "dev*"
+     # --- Obsidian CLI (safe commands - reads + additive writes) ---
+    - "obsidian*"
+    - "obsidian dev:console*"
+    - "obsidian dev:css*"
+    - "obsidian dev:dom*"
+    - "obsidian dev:errors*"
+    - "obsidian dev:screenshot*"
+    - "ccusage*"
 
     # --- PowerShell cmdlets (Claude, Copilot) ---
     - "Get-Service*"
@@ -585,6 +617,24 @@ commands:
     - "powershell.exe*Out-*"
     - "powershell.exe*Write-*"
     - "powershell.exe*Read-*"
+
+    # --- PowerShell via bare command (no .exe) ---
+    - "powershell*Get-*"
+    - "powershell*Select-*"
+    - "powershell*Where-*"
+    - "powershell*Format-*"
+    - "powershell*Sort-*"
+    - "powershell*Group-*"
+    - "powershell*Measure-*"
+    - "powershell*Compare-*"
+    - "powershell*Test-*"
+    - "powershell*Resolve-*"
+    - "powershell*ConvertTo-*"
+    - "powershell*ConvertFrom-*"
+    - "powershell*Out-*"
+    - "powershell*Write-*"
+    - "powershell*Read-*"
+
     - "pwsh*Get-*"
     - "pwsh*Select-*"
     - "pwsh*Where-*"

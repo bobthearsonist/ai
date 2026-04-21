@@ -174,6 +174,44 @@ function Invoke-OpenCodeUse {
     }
 }
 
+###############################################################################
+# ccusage — wrapper with live-watch mode
+# Usage: ccusage live [YYYYMMDD]   — live dashboard (alt screen, like watch)
+#        ccusage <subcommand> ...  — passthrough to ccusage CLI
+###############################################################################
+
+function ccusage {
+    if ($args.Count -gt 0 -and $args[0] -eq "live") {
+        $date = if ($args.Count -gt 1) { $args[1] } else { Get-Date -Format "yyyyMMdd" }
+        # Enter alternate screen buffer + hide cursor (like watch)
+        Write-Host -NoNewline "`e[?1049h`e[?25l"
+        try {
+            while ($true) {
+                $time = Get-Date -Format "HH:mm:ss"
+                $buffer = "--- ccusage LIVE for $date ($time) ---`n"
+                $buffer += (& ccusage.cmd session --since $date 2>$null | Out-String)
+                $buffer += "`n--- Blocks ---`n"
+                $buffer += (& ccusage.cmd blocks --recent --token-limit 80000000 2>$null | Out-String)
+                # Home cursor + clear screen + print (no flicker)
+                Write-Host -NoNewline "`e[H`e[2J"
+                Write-Host $buffer -NoNewline
+                Start-Sleep -Seconds 1
+            }
+        } finally {
+            # Restore main screen buffer + show cursor (terminal returns to pre-watch state)
+            Write-Host -NoNewline "`e[?25h`e[?1049l"
+        }
+    } else {
+        & ccusage.cmd @args 2>$null
+    }
+}
+
+###############################################################################
+# OpenCode — local worktree build switcher + proxy routing
+# Usage: opencode --use [list|<number>|<name>|reset]
+#        opencode [args...]
+###############################################################################
+
 function opencode {
     if ($args.Count -gt 0 -and $args[0] -eq '--use') {
         $useArgs = @()

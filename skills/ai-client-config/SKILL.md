@@ -7,6 +7,16 @@ description: AI coding client configuration paths and setup. Use when setting up
 
 Where each AI coding client looks for instructions, skills, agents, and MCP server configs.
 
+## Before Making Configuration Changes
+
+**MANDATORY for Claude Code config changes**: Before editing settings files, permissions, or MCP configuration, fetch the current official docs to verify syntax and supported features:
+
+1. **Settings & permissions**: `WebFetch https://code.claude.com/docs/en/permissions` and `WebFetch https://code.claude.com/docs/en/settings`
+2. **MCP servers**: `WebFetch https://code.claude.com/docs/en/mcp`
+3. **Known issues**: Search `gh issue list --repo anthropics/claude-code -S "<topic>"` for open bugs
+
+This skill documents what we've learned through testing, but Claude Code evolves. The official docs are the source of truth — verify before acting.
+
 ## Client Paths
 
 ### OpenCode
@@ -25,7 +35,7 @@ Where each AI coding client looks for instructions, skills, agents, and MCP serv
 | Instructions | `CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | Skills | `.claude/skills/*/SKILL.md` | `~/.claude/skills/*/SKILL.md` |
 | Agents | `.claude/agents/*.md` | `~/.claude/agents/*.md` |
-| **MCP** | `.mcp.json` | `~/.claude/.mcp.json` + `~/.claude/settings.local.json` (`enabledMcpjsonServers`) |
+| **MCP** | `.mcp.json` | `~/.claude/.mcp.json` + `~/.claude/settings.json` (`enabledMcpjsonServers`) |
 
 ### GitHub Copilot
 
@@ -72,10 +82,11 @@ Where each client stores its MCP server configuration. All paths shown as Window
 - Server definitions: `~/.claude/.mcp.json` (user-level) or `.mcp.json` (project-level)
 - Server enable/disable: `enabledMcpjsonServers` array in settings
 - Servers can also be added via `claude mcp add` (stored in internal config `~/.claude.json` → `mcpServers`). Prefer `.mcp.json` for version control.
-- **Settings stack** (merged, local overrides shared):
-  - `~/.claude/settings.json` — shared cross-platform (symlink to version-controlled file). Contains: hooks, command permissions, tool approval defaults.
-  - `~/.claude/settings.local.json` — machine-specific (not tracked). Contains: `statusLine`, `additionalDirectories`, `enabledMcpjsonServers`, MCP gateway tool approvals, platform-specific paths.
-- **Claude Code in VS Code** — all launch modes (extension, CLI, third-party agent in Copilot) use Claude Code's native MCP configuration (`~/.claude/.mcp.json`, `settings.json`, `settings.local.json`). The Claude Agent harness brings its own config regardless of host.
+- **User settings**: `~/.claude/settings.json` — the ONLY user-level settings file. Symlink to version-controlled file (e.g., `~/ai/claude/settings.json`). Contains: hooks, command permissions, tool approval defaults, `enabledMcpjsonServers`, `additionalDirectories`, MCP auto-approve (`mcp__servername`).
+  - **WARNING**: `~/.claude/settings.local.json` is NOT a user-level config. It's a project-level `.claude/settings.local.json` that applies only when CWD is `~`. Do not use it for user-wide settings — especially `permissions.allow` which won't apply to other projects.
+- **Settings precedence** (highest to lowest): managed > CLI args > project `.claude/settings.local.json` > project `.claude/settings.json` > user `~/.claude/settings.json`
+- **MCP auto-approve**: Use bare server name `mcp__servername` in `permissions.allow` (e.g., `mcp__mcpx` for a gateway). Wildcards (`mcp__mcpx__*`) are NOT reliably supported per anthropics/claude-code#3107.
+- **Claude Code in VS Code** — all launch modes (extension, CLI, third-party agent in Copilot) use Claude Code's native MCP configuration (`~/.claude/.mcp.json`, `settings.json`). The Claude Agent harness brings its own config regardless of host.
   - **Third-party agent mode** (Claude running inside GitHub Copilot): still uses `~/.claude/.mcp.json` and Claude Code settings, NOT VS Code's `mcp.json`. Tool names and `toolApprovalSettings` are consistent across all Claude Code launch modes.
   - **VS Code native Copilot agent** (GitHub's own agent): uses VS Code's MCP configuration (`~/Library/Application Support/Code/User/mcp.json` or `.vscode/mcp.json`). These are separate from Claude Code's MCP servers.
   - **Implication**: When debugging MCP connectivity for Claude Code sessions (any mode), always check `~/.claude/.mcp.json` and Claude Code settings. VS Code's `mcp.json` only applies to Copilot's native agent.
