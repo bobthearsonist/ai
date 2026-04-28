@@ -13,16 +13,13 @@ _opencode_use() {
     local CONFIG_FILE="$HOME/.opencode-local"
 
     _get_worktrees() {
-        git -C "$OPENCODE_REPO" worktree list 2>/dev/null | while IFS= read -r line; do
-            local path branch
-            path=$(echo "$line" | awk '{print $1}')
-            if [[ "$line" =~ \[([^\]]+)\] ]]; then
-                branch="${match[1]}"
-                echo "$path|$branch"
-            elif [[ "$line" =~ \(detached\ HEAD\) ]]; then
-                echo "$path|detached HEAD"
-            fi
-        done
+        # `git worktree list` emits "<path>  <sha>  [branch]" or
+        # "<path>  <sha>  (detached HEAD)". awk handles both — no
+        # shell regex needed, no subshell-local quirks.
+        git -C "$OPENCODE_REPO" worktree list 2>/dev/null | awk '
+            /\[[^]]+\]/ { match($0, /\[[^]]+\]/); b = substr($0, RSTART+1, RLENGTH-2); print $1 "|" b; next }
+            /\(detached HEAD\)/ { print $1 "|detached HEAD" }
+        '
     }
 
     _get_current() {
@@ -41,10 +38,10 @@ _opencode_use() {
         echo ""
         echo "Available worktrees:"
         local idx=1
-        while IFS='|' read -r path branch; do
+        while IFS='|' read -r wt_path branch; do
             local marker=""
-            [[ "$path" == "$current" ]] && marker="*"
-            printf "  %s%d) %-40s %s\n" "$marker" "$idx" "$branch" "$path"
+            [[ "$wt_path" == "$current" ]] && marker="*"
+            printf "  %s%d) %-40s %s\n" "$marker" "$idx" "$branch" "$wt_path"
             ((idx++))
         done < <(_get_worktrees)
         echo ""
@@ -53,10 +50,10 @@ _opencode_use() {
 
     _select_by_number() {
         local target_num=$1 idx=1
-        while IFS='|' read -r path branch; do
+        while IFS='|' read -r wt_path branch; do
             if [[ $idx -eq $target_num ]]; then
-                echo "$path" > "$CONFIG_FILE"
-                echo "✓ Selected: $branch ($path)"
+                echo "$wt_path" > "$CONFIG_FILE"
+                echo "✓ Selected: $branch ($wt_path)"
                 return 0
             fi
             ((idx++))
@@ -67,13 +64,13 @@ _opencode_use() {
 
     _select_by_name() {
         local target_name=$1
-        local -a matches paths
-        while IFS='|' read -r path branch; do
-            local path_basename
-            path_basename=$(basename "$path")
-            if [[ "$branch" == *"$target_name"* ]] || [[ "$path_basename" == *"$target_name"* ]]; then
+        local -a matches wt_paths
+        while IFS='|' read -r wt_path branch; do
+            local wt_basename
+            wt_basename=$(basename "$wt_path")
+            if [[ "$branch" == *"$target_name"* ]] || [[ "$wt_basename" == *"$target_name"* ]]; then
                 matches+=("$branch")
-                paths+=("$path")
+                wt_paths+=("$wt_path")
             fi
         done < <(_get_worktrees)
         if [[ ${#matches[@]} -eq 0 ]]; then
@@ -84,8 +81,8 @@ _opencode_use() {
             printf '  - %s\n' "${matches[@]}" >&2
             return 1
         fi
-        echo "${paths[1]}" > "$CONFIG_FILE"
-        echo "✓ Selected: ${matches[1]} (${paths[1]})"
+        echo "${wt_paths[1]}" > "$CONFIG_FILE"
+        echo "✓ Selected: ${matches[1]} (${wt_paths[1]})"
     }
 
     _reset_selection() {
