@@ -145,9 +145,18 @@ opencode() {
     # Check if mitmproxy is running on port 8080
     if nc -z 127.0.0.1 8080 2>/dev/null; then
         echo "[opencode] Routing through context-lens mitmproxy" >&2
+
+        # Bun 1.3.x ignores NODE_EXTRA_CA_CERTS / NODE_USE_SYSTEM_CA in its
+        # native fetch path (undici dispatcher bypass — see oven-sh/bun#23735,
+        # #24581). Opencode is a Bun binary that uses bun fetch, so neither
+        # env var helps. Disable TLS verification for child processes routing
+        # through our LOCAL mitmproxy. This is safe — the proxy is on
+        # 127.0.0.1, the cert is ours, and traffic stays on this machine
+        # before being forwarded upstream over a clean TLS connection.
         env \
             https_proxy=http://127.0.0.1:8080 \
             NODE_EXTRA_CA_CERTS="$mitm_cert" \
+            NODE_TLS_REJECT_UNAUTHORIZED=0 \
             "${run_cmd[@]}" "${project_arg[@]}" "$@"
     else
         "${run_cmd[@]}" "${project_arg[@]}" "$@"
