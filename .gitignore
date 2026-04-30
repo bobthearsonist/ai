@@ -17,5 +17,6 @@ local.yaml
 skills/
 agents/
 
-# Synced config directories
-claude/
+# Synced config directories — track settings.json, ignore the rest
+claude/*
+!claude/settings.json
