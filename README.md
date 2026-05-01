@@ -253,25 +253,29 @@ Reference these folders visible in your workspace:
 
 ### Claude Code Config Stack
 
-Claude Code merges settings from multiple layers. This repo provides the **shared** layer; machine-specific overrides go in `settings.local.json` (not tracked here).
+Claude Code merges settings from multiple layers. The canonical shared file lives in `ai-private` (private repo) and is exposed here via a `sync.sh`-managed directory symlink: `~/ai/claude/` → `~/ai-private/claude/`. Public-facing `~/ai` only contains the symlink, never the content.
+
+> **Why the indirection?** Atomic-write-rename (used by Claude Code for crash-safe settings writes) replaces a *file* symlink with a regular file on every save. A *directory* symlink is invulnerable — the rename happens to entries inside it, never to the directory entry itself.
 
 | File | Location | Purpose |
 |------|----------|---------|
-| `settings.json` | `~/.claude/settings.json` (symlink -> `~/ai/claude/settings.json`) | Shared cross-platform: hooks, permissions, toolApprovalSettings |
-| `settings.local.json` | `~/.claude/settings.local.json` (machine-specific, not synced) | Platform-specific: statusLine, additionalDirectories, MCP tool approvals |
+| `settings.json` | `~/.claude/settings.json` → (symlink chain) → `~/ai-private/claude/settings.json` | Shared cross-platform: hooks, permissions, plugins, marketplaces |
+| `settings.local.json` | `.claude/settings.local.json` in a project dir | Project-scoped overrides (NOT user-level — this is a common gotcha) |
 
-**What goes where:**
+> **`settings.local.json` is project-scoped, not machine-scoped.** It only applies when CWD matches the project. Don't put user-level overrides there.
 
-| Setting | `settings.json` (shared) | `settings.local.json` (per-machine) |
-|---------|--------------------------|--------------------------------------|
-| Hooks (SessionStart, PreToolUse) | X | |
-| Command permissions (Bash, Git, etc.) | X | |
-| Tool permissions (Read, Glob, etc.) | X | |
-| Sensitive path ask rules | X | |
-| `statusLine` | | X |
-| `additionalDirectories` | | X |
-| Platform-specific paths | | X |
-| MCP gateway tool approvals | | X |
+**What goes in the shared `settings.json`:**
+
+- Hooks (`SessionStart`, `PreToolUse`, `PostToolUse`)
+- `permissions.allow` / `permissions.ask` / `permissions.defaultMode`
+- `enabledPlugins`, `extraKnownMarketplaces`
+- `enabledMcpjsonServers`
+- UX preferences (theme, verbose, outputStyle) — flows naturally with the user
+
+**What does NOT go here:**
+
+- MCP server *definitions* — those live in `~/.claude.json` via `claude mcp add --scope user` (NOT in `settings.json`, NOT in `.mcp.json` at user level)
+- Project-specific MCP servers — those live in `<project>/.mcp.json`
 
 ### Symlinks Setup
 

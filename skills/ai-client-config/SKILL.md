@@ -80,14 +80,29 @@ Where each client stores its MCP server configuration. All paths shown as Window
 ### Claude Code
 
 - **MCP servers**: add via `claude mcp add --scope user <name> ...` — stored in `~/.claude.json` under `mcpServers`. Use `--transport http` with `--header` for HTTP gateways; default is stdio. Inspect with `claude mcp list` / `claude mcp get <name>`.
-- **User settings**: `~/.claude/settings.json` — the ONLY user-level settings file. Symlink to version-controlled file (e.g., `~/ai/claude/settings.json`). Contains: hooks, command permissions, tool approval defaults, `additionalDirectories`, MCP auto-approve (`mcp__servername`).
+- **User settings**: `~/.claude/settings.json` — the ONLY user-level settings file. Symlink chain: `~/.claude/settings.json` → `~/ai/claude/settings.json` → (via dir symlink) `~/ai-private/claude/settings.json`. Contains: hooks, `permissions.allow`/`ask`/`defaultMode`, `enabledPlugins`, `extraKnownMarketplaces`, `enabledMcpjsonServers`, UX preferences.
+  - **CRITICAL — symlink the directory, not the file.** `claude/` is a directory symlink (`ai/claude` → `ai-private/claude`), NOT a file symlink to `settings.json`. File symlinks of actively-written config files get clobbered on every save by atomic-write-rename (Claude Code writes settings via tmp-file + rename for crash safety; rename replaces the symlink with a regular file). Directory symlinks are immune — the rename happens inside the symlinked directory, never on the directory entry itself.
   - **WARNING**: `~/.claude/settings.local.json` is NOT a user-level config. It's a project-level `.claude/settings.local.json` that applies only when CWD is `~`. Do not use it for user-wide settings — especially `permissions.allow` which won't apply to other projects.
+  - **Deprecated key**: `toolApprovalSettings` is silently ignored by current Claude Code. All permissions go through `permissions.allow`/`ask`/`defaultMode` exclusively.
 - **Settings precedence** (highest to lowest): managed > CLI args > project `.claude/settings.local.json` > project `.claude/settings.json` > user `~/.claude/settings.json`
 - **MCP auto-approve**: Use bare server name `mcp__servername` in `permissions.allow` (e.g., `mcp__mcpx` for a gateway). Wildcards (`mcp__mcpx__*`) are NOT reliably supported per anthropics/claude-code#3107.
 - **Claude Code in VS Code** — all launch modes (extension, CLI, third-party agent in Copilot) use Claude Code's native MCP configuration (`~/.claude.json` mcpServers + `~/.claude/settings.json`). The Claude Agent harness brings its own config regardless of host.
   - **Third-party agent mode** (Claude running inside GitHub Copilot): still uses Claude Code's native config, NOT VS Code's `mcp.json`. Tool names and `toolApprovalSettings` are consistent across all Claude Code launch modes.
   - **VS Code native Copilot agent** (GitHub's own agent): uses VS Code's MCP configuration (`~/Library/Application Support/Code/User/mcp.json` or `.vscode/mcp.json`). These are separate from Claude Code's MCP servers.
   - **Implication**: When debugging MCP connectivity for Claude Code sessions (any mode), check `~/.claude.json` (`claude mcp list`) and `~/.claude/settings.json`. VS Code's `mcp.json` only applies to Copilot's native agent.
+
+### Symlinking actively-written config files
+
+Use **directory symlinks** for any path that the application writes to (settings.json, preferences, caches with autosave). A file symlink of a written-to file gets replaced with a regular file on the next write because most editors and config-writers use atomic-write-rename (write to `.tmp`, then `rename(tmp, target)`) for crash safety. The rename replaces the directory entry — including the symlink. This is OS-agnostic (happens on Linux too — vim breaks symlinks unless you set `:set backupcopy=yes`).
+
+**Symptom**: a file symlink keeps reverting to a regular file. **Fix**: symlink the parent directory instead. Verify with:
+
+```bash
+# After the app writes to the file, the symlink should still be a symlink:
+ls -la <path>     # expect: lrwxrwxrwx (not -rw-r--r--)
+```
+
+If the symlink keeps regenerating but writes still corrupt it, you have a contamination loop: something is restoring the symlink (a sync script, a post-checkout git hook) AND something is overwriting it. Either stop one of the writers or switch to a directory symlink.
 
 ### OpenCode
 
