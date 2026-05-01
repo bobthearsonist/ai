@@ -17,6 +17,7 @@ local.yaml
 skills/
 agents/
 
-# Synced config directories — track settings.json, ignore the rest
-claude/*
-!claude/settings.json
+# Synced config directory — entire claude/ is a sync.sh-managed symlink to ai-private.
+# No trailing slash so the gitignore rule matches the symlink itself (git treats
+# a symlink-to-directory as a file entry, not a directory entry).
+claude
