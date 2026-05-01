@@ -61,6 +61,11 @@ collections:
       - another-skill
     agents:
       - my-agent
+    # `links:` symlinks non-skill content into ~/AI. Use DIRECTORY links
+    # (not file links) for any actively-written config — file symlinks
+    # break on atomic-write-rename. The directory itself is invulnerable.
+    links:
+      - claude          # ~/AI/claude → ai-private/claude (entire dir)
 
   # Work collection — your company's repo (uncomment on work machine)
   # work:

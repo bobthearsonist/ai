@@ -66,6 +66,23 @@ collections:
         name: <symlink-name>
 ```
 
+**For non-skill files (config dirs, etc.)** — use the `links:` field:
+```yaml
+collections:
+  private:
+    links:
+      - claude          # symlinks ai/claude → ai-private/claude (DIRECTORY)
+      # NOT: claude/settings.json (file-level — gets clobbered by atomic
+      # writes; use directory level for actively-written config)
+```
+
+`links:` is for non-skill content the collection should expose (entire
+`claude/` config dir, hooks, etc.). Each entry symlinks `<collection>/<entry>`
+into `~/AI/<entry>`. **Always link directories, not individual files**, when
+the target file gets written by an application — file symlinks of
+written-to files break under atomic-write-rename (write-to-tmp, then
+`rename(tmp, target)` replaces the symlink).
+
 **For internal skills** — add to `external-skills.yaml`:
 ```yaml
 skills:
