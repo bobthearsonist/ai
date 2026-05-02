@@ -47,6 +47,23 @@ sync_symlink() {
     echo "  → $target (symlink)"
 }
 
+# Like sync_symlink but for paths OUTSIDE the AI repo (e.g. ~/.claude/foo).
+# Refuses to clobber real files/dirs as a safety guard — only replaces existing
+# symlinks. Move/delete the existing file to enable sync.
+sync_external_symlink() {
+    local source="$1" target="$2"
+
+    if [[ -e "$target" && ! -L "$target" ]]; then
+        echo "  ⚠️  $target exists and is not a symlink — skipping"
+        return
+    fi
+
+    mkdir -p "$(dirname "$target")"
+    ln -sfn "$source" "$target"
+
+    echo "  → $target (external symlink)"
+}
+
 # === Sync external-skills.yaml (git-based skills) ===
 echo "=== External skills ==="
 count=$(yq e '.skills | length' "$MANIFEST")
@@ -78,7 +95,7 @@ fi
 
 sync_collection_items() {
     local collection="$1" key="$2" subdir="$3" target_dir="$4"
-    local path count entry kind source_dir link_name source_path
+    local path count entry kind source_dir link_name custom_target source_path target
 
     path=$(yq e ".collections.$collection.path" "$LOCAL_CONFIG")
     count=$(yq e ".collections.$collection.$key | length" "$LOCAL_CONFIG")
@@ -87,13 +104,16 @@ sync_collection_items() {
     for ((i=0; i<count; i++)); do
         entry=$(yq e ".collections.$collection.${key}[$i]" "$LOCAL_CONFIG")
         kind=$(yq e ".collections.$collection.${key}[$i] | type" "$LOCAL_CONFIG")
+        custom_target=""
 
         if [[ "$kind" == "!!str" ]]; then
             source_dir="$entry"
             link_name="$entry"
         else
             source_dir=$(yq e ".collections.$collection.${key}[$i].source" "$LOCAL_CONFIG")
-            link_name=$(yq e ".collections.$collection.${key}[$i].name" "$LOCAL_CONFIG")
+            link_name=$(yq e ".collections.$collection.${key}[$i].name // \"\"" "$LOCAL_CONFIG")
+            custom_target=$(yq e ".collections.$collection.${key}[$i].target // \"\"" "$LOCAL_CONFIG")
+            [[ -z "$link_name" || "$link_name" == "null" ]] && link_name="$(basename "$source_dir")"
         fi
 
         if [[ -n "$subdir" ]]; then
@@ -102,8 +122,14 @@ sync_collection_items() {
             source_path="$path/$source_dir"
         fi
 
-        echo "Syncing: $link_name ($key symlink)"
-        sync_symlink "$source_path" "$target_dir/$link_name"
+        if [[ -n "$custom_target" && "$custom_target" != "null" ]]; then
+            target="${custom_target/#\~/$HOME}"
+            echo "Syncing: $link_name ($key external symlink)"
+            sync_external_symlink "$source_path" "$target"
+        else
+            echo "Syncing: $link_name ($key symlink)"
+            sync_symlink "$source_path" "$target_dir/$link_name"
+        fi
     done
 }
 
