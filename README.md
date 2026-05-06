@@ -412,35 +412,6 @@ The repo includes `init.bash` and `init.ps1` at the root for shell-level integra
 | | `opencode --use reset` | Return to npm release build |
 | Context Lens Routing | (automatic) | Routes OpenCode through mitmproxy if running on :8080 |
 
-## ccusage Live Wrapper
-
-Install the shareable `ccusage live` wrapper without cloning this repo.
-
-**PowerShell 7 on Windows:**
-
-```powershell
-winget install --id Microsoft.PowerShell --source winget
-pwsh
-npm install -g ccusage
-iex (irm https://raw.githubusercontent.com/bobthearsonist/ai/main/scripts/install-ccusage-live.ps1)
-. $PROFILE.CurrentUserAllHosts
-ccusage live
-```
-
-If `npm` is missing, install Node.js first:
-
-```powershell
-winget install --id OpenJS.NodeJS.LTS --source winget
-```
-
-**Git Bash on Windows:**
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/bobthearsonist/ai/main/scripts/install-ccusage-live.bash | bash -s -- --install-ccusage
-source ~/.bashrc
-ccusage live
-```
-
 ## When to Use What
 
 | Use        | When                                                       |
