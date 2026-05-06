@@ -113,7 +113,7 @@ sync_collection_items() {
             source_dir=$(yq e ".collections.$collection.${key}[$i].source" "$LOCAL_CONFIG")
             link_name=$(yq e ".collections.$collection.${key}[$i].name // \"\"" "$LOCAL_CONFIG")
             custom_target=$(yq e ".collections.$collection.${key}[$i].target // \"\"" "$LOCAL_CONFIG")
-            [[ -z "$link_name" || "$link_name" == "null" ]] && link_name="$(basename "$source_dir")"
+            [[ -z "$link_name" ]] && link_name="$(basename "$source_dir")"
         fi
 
         if [[ -n "$subdir" ]]; then
@@ -122,7 +122,7 @@ sync_collection_items() {
             source_path="$path/$source_dir"
         fi
 
-        if [[ -n "$custom_target" && "$custom_target" != "null" ]]; then
+        if [[ -n "$custom_target" ]]; then
             target="${custom_target/#\~/$HOME}"
             echo "Syncing: $link_name ($key external symlink)"
             sync_external_symlink "$source_path" "$target"

@@ -30,7 +30,7 @@ Manage the AI repository at `~/AI/` — skill placement, collection syncing, and
 | **Internal** (framework) | `~/AI/skills/<name>/` checked into AI repo | `external-skills.yaml` as `type: internal` | `ai-repo-management`, `skill-promotion` |
 | **Git-fetched** | Remote git repo, cloned to `.external-cache/` | `external-skills.yaml` as `type: git` | `skill-creator` (from anthropics/skills) |
 | **Private** (personal) | `ai-private` repo at `C:\Repositories\ai-private\skills\` | `local.yaml` under `collections.private.skills` | `design-patterns`, `diagrams`, `job-hunt` |
-| **Work** (Profisee) | Work skills repo (from `local.yaml` `work.skills_path`) | `local.yaml` under `collections.work.skills` | `dev-utilities`, `profisee-devops` |
+| **Work** | Work skills repo (from `local.yaml` `work.skills_path`) | `local.yaml` under `collections.work.skills` | `company-api`, `company-devops` |
 
 `sync.sh` reads both `external-skills.yaml` and `local.yaml`, then creates symlinks in `~/AI/skills/`.
 
@@ -41,7 +41,7 @@ Manage the AI repository at `~/AI/` — skill placement, collection syncing, and
 | If the skill is... | Put it in... | Configure in... |
 |--------------------|-------------|-----------------|
 | Personal / cross-project | `ai-private/skills/<name>/` | `local.yaml` → `collections.private.skills` |
-| Profisee work-specific | Work skills repo (`profisee-ai/skills/<name>/`) | `local.yaml` → `collections.work.skills` |
+| Company work-specific | Work skills repo (`company-ai/skills/<name>/`) | `local.yaml` → `collections.work.skills` |
 | AI framework (repo management, syncing) | `~/AI/skills/<name>/` directly | `external-skills.yaml` as `type: internal` |
 | From a remote git repo | Remote repo | `external-skills.yaml` as `type: git` |
 

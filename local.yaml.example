@@ -25,7 +25,7 @@ obsidian:
   personal_daily_folder: 0 Daily Notes
 
   # Folder name (relative to vault_path) for work daily notes
-  work_daily_folder: 0 Work/Captains Log
+  work_daily_folder: 0 Work/Team Daily Notes
 
 # Qdrant RAG collections available on this machine.
 # Key is the collection name, value describes the content.
@@ -61,17 +61,15 @@ collections:
       - another-skill
     agents:
       - my-agent
-    # `links:` symlinks non-skill content into ~/AI by default. Use DIRECTORY
-    # links (not file links) for any actively-written config — file symlinks
-    # break on atomic-write-rename. The directory itself is invulnerable.
-    #
-    # Items can also opt into EXTERNAL targets via a `target:` field — useful
-    # for dotfile-style symlinks under ~/.claude or similar. Read-only files
-    # only; same atomic-write caveat applies.
+    hooks:
+      - my-hook.sh
+    # `links:` symlinks content into the AI repo by default. Add `target:` to
+    # a link entry to symlink to an external path (e.g. ~/.claude/foo). Use
+    # directory symlinks for actively-written configs — file symlinks break
+    # on atomic-write-rename.
     links:
-      - claude          # ~/AI/claude → ai-private/claude (entire dir)
-      # External-target form (read-only file → ~/.claude):
-      - source: claude/statusline.sh
+      - claude                          # ai-repo/claude -> ai-private/claude
+      - source: claude/statusline.sh    # external file symlink
         target: ~/.claude/statusline.sh
 
   # Work collection — your company's repo (uncomment on work machine)
