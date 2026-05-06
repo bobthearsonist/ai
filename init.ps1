@@ -183,21 +183,50 @@ function Invoke-OpenCodeUse {
 function ccusage {
     if ($args.Count -gt 0 -and $args[0] -eq "live") {
         $date = if ($args.Count -gt 1) { $args[1] } else { Get-Date -Format "yyyyMMdd" }
+        $tokenLimit = 80000000
+        $compactWidth = 200
+        $originalColumns = $env:COLUMNS
         # Enter alternate screen buffer + hide cursor (like watch)
         Write-Host -NoNewline "`e[?1049h`e[?25l"
         try {
+            # Paint immediately so the alternate screen is never blank while ccusage loads pricing/data.
+            $time = Get-Date -Format "HH:mm:ss"
+            $loading = "--- ccusage LIVE for $date ($time) ---`nLoading first refresh..."
+            Write-Host -NoNewline "`e[H`e[2J"
+            Write-Host $loading
+
             while ($true) {
                 $time = Get-Date -Format "HH:mm:ss"
+                $terminalWidth = $Host.UI.RawUI.WindowSize.Width
+                if ($terminalWidth -lt 1) { $terminalWidth = 120 }
+                $env:COLUMNS = [string]$terminalWidth
+
+                if ($terminalWidth -lt $compactWidth) {
+                    $session = (& ccusage.cmd session --since $date --compact --color 2>$null | Out-String)
+                    $blocks = (& ccusage.cmd blocks --recent --token-limit $tokenLimit --compact --color 2>$null | Out-String)
+                } else {
+                    $session = (& ccusage.cmd session --since $date --color 2>$null | Out-String)
+                    $blocks = (& ccusage.cmd blocks --recent --token-limit $tokenLimit --color 2>$null | Out-String)
+                }
+
+                if ($session -notmatch "Claude Code Token Usage Report") {
+                    $session = "No session usage found since $date.`n"
+                }
                 $buffer = "--- ccusage LIVE for $date ($time) ---`n"
-                $buffer += (& ccusage.cmd session --since $date 2>$null | Out-String)
+                $buffer += $session
                 $buffer += "`n--- Blocks ---`n"
-                $buffer += (& ccusage.cmd blocks --recent --token-limit 80000000 2>$null | Out-String)
+                $buffer += $blocks
                 # Home cursor + clear screen + print (no flicker)
                 Write-Host -NoNewline "`e[H`e[2J"
                 Write-Host $buffer -NoNewline
                 Start-Sleep -Seconds 1
             }
         } finally {
+            if ($null -eq $originalColumns) {
+                Remove-Item Env:COLUMNS -ErrorAction SilentlyContinue
+            } else {
+                $env:COLUMNS = $originalColumns
+            }
             # Restore main screen buffer + show cursor (terminal returns to pre-watch state)
             Write-Host -NoNewline "`e[?25h`e[?1049l"
         }
