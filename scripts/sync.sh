@@ -11,6 +11,11 @@ MANIFEST="external-skills.yaml"
 LOCAL_CONFIG="local.yaml"
 mkdir -p "$CACHE"
 
+expand_home() {
+    local path="$1"
+    printf '%s\n' "${path/#\~/$HOME}"
+}
+
 sync_git() {
     local source="$1" branch="$2" path="$3" target="$4"
 
@@ -97,7 +102,7 @@ sync_collection_items() {
     local collection="$1" key="$2" subdir="$3" target_dir="$4"
     local path count entry kind source_dir link_name custom_target source_path target
 
-    path=$(yq e ".collections.$collection.path" "$LOCAL_CONFIG")
+    path=$(expand_home "$(yq e ".collections.$collection.path" "$LOCAL_CONFIG")")
     count=$(yq e ".collections.$collection.$key | length" "$LOCAL_CONFIG")
     [[ "$count" == "0" || "$count" == "null" ]] && return
 
@@ -133,10 +138,15 @@ sync_collection_items() {
     done
 }
 
-collection_names=$(yq e '.collections | keys | .[]' "$LOCAL_CONFIG" 2>/dev/null)
+collection_names=$(yq e '.collections | keys | .[]' "$LOCAL_CONFIG" 2>/dev/null || true)
+if [[ -z "$collection_names" ]]; then
+    echo "No collections found in local.yaml."
+    echo "Done!"
+    exit 0
+fi
 
 for collection in $collection_names; do
-    path=$(yq e ".collections.$collection.path" "$LOCAL_CONFIG")
+    path=$(expand_home "$(yq e ".collections.$collection.path" "$LOCAL_CONFIG")")
 
     if [ ! -d "$path" ]; then
         echo "=== Collection: $collection (SKIPPED — $path not found) ==="

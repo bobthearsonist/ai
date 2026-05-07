@@ -3,81 +3,77 @@
 # Copy this to local.yaml and customize for your machine.
 # local.yaml is gitignored - do not commit it.
 
+# Skill and agent collections map local source repos into this repo's shared
+# skills/ and agents/ output directories.
+#
+# `path` points to the source repo root. By default, skills are found at
+# {path}/skills/{name} and agents at {path}/agents/{name}.
+# Override with `skills_dir` or `agents_dir` for different layouts.
+#
+# Items can be:
+#   - A string: source dir name = symlink name
+#   - An object with `source` and `name` when they differ
+#
+# Collections whose path does not exist are skipped, so you can keep personal
+# and work collections in the same local.yaml across machines.
+
+collections:
+  # Personal collection - your private reusable skills repo.
+  personal:
+    path: ~/Repositories/my-ai-skills
+    skills:
+      - my-skill
+      - another-skill
+      # - source: reviewer
+      #   name: code-review
+    agents:
+      - my-agent.md
+    hooks:
+      - my-hook.sh
+
+    # `links:` exposes non-skill content from the collection. Use directory
+    # symlinks for actively-written configs; file symlinks can be replaced by
+    # apps that write through atomic temp-file renames.
+    links:
+      # - claude
+      # - source: claude/statusline.sh
+      #   target: ~/.claude/statusline.sh
+
+  # Flat repo example - skills live directly under the repo root.
+  # flat-skills:
+  #   path: ~/Repositories/my-flat-skills
+  #   skills_dir: ""
+  #   skills:
+  #     - code-review
+
+  # Work collection - uncomment on work machines.
+  # work:
+  #   path: ~/Repositories/company-ai
+  #   skills:
+  #     - company-api
+  #     - source: dotnet
+  #       name: company-dotnet
+  #   agents:
+  #     - company-agent.md
+
+# Optional machine context used by some skills/prompts. sync.sh does not require
+# these sections.
+
 work:
-  # Display name for the work domain (used in prompts/documentation)
   name: YourCompany
-
-  # Path to work-specific skills repository
   skills_path: /path/to/yourcompany-ai/skills/
-
-  # Root directory for work repositories
   repositories_root: /path/to/repositories/
 
 paths:
-  # Home directory (for {{HOME}} expansion)
   home: /Users/YourUsername
 
 obsidian:
-  # Root path to the Obsidian vault on this machine
   vault_path: /path/to/your/obsidian/vault
-
-  # Folder name (relative to vault_path) for personal daily notes
   personal_daily_folder: 0 Daily Notes
-
-  # Folder name (relative to vault_path) for work daily notes
   work_daily_folder: 0 Work/Team Daily Notes
 
-# Qdrant RAG collections available on this machine.
-# Key is the collection name, value describes the content.
-# Only list collections that are indexed and available locally.
 qdrant:
   collections:
     code: Indexed Git repo source code
     # work: Obsidian work notes
     # personal: Obsidian personal notes
-
-# Skill and agent collections — each maps a local repo to symlinks.
-# The sync script creates symlinks under skills/ and agents/ for each entry.
-#
-# `path` points to the repo root. By default, skills are found at
-# {path}/skills/{name} and agents at {path}/agents/{name}.
-# Override with `skills_dir` or `agents_dir` (e.g., skills_dir: "" for flat repos).
-#
-# Items can be:
-#   - A string: source dir name = symlink name (e.g., "my-skill")
-#   - An object with `source` and `name` when they differ:
-#       - source: directory-in-repo
-#         name: symlink-name
-#
-# Collections whose path doesn't exist are silently skipped,
-# so you can define both private and work on all machines.
-
-collections:
-  # Private collection — your personal ai-private repo
-  private:
-    path: /path/to/your/ai-private
-    skills:
-      - my-skill
-      - another-skill
-    agents:
-      - my-agent
-    hooks:
-      - my-hook.sh
-    # `links:` symlinks content into the AI repo by default. Add `target:` to
-    # a link entry to symlink to an external path (e.g. ~/.claude/foo). Use
-    # directory symlinks for actively-written configs — file symlinks break
-    # on atomic-write-rename.
-    links:
-      - claude                          # ai-repo/claude -> ai-private/claude
-      - source: claude/statusline.sh    # external file symlink
-        target: ~/.claude/statusline.sh
-
-  # Work collection — your company's repo (uncomment on work machine)
-  # work:
-  #   path: /path/to/company-ai
-  #   skills:
-  #     - company-api
-  #     - source: dotnet           # dir name in repo
-  #       name: company-dotnet     # symlink name in skills/
-  #   agents:
-  #     - company-agent
