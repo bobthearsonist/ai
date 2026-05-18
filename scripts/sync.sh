@@ -121,7 +121,14 @@ sync_collection_items() {
             [[ -z "$link_name" ]] && link_name="$(basename "$source_dir")"
         fi
 
-        if [[ -n "$subdir" ]]; then
+        # Absolute source paths (starting with / or ~) are taken verbatim,
+        # bypassing the collection's repo path. This enables chained symlinks
+        # whose target routes through another symlink — e.g. a settings.json
+        # link that goes through `ai/claude/` so it benefits from the
+        # directory-symlink protection against atomic-write-rename.
+        if [[ "$source_dir" == /* || "$source_dir" == "~"* ]]; then
+            source_path=$(expand_home "$source_dir")
+        elif [[ -n "$subdir" ]]; then
             source_path="$path/$subdir/$source_dir"
         else
             source_path="$path/$source_dir"
