@@ -91,6 +91,41 @@ Where each client stores its MCP server configuration. All paths shown as Window
   - **VS Code native Copilot agent** (GitHub's own agent): uses VS Code's MCP configuration (`~/Library/Application Support/Code/User/mcp.json` or `.vscode/mcp.json`). These are separate from Claude Code's MCP servers.
   - **Implication**: When debugging MCP connectivity for Claude Code sessions (any mode), check `~/.claude.json` (`claude mcp list`) and `~/.claude/settings.json`. VS Code's `mcp.json` only applies to Copilot's native agent.
 
+### Settings that reference external scripts
+
+Some settings name an executable by path rather than embedding a payload — Claude Code's `statusLine.command` and `hooks[].command` are the common cases, and any custom integration follows the same shape. The setting itself rides along with `settings.json`, but the script does **not**: it must also exist at that exact path on every machine, or the feature silently does nothing.
+
+**Symptom**: a feature configured in `settings.json` (status line shows nothing, a hook never fires) on a fresh or peer machine, even though `settings.json` is correctly symlinked. The script the command points to isn't there.
+
+**Anti-pattern**: pointing the setting at a path inside your private config repo (e.g. `~/Repositories/my-private-config/claude/foo.sh`). The path is now coupled to your repo location and breaks on any machine where the repo is cloned elsewhere — or where it's not cloned at all.
+
+**Solution**: keep the script in your own collection's repo, but declare a stable target path via `local.yaml`'s `links:` block. `scripts/sync.sh` materializes the symlink on each machine; settings point at the stable target.
+
+```yaml
+# local.yaml
+collections:
+  <your-collection>:
+    path: /absolute/path/to/your/private-config-repo
+    links:
+      - source: relative/path/in/repo/some-script.sh
+        target: ~/.claude/some-script.sh
+```
+
+```jsonc
+// settings.json — references the stable target, not the repo path
+{
+  "statusLine": { "type": "command", "command": "~/.claude/some-script.sh" }
+}
+```
+
+**Rules for `links:`**:
+- **Read-only files only.** Use this for scripts, templates, anything the app doesn't rewrite. For files the app writes back to (like `settings.json` itself), symlink the parent directory instead — see the next section.
+- **Target must not already exist as a regular file.** `sync_external_symlink` refuses to clobber non-symlinks for safety. If a prior manual setup left a real file there, move or delete it before running sync.
+- **`~` in `target` expands to `$HOME`** so the same `local.yaml` entry works on every machine without per-host editing.
+- **One source of truth per file.** Don't also commit the same script to a path that gets directly synced by another mechanism — pick one.
+
+This pattern works for any collection-owner with their own private-config-style repo: each collection declares its own `path` and its own `links`, so peers don't need to know about each other's scripts. See the `ai-repo-management` skill for the full `local.yaml` schema.
+
 ### Symlinking actively-written config files
 
 Use **directory symlinks** for any path that the application writes to (settings.json, preferences, caches with autosave). A file symlink of a written-to file gets replaced with a regular file on the next write because most editors and config-writers use atomic-write-rename (write to `.tmp`, then `rename(tmp, target)`) for crash safety. The rename replaces the directory entry — including the symlink. This is OS-agnostic (happens on Linux too — vim breaks symlinks unless you set `:set backupcopy=yes`).
