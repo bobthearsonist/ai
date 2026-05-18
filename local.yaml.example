@@ -31,11 +31,33 @@ collections:
     hooks:
       - my-hook.sh
 
-    # `links:` exposes non-skill content from the collection. Use directory
-    # symlinks for actively-written configs; file symlinks can be replaced by
-    # apps that write through atomic temp-file renames.
+    # `links:` exposes non-skill content from the collection.
+    #
+    # `target` must be absolute or ~-prefixed.
+    # `source` is normally relative to `path` (the collection repo root);
+    # a source starting with `/` or `~` is taken verbatim, which lets a
+    # link CHAIN through another already-declared symlink rather than
+    # pointing straight at the collection repo.
+    #
+    # For actively-written config files (e.g. Claude Code's settings.json),
+    # prefer a directory symlink one layer up so atomic-write-rename lands
+    # inside the symlinked directory and the symlinks above it survive.
+    # Read-only scripts can use a direct file symlink without this concern.
     links:
-      # - claude
+      # === Example: Claude Code settings chain ===
+      # 1. Directory symlink so ai/claude/ resolves to the collection's
+      #    claude/ directory.
+      # - source: claude
+      #   target: ~/Repositories/ai/claude
+      # 2. File symlink chained through ai/claude/ (absolute source path).
+      #    Atomic writes by Claude Code rename inside the resolved
+      #    directory, leaving both symlinks above it intact.
+      # - source: ~/Repositories/ai/claude/settings.json
+      #   target: ~/.claude/settings.json
+      # === Example: read-only scripts referenced from settings.json ===
+      # statusLine.command and hook commands are paths, not payloads —
+      # symlinking them here means peer machines that run sync.sh get
+      # the same scripts available at the same well-known paths.
       # - source: claude/statusline.sh
       #   target: ~/.claude/statusline.sh
 
