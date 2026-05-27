@@ -92,6 +92,7 @@ mcp_servers:
 
 additional_directories:
   - "C:\\Repositories"
+  - "{{HOME}}/ai"
 
 # =============================================================================
 # FILE ACCESS PERMISSIONS
