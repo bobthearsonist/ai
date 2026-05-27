@@ -91,8 +91,18 @@ paths:
 
 obsidian:
   vault_path: /path/to/your/obsidian/vault
-  personal_daily_folder: 0 Daily Notes
-  work_daily_folder: 0 Work/Team Daily Notes
+
+  # User-defined contexts. Keys are free-form names you choose to match
+  # how you mentally separate your notes (some users have one, others
+  # have several). Agents enumerate these via
+  # skills/obsidian-notes/scripts/context.sh and ask which to use when
+  # it can't be inferred from session context. The shape mirrors the
+  # daily-context Obsidian plugin's data.json so both stay in sync.
+  contexts:
+    default:
+      daily_folder: 0 Daily Notes
+      ai_session_folders:
+        - 0 AI Sessions
 
 qdrant:
   collections:
