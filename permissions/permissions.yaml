@@ -70,18 +70,26 @@ mcp_servers:
     auto_approve:
       - "*"
 
-  qdrant-work:
+  qdrant-notes-work:
     type: remote
-    url: "http://localhost:7020/servers/qdrant-work/sse"
-    description: Qdrant vector DB for work items and ADO knowledge (via Docker mcp-proxy)
+    url: "http://localhost:7020/servers/qdrant-notes-work/sse"
+    description: Qdrant RAG search over Obsidian work vault (Profisee captain's log, project notes)
     auto_approve:
       - qdrant-find
       - qdrant-store
 
-  qdrant-code:
+  qdrant-code-work:
     type: remote
-    url: "http://localhost:7020/servers/qdrant-code/sse"
-    description: Qdrant vector DB for repository/code indexing (via Docker mcp-proxy)
+    url: "http://localhost:7020/servers/qdrant-code-work/sse"
+    description: Qdrant RAG search over Profisee source code (23 canonical repos)
+    auto_approve:
+      - qdrant-find
+      - qdrant-store
+
+  qdrant-code-public:
+    type: remote
+    url: "http://localhost:7020/servers/qdrant-code-public/sse"
+    description: Qdrant RAG search over personal/public source code (AI tooling, opencode, etc.)
     auto_approve:
       - qdrant-find
       - qdrant-store
