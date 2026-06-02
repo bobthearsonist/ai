@@ -44,9 +44,9 @@ Create a task list for any work with 2+ steps. Rules:
 
 ---
 
-## Memory
+## Memory & Tool Routing (authoritative)
 
-Use both the **MCP memory knowledge graph** and any built-in memory system actively. The MCP memory knowledge graph is the **primary** memory — it persists across all agents and providers. Built-in agent memory (e.g., Copilot `/memories/`) may be used as a supplement but must not replace the MCP memory.
+### When to store
 
 | Trigger                      | Action                      |
 | ---------------------------- | --------------------------- |
@@ -58,15 +58,41 @@ Use both the **MCP memory knowledge graph** and any built-in memory system activ
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
-### Tool Disambiguation
+### Which tool for what
 
-| Purpose | Use These Tools | NOT These |
-|---------|----------------|-----------|
-| Session memory / knowledge graph (startup memory check, storing preferences, learnings) | `memory_search_nodes`, `memory_read_graph`, `memory_create_entities`, `memory_add_observations`, `memory_open_nodes` | `qdrant-find`, `qdrant-store` |
-| Search Obsidian work notes (past sessions, project docs, meeting notes) | `qdrant-work_qdrant-find` | `memory_*` tools |
-| Search indexed source code (implementations, patterns, examples) | `qdrant-code_qdrant-find` | `memory_*` tools |
+Five distinct durable/working-memory systems on this machine. Pick by the **shape of the question**, not the name of the tool.
 
-**⚠️ WARNING**: The Qdrant tools may describe themselves as "memory" tools — this is misleading. Qdrant tools are RAG (semantic search) indexes, not the knowledge graph. When the startup checklist says "Check memory," use `memory_*` tools ONLY. Use Qdrant tools for deeper contextual search when you need to find specific past work, code patterns, or project documentation.
+| Question shape | Tool | What it is | Persistence |
+|---|---|---|---|
+| "What did we decide? What does the user prefer?" | **Memory MCP** (`memory_*`) | Cross-session knowledge graph — entities + observations + relations | Forever, across all agents/providers |
+| "What's the workflow here in THIS project?" | **Auto-memory** (`~/.claude/projects/.../memory/`) | Per-project file-based memory; transparent, versionable | This project only |
+| "Find code/notes similar to X" | **Qdrant** (`qdrant-notes-work_*`, `qdrant-code-work_*`, `qdrant-code-public_*`) | Vector RAG — semantic similarity search | As long as indexers run |
+| "Where is X called from? What's the path between A and B?" | **Graphify** (`graphify query/path/explain`) | Structural code graph — call/dependency relationships, community detection | As long as the graph file exists |
+| "I need to reason through this step-by-step right now" | **Sequential thinking** (`sequentialthinking`) | Working memory for the current turn only — NOT durable | This turn only |
+
+### Confusable pairs — read these before routing
+
+- **Memory MCP vs Auto-memory.** Both store facts. MCP is a graph (entities + relations between them), persists across providers/agents/projects. Auto-memory is files scoped to the current project. **When in doubt:** Memory MCP for cross-cutting facts about the user or recurring patterns; Auto-memory for "how do we work in THIS repo."
+- **Qdrant vs Graphify.** Both index code. Qdrant is *semantic* ("find things like X"). Graphify is *structural* ("find callers of X"). **When in doubt:** ask "is the answer a list of similar items (Qdrant) or a connected subgraph (Graphify)?" — both are valid; question shape determines which.
+- **Qdrant calling itself "memory."** Qdrant MCP tool descriptions call themselves "memory" — this is a naming mistake. Qdrant is a RAG index. Don't confuse with Memory MCP.
+
+### Routing rules (deterministic)
+
+1. **Startup memory check** → Memory MCP only. Never Qdrant.
+2. **"Search for past sessions / notes / project docs"** → Qdrant `notes-work` collection.
+3. **"Where in code is X / what calls Y / path from A to B"** → Graphify first, then Qdrant code collections if needed for prose-style search.
+4. **"Find code similar to this pattern" / "examples of usage"** → Qdrant `code-work` (Profisee) or `code-public` (personal AI tooling).
+5. **"What did the user prefer / how do we do X here"** → Auto-memory first, then Memory MCP.
+6. **Hard reasoning task (debugging, architecture)** → Wrap in Sequential thinking. Use other tools as the chain demands.
+
+### Collection scope cheat sheet
+
+| Collection | Source | What's in it |
+|---|---|---|
+| `notes-work` | Obsidian vault `0 Profisee/*` | Captain's log, AI sessions, project notes, meeting notes |
+| `code-work` | 23 Profisee canonical repos | matching, platform, Cdp, connex, rest-api, etc. |
+| `code-public` | bobthearsonist GitHub repos | ai, ai-infrastructure, ai-private, opencode, visual-notes, etc. |
+| `notes-public` | (future, not indexed yet) | Personal vault folders when added |
 
 ---
 
@@ -171,3 +197,10 @@ Load `obsidian-notes` skill and append a session summary. When the last todo is 
 - ASCII art for milestones, celebrations, errors, and reactions. Go big.
 - Kaomoji, reaction text, shitpost-tier humor welcome. The terminal is your canvas.
 - Load the `interaction-style` skill for your meme armory and ASCII art library.
+
+---
+
+## Skill Triggers
+
+- **graphify** (`~/.claude/skills/graphify/SKILL.md`) — any input to knowledge graph. Trigger: `/graphify`
+  When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
