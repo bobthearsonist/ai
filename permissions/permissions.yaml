@@ -102,6 +102,13 @@ mcp_servers:
       - qdrant-find
       - qdrant-store
 
+  monarch-money:
+    description: >-
+      Monarch Money personal finance — READ-ONLY, reached via the gateways
+      (mcpx + agentgateway). Cookie-auth fork; see project_monarch_mcp_cookie_auth memory.
+    auto_approve:
+      - "*"  # read-only by design (server exposes no write tools) -> mcp__mcpx__monarch-money__*
+
 # =============================================================================
 # DIRECTORIES
 # =============================================================================
