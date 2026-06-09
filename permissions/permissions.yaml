@@ -50,11 +50,7 @@ mcp_servers:
     command: npx
     args: ["-y", "@azure-devops/mcp", "{{ADO_ORG}}"]
     description: Azure DevOps integration (org from local.yaml work.ado_org)
-    auto_approve:
-      - "*"  # All ADO tools. Matches the bare-wildcard pattern used by every
-             # other mcpx sub-server. Note: covers destructive writes (PR merge,
-             # work-item close, etc.); if any specific op proves footgun-prone,
-             # carve it out here rather than narrowing the whole family.
+    auto_approve: []
 
   kapture:
     description: Browser DevTools via Kapture MCP extension
