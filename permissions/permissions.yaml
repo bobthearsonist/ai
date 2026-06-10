@@ -94,6 +94,14 @@ mcp_servers:
       - qdrant-find
       - qdrant-store
 
+  qdrant-personal:
+    type: remote
+    url: "http://localhost:7020/servers/qdrant-personal/sse"
+    description: Qdrant RAG search over personal Obsidian vault folders (non-work notes). Routed through mcpx via the knowledge-personal toolGroup.
+    auto_approve:
+      - qdrant-find
+      - qdrant-store
+
 # =============================================================================
 # DIRECTORIES
 # =============================================================================
