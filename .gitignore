@@ -21,3 +21,6 @@ agents/
 # No trailing slash so the gitignore rule matches the symlink itself (git treats
 # a symlink-to-directory as a file entry, not a directory entry).
 claude
+
+# graphify per-repo graph artifacts (built locally, not source-controlled)
+graphify-out/
