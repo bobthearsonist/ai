@@ -1,14 +1,4 @@
-#!/bin/bash
-# Git hook: Sync external skills after checkout (clone, branch switch, etc.)
-# This hook is part of the repository - see setup.sh to enable
-
-cd "$(git rev-parse --show-toplevel)" || exit 0
-
-# Only sync if manifest exists
-if [ -f external-skills.yaml ]; then
-    echo "🔄 Syncing external skills..."
-    ./scripts/sync.sh
-fi
+#!/bin/sh
 
 # === local hooks dispatcher ============================================
 # Runs any executable scripts from .git/hooks/$(basename $0).d/ so
