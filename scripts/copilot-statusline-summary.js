@@ -67,7 +67,7 @@ process.stdin.on("end", () => {
   const segments = [
     colored(model, "orange"),
     colored(`ctx:${contextUsage}`, "cyan"),
-    colored(sessionCost, "green"),
+    sessionCost ? colored(sessionCost, "green") : "",
     colored(sessionUsage, "yellow"),
     weeklyUsage ? colored(weeklyUsage, "yellow") : "",
     branch ? colored(branch, "magenta") : "",
@@ -128,13 +128,7 @@ function formatContextUsage(status, contextWindow) {
 
 function formatSessionCost(cost) {
   const usd = firstNumber(cost.total_cost_usd, cost.cost_usd, cost.cost);
-  if (typeof usd === "number") {
-    return `$${usd.toFixed(4)}`;
-  }
-
-  const premiumRequests = formatNumber(cost.total_premium_requests || 0);
-  const duration = formatDuration(cost.total_duration_ms || 0);
-  return `req:${premiumRequests}P (${duration})`;
+  return typeof usd === "number" ? `$${usd.toFixed(4)}` : "";
 }
 
 function formatSessionUsage(contextWindow) {
@@ -197,28 +191,9 @@ function tryGitBranch(cwd) {
   }
 }
 
-function formatNumber(value) {
-  const number = Number(value || 0);
-  return Number.isInteger(number) ? String(number) : number.toFixed(1);
-}
-
 function formatTokens(value) {
   const number = Number(value || 0);
   return compactNumberFormatter.format(Math.round(number)).toLowerCase();
-}
-
-function formatDuration(milliseconds) {
-  const totalSeconds = Math.max(0, Math.floor(Number(milliseconds || 0) / 1000));
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const parts = [];
-
-  if (hours) parts.push(`${hours}h`);
-  if (minutes) parts.push(`${minutes}m`);
-  if (!hours && !minutes) parts.push(`${seconds}s`);
-
-  return parts.join("");
 }
 
 function firstNumber(...values) {
