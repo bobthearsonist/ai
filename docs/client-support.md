@@ -36,6 +36,22 @@ Recommended user settings:
 
 Copilot also discovers project-local skills from `.github/skills/<name>/SKILL.md`.
 
+## GitHub Copilot CLI
+
+For the repo-backed custom status line, point user settings at the script in this repo:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/AI/scripts/copilot-statusline-summary.js"
+  },
+  "footer": {
+    "showCustom": true
+  }
+}
+```
+
 ## Claude Code
 
 macOS/Linux:
