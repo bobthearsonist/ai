@@ -40,6 +40,7 @@ mkdir -p ~/.claude ~/.copilot
 ## Need More Detail?
 
 - **Install the toolkit on a machine:** [Getting started](docs/getting-started.md)
+- **Configure terminal GitHub Copilot CLI:** [GitHub Copilot CLI](docs/copilot-cli.md)
 - **Bring existing local skills under this workflow:** [Migration guide](docs/migration-guide.md)
 - **Configure `local.yaml` collections:** [Collections reference](docs/collections.md)
 - **Point AI clients at synced skills:** [Client support](docs/client-support.md)

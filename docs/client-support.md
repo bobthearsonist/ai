@@ -11,6 +11,8 @@
 | Agents | `~/AI/agents` |
 | Permissions | `~/AI/permissions/permissions.yaml` |
 
+For terminal-specific setup, see [GitHub Copilot CLI](copilot-cli.md).
+
 ## GitHub Copilot in VS Code
 
 Recommended user settings:

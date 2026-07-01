@@ -85,6 +85,8 @@ For GitHub Copilot in VS Code, add user settings like:
 }
 ```
 
+For terminal Copilot CLI setup, see [GitHub Copilot CLI](copilot-cli.md).
+
 For Claude Code on macOS:
 
 ```bash
