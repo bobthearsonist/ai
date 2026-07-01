@@ -44,6 +44,13 @@ Create a task list for any work with 2+ steps. Rules:
 
 ---
 
+## Code Change Visibility
+
+- When patching a small file or making a small edit, show the inline diff/hunk to the user.
+- For larger diffs, summarize the meaningful changes and point to the full diff command or view.
+
+---
+
 ## Memory & Tool Routing (authoritative)
 
 ### When to store
@@ -207,10 +214,11 @@ Load `obsidian-notes` skill and append a session summary. When the last todo is 
 
 ## graphify
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+A `graphify-out/` knowledge graph may exist **per-repo** or as a **multi-root workspace index** — one graph at a parent root covering many child repos, so child repos/subdirs have no local `graphify-out/`.
 
 Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- **Find the graph by walking up, not just cwd.** Check `graphify-out/graph.json` in the current dir and each ancestor. A missing `./graphify-out/` ≠ no graph — in a workspace setup it lives above the repo. Don't fall back to grep/manual reads until you've checked ancestors.
+- **Query an ancestor graph explicitly:** `graphify query "<q>" --graph <path/to/graph.json>` (same for `path`/`explain`), or `cd` to the root that owns it.
+- Prefer `graphify query`/`path`/`explain` first — a scoped subgraph beats reading `GRAPH_REPORT.md` or grepping.
+- Use `graphify-out/wiki/index.md` for broad navigation; read `GRAPH_REPORT.md` only for architecture-level review or when query/path/explain fall short.
+- After modifying code, run `graphify update .` (AST-only, no API cost).
