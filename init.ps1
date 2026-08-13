@@ -1,4 +1,4 @@
-# ~/AI/init.ps1 — Developer shell integrations
+﻿# ~/AI/init.ps1 — Developer shell integrations
 # Dot-sourced by PowerShell profiles
 # NOTE: This is standalone tooling — not part of the AI skills/sync system.
 

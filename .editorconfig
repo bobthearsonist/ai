@@ -1,0 +1,11 @@
+# EditorConfig - https://editorconfig.org
+root = true
+
+# init.ps1 is dot-sourced by Windows PowerShell 5.1, which assumes CP1252 for
+# BOM-less files and silently corrupts the non-ASCII characters in this file.
+# The BOM is load-bearing; see .gitattributes for the full failure mode.
+# This is the only mechanism that actually prevents the regression -- git
+# cannot enforce a BOM via working-tree-encoding.
+[init.ps1]
+charset = utf-8-bom
+end_of_line = lf

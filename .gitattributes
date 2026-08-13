@@ -1,0 +1,20 @@
+# Line endings for repo-owned PowerShell. LF matches what is committed today
+# (core.autocrlf=input), so this only guards against a future autocrlf change
+# rewriting these files wholesale.
+/init.ps1        text eol=lf
+/scripts/*.ps1   text eol=lf
+
+# init.ps1 must keep its UTF-8 BOM.
+#
+# Windows PowerShell 5.1 falls back to CP1252 for BOM-less files. The check-mark
+# characters (U+2713) in this file then decode as three CP1252 characters, the
+# last of which is U+201C LEFT DOUBLE QUOTATION MARK -- and PS 5.1 accepts a
+# smart quote as a string delimiter. Each one therefore opens a string that
+# swallows every line until the next, which surfaces as a bogus
+# "Missing closing '}'" error pointing at an unrelated function.
+# PowerShell 7 defaults to UTF-8 and is unaffected, so this hides easily.
+#
+# git CANNOT enforce the BOM: working-tree-encoding=UTF-8-BOM is rejected
+# ("fatal: failed to encode ... from UTF-8-BOM to UTF-8" on git 2.52) and a
+# plain working-tree-encoding=UTF-8 is a no-op. Enforcement lives in
+# .editorconfig (charset = utf-8-bom). Keep the two files in sync.
