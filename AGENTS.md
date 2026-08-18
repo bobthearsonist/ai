@@ -65,6 +65,29 @@ Create a task list for any work with 2+ steps. Rules:
 
 **What to store**: user preferences, project context, architecture decisions, recurring fix patterns, entity relationships.
 
+### NEVER write the memory store directly
+
+`~/ai/memory/memory.jsonl` is owned by the memory MCP server. **Read it freely for analysis; never write it.**
+
+Every mutating tool does `loadGraph` → mutate → `saveGraph`, a full-file read-modify-write. An external
+write races that cycle and one side loses silently — the server holds no lock and will not notice. The store
+was corrupted four times in fourteen weeks (2026-04-01, 05-12, 06-16, 07-09) before its writer was made
+atomic on 2026-08-18; do not reintroduce the failure from the other end.
+
+- **Writes** go through `mcp__mcpx__memory__*` only. No `Write`, `Edit`, `sed`, `>`, or `>>` on the store.
+- **Bulk changes** (merges, retypes, evictions) are still MCP calls — script the calls, not the file.
+  Take a timestamped copy into `~/ai/memory/backups/` first; the store is gitignored and has no history.
+- **`delete_entities` cascades to relations.** Capture every relation touching an entity before deleting it,
+  and recreate them afterwards, or the edges are gone.
+- **The gateway rejects large payloads with HTTP 413.** Batch by serialised bytes and halve on failure —
+  a 289-entity recreate needed three batches, and the ceiling is lower than it looks.
+- **If the MCP tools hang**, the client is holding a stale SSE session after a container restart. The server
+  is fine. Reach it over HTTP at `localhost:9000/mcp` (initialize, then `tools/call` with the returned
+  `mcp-session-id`) rather than editing the file to work around it.
+
+The same rule applies to any store a service owns while running: `graphify-out/graph.json`, the Qdrant
+collections, and the indexer state files. Go through the owning process.
+
 ### Which tool for what
 
 Four distinct durable/working-memory systems on this machine. Pick by the **shape of the question**, not the name of the tool.
