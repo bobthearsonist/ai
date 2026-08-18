@@ -146,14 +146,32 @@ Gotchas that have burned agents before:
 
 - **`notes-public` does not exist.** It was never created. Do not route to it.
 - **The `__jina` suffix is load-bearing.** The code collections are `code-work__jina` /
-  `code-public__jina`. Bare `code-work` and `code-public` also exist in Qdrant but are the older
-  minilm-embedding generation and are **not wired to any MCP server** — you cannot reach them with a
-  tool, so never cite them as the source of a result.
+  `code-public__jina`. The bare `code-work` / `code-public` were the older minilm generation, wired to
+  no MCP server; they were **deleted 2026-08-18** (1.9 GB, 65% of the store). If you see those names in
+  a doc or a skill, that doc is stale.
 - **`personal` is empty**, so a miss there means "not indexed", not "not true".
 
----
+### Graphify — the structural code graph
 
-## Sequential Thinking
+A `graphify-out/` graph may be **per-repo** or a **multi-root workspace index** — one graph at a parent
+root covering many child repos, so a child repo has no local `graphify-out/`.
+
+- **Find the graph by walking up, not just cwd.** Check `graphify-out/graph.json` in the current dir and
+  each ancestor. A missing `./graphify-out/` ≠ no graph. Don't fall back to grep until you've walked up.
+- **Query an ancestor graph explicitly:** `graphify query "<q>" --graph <path/to/graph.json>` (same for
+  `path` / `explain`), or `cd` to the root that owns it.
+- **`--graph` is argument-order sensitive.** `query "X" --graph <p>` works; `query --graph <p> "X"`
+  **silently ignores the flag** and then reports a cwd-based "graph file not found" — an error that
+  misdiagnoses itself. Put the question first.
+- Prefer `query` / `path` / `explain` over reading `GRAPH_REPORT.md` or grepping — a scoped subgraph is
+  far smaller. Use `graphify-out/wiki/index.md` for broad navigation.
+- **Queries from a worktree answer about the canonical repo, not your branch.** Worktrees are excluded
+  from the spine by design (`.graphifyignore` is a deny-all allowlist). Structure is reliable; line
+  numbers and recent symbols may not be.
+- After modifying code, `graphify update .` (AST-only, no API cost). Never write `graph.json` directly —
+  see the store-ownership rule above.
+
+### Sequential thinking — recommended, not mandatory
 
 > **Status: recommended, NOT mandatory.** Superseded by the **2026-07-09 architecture decision**, which
 > demoted sequential thinking: *"should not be a core dependency."* This section previously declared it
@@ -270,14 +288,3 @@ Load `obsidian-notes` skill and append a session summary. When the last todo is 
 
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) — any input to knowledge graph. Trigger: `/graphify`
   When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
-
-## graphify
-
-A `graphify-out/` knowledge graph may exist **per-repo** or as a **multi-root workspace index** — one graph at a parent root covering many child repos, so child repos/subdirs have no local `graphify-out/`.
-
-Rules:
-- **Find the graph by walking up, not just cwd.** Check `graphify-out/graph.json` in the current dir and each ancestor. A missing `./graphify-out/` ≠ no graph — in a workspace setup it lives above the repo. Don't fall back to grep/manual reads until you've checked ancestors.
-- **Query an ancestor graph explicitly:** `graphify query "<q>" --graph <path/to/graph.json>` (same for `path`/`explain`), or `cd` to the root that owns it.
-- Prefer `graphify query`/`path`/`explain` first — a scoped subgraph beats reading `GRAPH_REPORT.md` or grepping.
-- Use `graphify-out/wiki/index.md` for broad navigation; read `GRAPH_REPORT.md` only for architecture-level review or when query/path/explain fall short.
-- After modifying code, run `graphify update .` (AST-only, no API cost).
