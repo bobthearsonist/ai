@@ -5,11 +5,11 @@
 Complete these steps IN ORDER before responding to any request:
 
 1. **Read todo list** - Check for existing tasks from previous sessions
-2. **Check memory** - Search for relevant stored context
+2. **Check memory** - Call `mcp__mcpx__memory__search_nodes` to search for relevant stored context
 3. **Evaluate skill promotion** - Entity has 10+ observations? Load `skill-promotion` skill and suggest promoting
 4. **Check skills** - Before infrastructure/CLI commands, search skills for documented procedures
 5. **Create/update task list** - If request involves 2+ steps or any code changes
-6. **Use sequential thinking** - For debugging, architecture, or multi-file changes
+6. **Consider sequential thinking** - Recommended for genuinely hard reasoning; see the Sequential Thinking section
 
 This applies even if a session summary is provided. Summaries may be stale.
 
@@ -20,7 +20,7 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Never do this                                                             | Do this instead                                                              |
 | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | Skip startup steps because "I have context"                               | Always run the checklist - todo state may differ from summary                |
-| Debug without sequential thinking                                         | Think systematically before acting                                           |
+| Thrash on a hard debug after the obvious fix failed                       | Think systematically before acting; sequential thinking is recommended here (not mandatory)   |
 | Let task list go stale                                                    | Update status immediately after each step                                    |
 | Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                    |
 | Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                  |
@@ -67,51 +67,87 @@ Create a task list for any work with 2+ steps. Rules:
 
 ### Which tool for what
 
-Five distinct durable/working-memory systems on this machine. Pick by the **shape of the question**, not the name of the tool.
+Four distinct durable/working-memory systems on this machine. Pick by the **shape of the question**, not the name of the tool.
 
-| Question shape | Tool | What it is | Persistence |
-|---|---|---|---|
-| "What did we decide? What does the user prefer?" | **Memory MCP** (`memory_*`) | Cross-session knowledge graph — entities + observations + relations | Forever, across all agents/providers |
-| "What's the workflow here in THIS project?" | **Auto-memory** (`~/.claude/projects/.../memory/`) | Per-project file-based memory; transparent, versionable | This project only |
-| "Find code/notes similar to X" | **Qdrant** (`qdrant-notes-work_*`, `qdrant-code-work_*`, `qdrant-code-public_*`) | Vector RAG — semantic similarity search | As long as indexers run |
-| "Where is X called from? What's the path between A and B?" | **Graphify** (`graphify query/path/explain`) | Structural code graph — call/dependency relationships, community detection | As long as the graph file exists |
-| "I need to reason through this step-by-step right now" | **Sequential thinking** (`sequentialthinking`) | Working memory for the current turn only — NOT durable | This turn only |
+Tool names below are the **exact callable MCP tool names**. Match on these verbatim — the older
+short forms (`memory_*`, `qdrant-notes-work_*`) are not real and will match nothing in your tool list.
+
+| Question shape                                             | Tool                                                                                                                             | What it is                                                                 | Persistence                          |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------ |
+| "What did we decide? What does the user prefer?"           | **Memory MCP** (`mcp__mcpx__memory__*`, e.g. `mcp__mcpx__memory__search_nodes`)                                                   | Cross-session knowledge graph — entities + observations + relations        | Forever, across all agents/providers |
+| "Find code/notes similar to X"                             | **Qdrant** (`mcp__mcpx__qdrant-notes-work__*`, `mcp__mcpx__qdrant-code-work__*`, `mcp__mcpx__qdrant-code-public__*`)              | Vector RAG — semantic similarity search                                    | As long as indexers run              |
+| "Where is X called from? What's the path between A and B?" | **Graphify** (`graphify query/path/explain`)                                                                                     | Structural code graph — call/dependency relationships, community detection | As long as the graph file exists     |
+| "I need to reason through this step-by-step right now"     | **Sequential thinking** (`mcp__mcpx__sequential-thinking__sequentialthinking`)                                                    | Working memory for the current turn only — NOT durable                     | This turn only                       |
 
 ### Confusable pairs — read these before routing
 
-- **Memory MCP vs Auto-memory.** Both store facts. MCP is a graph (entities + relations between them), persists across providers/agents/projects. Auto-memory is files scoped to the current project. **When in doubt:** Memory MCP for cross-cutting facts about the user or recurring patterns; Auto-memory for "how do we work in THIS repo."
-- **Qdrant vs Graphify.** Both index code. Qdrant is *semantic* ("find things like X"). Graphify is *structural* ("find callers of X"). **When in doubt:** ask "is the answer a list of similar items (Qdrant) or a connected subgraph (Graphify)?" — both are valid; question shape determines which.
+- **Qdrant vs Graphify.** Both index code. Qdrant is _semantic_ ("find things like X"). Graphify is _structural_ ("find callers of X"). **When in doubt:** ask "is the answer a list of similar items (Qdrant) or a connected subgraph (Graphify)?" — both are valid; question shape determines which.
 - **Qdrant calling itself "memory."** Qdrant MCP tool descriptions call themselves "memory" — this is a naming mistake. Qdrant is a RAG index. Don't confuse with Memory MCP.
+
+### RETIRED LAYERS — do not route here
+
+These are **dead**. They are listed only so nobody re-derives them from an old doc, an old session
+summary, or muscle memory. Never send a question to either one; there is nothing behind them.
+
+- **Auto-memory** (`~/.claude/projects/.../memory/`) — **disabled 2026-07-02** (`autoMemoryEnabled: false`).
+  It used to be the first stop for "how do we work in THIS repo." It no longer runs, so that question
+  now goes to **Memory MCP** (see routing rule 5). Do not read, write, or cite these files.
+- **`remember` plugin** — retired. Superseded by Memory MCP. Its skills may still appear in a skill
+  listing; that is a stale registration, not a live layer. Do not invoke it to store or recall facts.
+
+If you catch yourself about to route to either, the correct destination is **Memory MCP**
+(`mcp__mcpx__memory__*`).
 
 ### Routing rules (deterministic)
 
-1. **Startup memory check** → Memory MCP only. Never Qdrant.
-2. **"Search for past sessions / notes / project docs"** → Qdrant `notes-work` collection.
-3. **"Where in code is X / what calls Y / path from A to B"** → Graphify first, then Qdrant code collections if needed for prose-style search.
-4. **"Find code similar to this pattern" / "examples of usage"** → Qdrant `code-work` (Profisee) or `code-public` (personal AI tooling).
-5. **"What did the user prefer / how do we do X here"** → Auto-memory first, then Memory MCP.
-6. **Hard reasoning task (debugging, architecture)** → Wrap in Sequential thinking. Use other tools as the chain demands.
+1. **Startup memory check** → Memory MCP only (`mcp__mcpx__memory__search_nodes`). Never Qdrant.
+2. **"Search for past sessions / notes / project docs"** → `mcp__mcpx__qdrant-notes-work__qdrant-find`.
+3. **"Where in code is X / what calls Y / path from A to B"** → Graphify first, then the Qdrant code tools if needed for prose-style search.
+4. **"Find code similar to this pattern" / "examples of usage"** → `mcp__mcpx__qdrant-code-work__qdrant-find` (Profisee) or `mcp__mcpx__qdrant-code-public__qdrant-find` (personal AI tooling).
+5. **"What did the user prefer / how do we do X here"** → **Memory MCP** (`mcp__mcpx__memory__search_nodes`). This used to say "Auto-memory first"; Auto-memory was disabled 2026-07-02 and is now a RETIRED LAYER — go straight to Memory MCP.
+6. **Hard reasoning task (debugging, architecture)** → Sequential thinking is *recommended*, not required (see Sequential Thinking, per the 2026-07-09 decision). Use other tools as the chain demands.
 
 ### Collection scope cheat sheet
 
-| Collection | Source | What's in it |
-|---|---|---|
-| `notes-work` | Obsidian vault `0 Profisee/*` | Captain's log, AI sessions, project notes, meeting notes |
-| `code-work` | 23 Profisee canonical repos | matching, platform, Cdp, connex, rest-api, etc. |
-| `code-public` | bobthearsonist GitHub repos | ai, ai-infrastructure, ai-private, opencode, visual-notes, etc. |
-| `notes-public` | (future, not indexed yet) | Personal vault folders when added |
+These are the **live** collection names and the MCP tool that serves each one. Verified against
+`ai-infrastructure/mcps/qdrant-mcp/servers.json` and the running Qdrant on `localhost:6333`.
+
+| Collection         | Served by                                 | Source                        | What's in it                                                    |
+| ------------------ | ----------------------------------------- | ----------------------------- | --------------------------------------------------------------- |
+| `notes-work`       | `mcp__mcpx__qdrant-notes-work__qdrant-find`  | Obsidian vault `0 Profisee/*` | Captain's log, AI sessions, project notes, meeting notes        |
+| `code-work__jina`  | `mcp__mcpx__qdrant-code-work__qdrant-find`   | Profisee canonical repos      | matching, platform, Cdp, connex, rest-api, etc.                 |
+| `code-public__jina`| `mcp__mcpx__qdrant-code-public__qdrant-find` | bobthearsonist GitHub repos   | ai, ai-infrastructure, ai-private, opencode, visual-notes, etc. |
+| `personal`         | `mcp__mcpx__qdrant-personal__qdrant-find`    | (not yet indexed)             | **EMPTY — 0 points.** Pending a routing decision; expect no results. Do not treat an empty result as "nothing exists." |
+
+Gotchas that have burned agents before:
+
+- **`notes-public` does not exist.** It was never created. Do not route to it.
+- **The `__jina` suffix is load-bearing.** The code collections are `code-work__jina` /
+  `code-public__jina`. Bare `code-work` and `code-public` also exist in Qdrant but are the older
+  minilm-embedding generation and are **not wired to any MCP server** — you cannot reach them with a
+  tool, so never cite them as the source of a result.
+- **`personal` is empty**, so a miss there means "not indexed", not "not true".
 
 ---
 
 ## Sequential Thinking
 
-**Mandatory triggers** - use structured thinking when:
+> **Status: recommended, NOT mandatory.** Superseded by the **2026-07-09 architecture decision**, which
+> demoted sequential thinking: *"should not be a core dependency."* This section previously declared it
+> mandatory for any 3+ step task, which contradicted that decision. The later decision wins. If you find
+> an older doc, skill, or session summary still calling it mandatory, that text is stale — this is the
+> reconciled position.
 
-- Debugging any error or unexpected behavior
-- Planning changes to 2+ files
-- Answering "why" or "how" questions requiring analysis
-- Architecture or design decisions
-- Any task requiring 3+ logical steps
+Reach for `mcp__mcpx__sequential-thinking__sequentialthinking` when the reasoning is **genuinely hard**
+— when you would otherwise thrash, guess, or lose the thread:
+
+- Debugging where the cause is not yet identified and the obvious hypothesis already failed
+- Architecture or design decisions with real trade-offs
+- Untangling a problem whose full scope is not clear yet, or that needs course-correction mid-way
+
+Do **not** reach for it as ceremony. Mechanical multi-step work — a known refactor across three files,
+a documented runbook, a sequence you could already write down — does not need it. Step count alone is
+not the trigger; difficulty is. Using it on easy work burns turns and adds no accuracy.
 
 ---
 
