@@ -1,6 +1,6 @@
 ---
 name: ai-repo-management
-description: Use when creating skills or agents, understanding where skills live, syncing external skills, editing local.yaml or external-skills.yaml, or troubleshooting why a skill isn't loading. Triggers on "create skill", "new agent", "ai repo", "sync skills", "add skill", "local.yaml", "external-skills".
+description: Manage AI skill and agent source placement, registration, syncing, and generated Claude plugin artifacts. Use whenever creating, editing, renaming, moving, deleting, or troubleshooting any skill or agent, especially files under profisee-ai/skills or profisee-ai/agents; when modifying SKILL.md trigger descriptions; when running build-plugins.sh; when editing local.yaml or external-skills.yaml; or when a skill or plugin is not loading.
 ---
 
 # AI Repository Management
@@ -33,6 +33,27 @@ Manage the AI repository at `~/AI/` — skill placement, collection syncing, and
 | **Work** | Work skills repo (from `local.yaml` `work.skills_path`) | `local.yaml` under `collections.work.skills` | `company-api`, `company-devops` |
 
 `sync.sh` reads both `external-skills.yaml` and `local.yaml`, then creates symlinks in `~/AI/skills/`.
+
+## Profisee Claude Plugin Marketplace
+
+`C:\Repositories\profisee-ai` is both the work-skill source and a Claude plugin
+marketplace. A change under `skills/` or `agents/` is incomplete until its
+generated plugin artifacts are rebuilt and committed.
+
+For every Profisee skill or agent change:
+
+1. Edit only the source under `skills/` or `agents/`.
+2. Run `bash scripts/build-plugins.sh` from the repository root.
+3. Verify the generated `plugins/<name>/` content matches the source and that
+   `.claude-plugin/marketplace.json` contains the separate plugin entry.
+4. Commit the source, generated plugin directory, and marketplace update
+   together.
+5. Validate from a clean committed worktree before pushing so CI will reproduce
+   the same generated files.
+
+If the repository contains unrelated work, preserve it. Use a clean sibling
+worktree when practical; otherwise stage only the target source/plugin paths and
+the target marketplace hunk.
 
 ## Creating a New Skill
 
