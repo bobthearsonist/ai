@@ -1,6 +1,6 @@
 ---
 name: ai-repo-management
-description: Manage the shared AI repository and client discovery layer. Use when choosing canonical source placement, registering internal, external, private, or work skills and agents, editing local.yaml or external-skills.yaml, running sync.sh, maintaining client symlinks, or troubleshooting why components are not loading across AI clients. Repository-specific plugin, marketplace, bundle, and package publishing belongs to the source repository's publishing workflow.
+description: Manage shared AI skill and agent source placement, registration, syncing, and client discovery. Use when choosing canonical locations, editing local.yaml or external-skills.yaml, running sync.sh, maintaining symlinks, or troubleshooting missing components.
 ---
 
 # AI Repository Management

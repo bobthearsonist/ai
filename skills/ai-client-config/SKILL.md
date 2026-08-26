@@ -1,6 +1,6 @@
 ---
 name: ai-client-config
-description: AI coding client configuration paths and setup. Use when setting up symlinks for AI clients, troubleshooting why instructions/skills aren't loading, understanding where each client looks for config files, configuring MCP servers, or syncing configurations across OpenCode, Claude Code, GitHub Copilot, and Cline.
+description: AI coding client configuration and discovery. Use when setting up or troubleshooting how OpenCode, Claude Code, GitHub Copilot, or Cline load instructions, skills, agents, MCP servers, symlinks, or shared configuration.
 ---
 
 # AI Client Configuration
