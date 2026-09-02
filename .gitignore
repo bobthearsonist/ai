@@ -9,7 +9,7 @@ dist/
 
 # Memory
 memory/memory.jsonl
-memory/backups/
+memory-backups/
 
 # Local config
 local.yaml

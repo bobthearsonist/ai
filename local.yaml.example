@@ -79,17 +79,28 @@ collections:
   #     - company-agent.md
 
 # Optional machine context used by some skills/prompts. sync.sh does not require
-# these sections.
+# any of these. Keys marked CONSUMED are read by tooling - the rest are
+# reference material for agents and humans.
 
 work:
   name: YourCompany
+  # CONSUMED: substituted for {{ADO_ORG}} in permissions/permissions.yaml
+  ado_org: yourcompany
   skills_path: /path/to/yourcompany-ai/skills/
   repositories_root: /path/to/repositories/
 
 paths:
   home: /Users/YourUsername
 
+repos:
+  # CONSUMED: ai-infrastructure/mcps/qdrant-mcp/indexer/run.sh line 14 reads
+  # .repos.base_path into REPOS_BASE when indexing source repositories.
+  base_path: /path/to/repositories
+
 obsidian:
+  # CONSUMED: run.sh line 13 reads .obsidian.vault_path into VAULT_PATH when
+  # indexing the vault. Only folders named under contexts: are indexed - the
+  # rest of the vault is deliberately left out.
   vault_path: /path/to/your/obsidian/vault
 
   # User-defined contexts. Keys are free-form names you choose to match
@@ -104,8 +115,17 @@ obsidian:
       ai_session_folders:
         - 0 AI Sessions
 
-qdrant:
-  collections:
-    code: Indexed Git repo source code
-    # work: Obsidian work notes
-    # personal: Obsidian personal notes
+graphify:
+  # Structural code-graph topology for this machine. Reference only - no script
+  # reads these keys today, but this is the only place the workspace layout is
+  # written down. Full guide: ai-infrastructure/docs/graphify-workspace-setup.md
+  #
+  # graphify scans scan_root subject to .graphifyignore at that same root. That
+  # ignore file is the source-of-truth allowlist for which repos are in scope,
+  # so worktrees and vendored trees are excluded there, not here.
+  scan_root: /path/to/repositories
+
+  # Graph artifacts (graph.json, GRAPH_REPORT.md) land here rather than in the
+  # source tree. graphify always writes to a cwd-relative graphify-out/, so
+  # scan_root/graphify-out is a link pointing at this directory.
+  output_dir: /path/to/graphify-out

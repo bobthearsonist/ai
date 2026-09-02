@@ -122,7 +122,7 @@ atomic on 2026-08-18; do not reintroduce the failure from the other end.
 
 - **Writes** go through `mcp__mcpx__memory__*` only. No `Write`, `Edit`, `sed`, `>`, or `>>` on the store.
 - **Bulk changes** (merges, retypes, evictions) are still MCP calls — script the calls, not the file.
-  Take a timestamped copy into `~/ai/memory/backups/` first; the store is gitignored and has no history.
+  Take a timestamped copy into `~/ai/memory-backups/` first - deliberately OUTSIDE `~/ai/memory/`, which is bind-mounted read-write into the memory_mcp container; the store is gitignored and has no history.
 - **`delete_entities` cascades to relations.** Capture every relation touching an entity before deleting it,
   and recreate them afterwards, or the edges are gone.
 - **The gateway rejects large payloads with HTTP 413.** Batch by serialised bytes and halve on failure —
