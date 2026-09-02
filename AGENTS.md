@@ -240,6 +240,19 @@ feat!: drop support for Node 14
 
 ---
 
+## Code comments
+
+Comments live in the codebase long after our conversation ends. Write them for a **future
+developer with no knowledge of this session.**
+
+- Keep them **concise** and focused on non-obvious logic: workarounds, gotchas, "why" decisions,
+  and anything a competent reader couldn't infer from the code itself.
+- **Do not** reference anything specific to the current conversation or task workflow.
+- **Do not** reference plans, tickets, phases, or task lists in comments.
+  That context belongs in PR descriptions and tickets, not the codebase.
+
+---
+
 ## Worktree Directory
 
 Create each worktree as a **flat sibling** to the repo — not nested inside it or inside a container directory. This avoids issues with relative paths, directory structure dependencies, and build tool assumptions.
