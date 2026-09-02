@@ -13,6 +13,7 @@ Manage the AI repository at `~/AI/` — skill placement, collection syncing, and
 ~/AI/
 ├── skills/                     # Symlinks to skills (created by sync.sh)
 ├── agents/                     # Symlinks to agents (created by sync.sh)
+├── hooks/                      # Symlinks to hooks (created by sync.sh) — currently unread
 ├── rules/                      # Simple constraints (<10 lines)
 ├── prompts/                    # Standalone prompts
 ├── external-skills.yaml        # Git-fetched + internal skill manifest
@@ -130,6 +131,44 @@ This creates the symlink in `~/AI/skills/<name>` pointing to the source.
 | Skill  | Has procedures, substantial knowledge (>10 lines) |
 | Rule   | Simple constraint, <10 lines, no procedures       |
 | Agent  | Composing skills for specific context              |
+| Hook   | Deterministic automation on a Claude Code event   |
+
+## Hooks (Claude Code only)
+
+**Hooks ship as a plugin, not through `sync.sh`.** The file a human edits is not
+the file that runs.
+
+| Path | Role |
+|------|------|
+| `ai-private/hooks/hooks.json` | What a human edits. **Not executed.** |
+| `~/.claude/plugins/cache/bobthearsonist/ai-private/<version>/hooks/hooks.json` | What Claude Code executes — a clone of the GitHub remote, pinned to a commit by `installed_plugins.json` |
+| `~/AI/hooks/` | sync.sh symlinks. **Nothing reads them.** |
+
+Delivery path for a hook change: edit → commit → **push to GitHub** → bump
+`version` in `ai-private/.claude-plugin/plugin.json` (convention: a commit titled
+`chore(release): bump ai-private to X.Y.Z`) → `claude plugin update
+ai-private@bobthearsonist` → restart Claude Code.
+
+**The version bump is not optional.** `claude plugin update` is version-gated,
+not commit-gated: with an unchanged version it reports "already at the latest
+version" and does nothing, however many commits landed. Measured 2026-09-02 —
+the plugin sat pinned for ~3 months behind 22 commits, six of them changing hook
+behaviour; a Grep-nudge hook was dormant the whole time with no error anywhere.
+
+**`~/AI/hooks/` is orphaned.** `sync.sh` reads `.collections.<name>.hooks` from
+`local.yaml` and symlinks those entries in (currently `run-regenerate-visual.sh`,
+`run-hook.sh`, `post-obsidian-append.md`, `skill-check.sh`,
+`session-start-context.md`). No Claude Code settings scope references that
+directory, and the plugin resolves `${CLAUDE_PLUGIN_ROOT}` to its own cache copy
+instead. Open question: whether the `hooks:` key in `local.yaml` should be
+dropped.
+
+**Other clients get no hooks.** `docs/client-support.md` names four shared
+surfaces — Instructions, Skills, Agents, Permissions — and hooks are not among
+them. opencode's config has no `hooks` key; Copilot CLI sets
+`"disableAllHooks": true`. Git hooks (via `core.hooksPath`) are the only
+genuinely cross-client hook mechanism, because they hang off git rather than off
+a client.
 
 ## Troubleshooting
 
