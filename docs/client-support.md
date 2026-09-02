@@ -40,6 +40,26 @@ Copilot also discovers project-local skills from `.github/skills/<name>/SKILL.md
 
 For the repo-backed custom status line, point user settings at the script in this repo:
 
+The gray `@organization` segment comes from the Copilot access organizations
+returned by `gh api /copilot_internal/user`. Authenticate GitHub CLI with the
+same account used by Copilot CLI; the response is cached for one hour.
+
+Windows:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "node \"%USERPROFILE%\\AI\\scripts\\copilot-statusline-summary.js\""
+  },
+  "footer": {
+    "showCustom": true
+  }
+}
+```
+
+macOS/Linux:
+
 ```json
 {
   "statusLine": {

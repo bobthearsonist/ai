@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
 const { execFileSync } = require("node:child_process");
+const { readFileSync, writeFileSync } = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
+
+const ORGANIZATION_CACHE_TTL_MS = 60 * 60 * 1000;
 
 const COLORS = {
   orange: "\x1b[38;5;208m",
@@ -61,7 +65,7 @@ process.stdin.on("end", () => {
   const sessionCost = formatSessionCost(cost);
   const sessionUsage = formatSessionUsage(contextWindow);
   const weeklyUsage = formatWeeklyUsage(status, cost);
-  const account = formatAccount(status);
+  const copilotOrganization = formatCopilotOrganization(status);
   const session = firstString(status.session_name, status.session_id);
 
   const segments = [
@@ -72,7 +76,7 @@ process.stdin.on("end", () => {
     weeklyUsage ? colored(weeklyUsage, "yellow") : "",
     branch ? colored(branch, "magenta") : "",
     workspace ? colored(workspace, "blue") : "",
-    account ? colored(account, "gray") : "",
+    copilotOrganization ? colored(copilotOrganization, "gray") : "",
     session ? colored(session, "dim") : "",
   ].filter(Boolean);
 
@@ -152,26 +156,107 @@ function formatWeeklyUsage(status, cost) {
   return typeof used === "number" ? `7d:${Math.round(used)}%` : "";
 }
 
-function formatAccount(status) {
-  const email = firstString(
-    status.account?.email,
-    status.user?.email,
-    status.github?.email,
-    status.githubUser?.email
-  );
-  if (email && email.includes("@")) {
-    return `@${email.split("@")[1].split(".")[0]}`;
+function formatCopilotOrganization(status) {
+  const organization = queryCopilotOrganization(status.username);
+  return organization ? `@${stripAt(organization)}` : "";
+}
+
+function queryCopilotOrganization(activeLogin) {
+  if (!activeLogin) {
+    return "";
   }
 
-  const login = firstString(
-    status.account?.login,
-    status.user?.login,
-    status.github?.login,
-    status.githubUser?.login,
-    status.username
-  );
+  const cached = readOrganizationCache(activeLogin);
+  if (cached) {
+    return loginsMatch(activeLogin, cached.login) ? cached.organization : "";
+  }
 
-  return login ? `@${login}` : "";
+  try {
+    const response = execFileSync(
+      "gh",
+      [
+        "api",
+        "--cache",
+        "1h",
+        "/copilot_internal/user",
+        "--jq",
+        '[.login, (.organization_login_list[0] // .organization_list[0].login // "")] | @tsv',
+      ],
+      {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+        timeout: 3000,
+      }
+    ).trim();
+    const [apiLogin, organization] = response.split("\t");
+    writeOrganizationCache(activeLogin, apiLogin, organization);
+
+    return loginsMatch(activeLogin, apiLogin) ? organization || "" : "";
+  } catch {
+    writeOrganizationCache(activeLogin, activeLogin, "", 5 * 60 * 1000);
+    return "";
+  }
+}
+
+function organizationCachePath(activeLogin) {
+  const cacheKey = activeLogin.toLowerCase().replace(/[^a-z0-9-]/g, "_");
+  return path.join(
+    os.tmpdir(),
+    `copilot-statusline-organization-${cacheKey}.json`
+  );
+}
+
+function readOrganizationCache(activeLogin) {
+  try {
+    const cached = JSON.parse(
+      readFileSync(organizationCachePath(activeLogin), "utf8")
+    );
+    if (
+      typeof cached.login === "string" &&
+      typeof cached.organization === "string" &&
+      typeof cached.expiresAt === "number" &&
+      cached.expiresAt > Date.now()
+    ) {
+      return cached;
+    }
+  } catch {
+    // A missing or invalid cache is refreshed from the API.
+  }
+
+  return null;
+}
+
+function writeOrganizationCache(
+  activeLogin,
+  login,
+  organization,
+  ttl = ORGANIZATION_CACHE_TTL_MS
+) {
+  try {
+    writeFileSync(
+      organizationCachePath(activeLogin),
+      JSON.stringify({
+        login: login || "",
+        organization: organization || "",
+        expiresAt: Date.now() + ttl,
+      }),
+      "utf8"
+    );
+  } catch {
+    // The statusline still works without persistent caching.
+  }
+}
+
+function loginsMatch(activeLogin, apiLogin) {
+  return (
+    Boolean(activeLogin) &&
+    Boolean(apiLogin) &&
+    activeLogin.toLowerCase() === apiLogin.toLowerCase()
+  );
+}
+
+function stripAt(value) {
+  return value.replace(/^@+/, "");
 }
 
 function tryGitBranch(cwd) {
