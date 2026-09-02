@@ -9,13 +9,17 @@ dist/
 
 # Memory
 memory/memory.jsonl
+memory/backups/
 
 # Local config
 local.yaml
 
-# Synced skills and agents (use git add -f for shared items)
+# Synced collections (use git add -f for shared items). sync.sh materializes
+# skills/, agents/ and hooks/ from the collections in local.yaml — see
+# docs/collections.md. Contents are symlinks into ai-private/profisee-ai.
 skills/
 agents/
+hooks/
 
 # Synced config directory — entire claude/ is a sync.sh-managed symlink to ai-private.
 # No trailing slash so the gitignore rule matches the symlink itself (git treats
@@ -24,3 +28,7 @@ claude
 
 # graphify per-repo graph artifacts (built locally, not source-controlled)
 graphify-out/
+
+# Timestamped hand-rolled backups (*.bak-YYYYMMDD) — a recurring local habit,
+# never source. Delete when the forensics are done.
+*.bak-*
