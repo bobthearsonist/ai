@@ -17,22 +17,23 @@ This applies even if a session summary is provided. Summaries may be stale.
 
 ## Anti-Patterns
 
-| Never do this                                                             | Do this instead                                                              |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Skip startup steps because "I have context"                               | Always run the checklist - todo state may differ from summary                |
+| Never do this                                                             | Do this instead                                                                               |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Skip startup steps because "I have context"                               | Always run the checklist - todo state may differ from summary                                 |
 | Thrash on a hard debug after the obvious fix failed                       | Think systematically before acting; sequential thinking is recommended here (not mandatory)   |
-| Let task list go stale                                                    | Update status immediately after each step                                    |
-| Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                    |
-| Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                  |
-| Delete branches or remove worktrees without user validation               | Ask the user to validate/confirm immediately before destructive cleanup      |
-| Guess at CLI/infrastructure commands                                      | Check skills first - they contain tested syntax                              |
-| Run broad glob patterns (`**/*.ts` from root)                             | Ask user to narrow scope or use grep instead                                 |
-| Tail or stream long-running commands (builds, tests, docker)              | Pipe to a temp file and read it after completion (see Long-Running Commands) |
-| Redirect to `/dev/null` or `$null` (triggers file-write approval prompts) | Omit the redirect (output is useful context), or use `--quiet`/`-q` flags   |
-| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `tee`) | Prefer single commands; if piping is necessary, keep targets as stdout only  |
-| Wrap commands in `bash -c "..."` or other sub-shells                      | Run commands directly — sub-shells obscure intent and may trigger approval   |
-| `cd` into a repo to run git commands                                      | Use `git -C <path>` to target repos without changing working directory       |
-| Suggest taking a break, "wrap for the day?", or warn about long sessions  | User drives session pacing — keep working; they'll say when to stop          |
+| Let task list go stale                                                    | Update status immediately after each step                                                     |
+| Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                                     |
+| Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                                   |
+| Delete branches or remove worktrees without user validation               | Ask the user to validate/confirm immediately before destructive cleanup                       |
+| Guess at CLI/infrastructure commands                                      | Check skills first - they contain tested syntax                                               |
+| Run broad glob patterns (`**/*.ts` from root)                             | Ask user to narrow scope or use grep instead                                                  |
+| Tail or stream long-running commands (builds, tests, docker)              | Pipe to a temp file and read it after completion (see Long-Running Commands)                  |
+| Redirect to `/dev/null` or `$null` (triggers file-write approval prompts) | Omit the redirect (output is useful context), or use `--quiet`/`-q` flags                     |
+| Use shell operators that trigger approval (`\|`, `>`, `>>`, `2>`, `tee`)  | Prefer single commands; if piping is necessary, keep targets as stdout only                   |
+| Wrap commands in `bash -c "..."` or other sub-shells                      | Run commands directly — sub-shells obscure intent and may trigger approval                    |
+| `cd` into a repo to run git commands                                      | Use `git -C <path>` to target repos without changing working directory                        |
+| Suggest taking a break, "wrap for the day?", or warn about long sessions  | User drives session pacing — keep working; they'll say when to stop                           |
+| Do bounded research/exploration inline, flooding main context             | Delegate to a subagent (`Explore`/`general-purpose`); keep the conclusion, not the file dumps |
 
 ## Task Management
 
@@ -41,6 +42,34 @@ Create a task list for any work with 2+ steps. Rules:
 - Create todos BEFORE starting work
 - Only ONE todo `in-progress` at a time
 - Mark `completed` IMMEDIATELY after finishing (don't batch)
+
+---
+
+## Subagent Delegation
+
+Delegate work that is **bounded** — self-contained, and judgeable by its result
+alone — to a subagent via the Agent tool. The main thread keeps the conclusion,
+not the intermediate file dumps. This protects context and enables parallelism.
+
+### Delegate when the task is...
+
+- **Read-heavy exploration** — "where is X handled", "find all callers of Y",
+  sweeping many files/dirs. Use `Explore` (read-only) or `general-purpose`.
+  You want the answer, not 40 file excerpts in main context.
+- **Independent + parallelizable** — 3 unrelated lookups, N repos to check the
+  same thing in. Launch them in ONE message so they run concurrently.
+- **Output-heavy but conclusion-light** — log triage, test-failure analysis,
+  build-output scanning. The subagent wades through noise; you get the finding.
+- **A well-specified implementation slice** — clear inputs, a clear done-condition,
+  no back-and-forth needed. Use `Plan` to design, `profisee-developer` or a domain
+  expert (`dotnet-expert`, `sql-expert`) to build.
+
+### Keep in the main thread when...
+
+- The task needs our conversation history or evolving intent (subagents can't see it).
+- It's interactive/iterative — you'd be relaying messages back and forth.
+- It's faster to just do it than to write a good brief (a 2-line edit).
+- It touches the decision you're actively reasoning about — don't outsource judgment.
 
 ---
 
