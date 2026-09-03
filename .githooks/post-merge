@@ -9,3 +9,18 @@ if [ -f external-skills.yaml ]; then
     echo "🔄 Syncing external skills..."
     ./scripts/sync.sh
 fi
+
+# === local hooks dispatcher ============================================
+# Runs any executable scripts from .git/hooks/$(basename $0).d/ so
+# machine-local hooks (graphify rebuild, etc.) can run without being
+# tracked. Add a hook with:
+#   install -m 755 my-hook .git/hooks/post-merge.d/<name>
+# Contributors without local hooks see a silent no-op.
+_HOOK_LOCAL_DIR=".git/hooks/$(basename "$0").d"
+if [ -d "$_HOOK_LOCAL_DIR" ]; then
+  for _h in "$_HOOK_LOCAL_DIR"/*; do
+    [ -x "$_h" ] && "$_h" "$@" || true
+  done
+fi
+unset _HOOK_LOCAL_DIR _h
+# === end local hooks dispatcher ========================================
