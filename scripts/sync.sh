@@ -26,14 +26,13 @@ sync_git() {
         key=$(echo "$source" | md5sum | cut -d' ' -f1)
     fi
 
-    if [ -d "$CACHE/$key" ]; then
-        git -C "$CACHE/$key" fetch --depth=1
-    else
-        git clone --depth=1 --sparse "$source" "$CACHE/$key"
+    if [ ! -d "$CACHE/$key" ]; then
+        git clone --depth=1 --filter=blob:none --sparse --no-checkout "$source" "$CACHE/$key"
     fi
 
+    git -C "$CACHE/$key" fetch --depth=1 origin "$branch"
     git -C "$CACHE/$key" sparse-checkout set "$path"
-    git -C "$CACHE/$key" checkout
+    git -C "$CACHE/$key" checkout --detach FETCH_HEAD
 
     rm -rf "$target"
     mkdir -p "$(dirname "$target")"
