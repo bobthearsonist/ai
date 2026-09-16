@@ -339,3 +339,17 @@ Load `obsidian-notes` skill and append a session summary. When the last todo is 
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) — any input to knowledge graph. Trigger: `/graphify`
   When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
 
+## graphify
+
+A `graphify-out/` knowledge graph may exist **per-repo** or as a **multi-root workspace index** — one graph at a parent root covering many child repos, so child repos/subdirs have no local `graphify-out/`.
+
+Rules:
+- **Find the graph by walking up, not just cwd.** Check `graphify-out/graph.json` in the current dir and each ancestor. A missing `./graphify-out/` ≠ no graph — in a workspace setup it lives above the repo. Don't fall back to grep/manual reads until you've checked ancestors.
+- **Query an ancestor graph explicitly:** `graphify query "<q>" --graph <path/to/graph.json>` (same for `path`/`explain`), or `cd` to the root that owns it.
+- Prefer `graphify query`/`path`/`explain` first — a scoped subgraph beats reading `GRAPH_REPORT.md` or grepping.
+- Use `graphify-out/wiki/index.md` for broad navigation; read `GRAPH_REPORT.md` only for architecture-level review or when query/path/explain fall short.
+- After modifying code, run `graphify update .` (AST-only, no API cost).
+
+### forbidden phrases
+
+- "the smoking gun"

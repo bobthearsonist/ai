@@ -5,7 +5,7 @@ const { readFileSync, writeFileSync } = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 
-const ORGANIZATION_CACHE_TTL_MS = 60 * 60 * 1000;
+const ORGANIZATION_CACHE_TTL_MS = 5 * 60 * 1000;
 
 const COLORS = {
   orange: "\x1b[38;5;208m",
@@ -65,18 +65,18 @@ process.stdin.on("end", () => {
   const sessionCost = formatSessionCost(cost);
   const sessionUsage = formatSessionUsage(contextWindow);
   const weeklyUsage = formatWeeklyUsage(status, cost);
-  const copilotOrganization = formatCopilotOrganization(status);
+  const copilotIdentity = formatCopilotIdentity(status);
   const session = firstString(status.session_name, status.session_id);
 
   const segments = [
     colored(model, "orange"),
+    copilotIdentity ? colored(copilotIdentity, "gray") : "",
     colored(`ctx:${contextUsage}`, "cyan"),
     sessionCost ? colored(sessionCost, "green") : "",
     colored(sessionUsage, "yellow"),
     weeklyUsage ? colored(weeklyUsage, "yellow") : "",
     branch ? colored(branch, "magenta") : "",
     workspace ? colored(workspace, "blue") : "",
-    copilotOrganization ? colored(copilotOrganization, "gray") : "",
     session ? colored(session, "dim") : "",
   ].filter(Boolean);
 
@@ -156,19 +156,29 @@ function formatWeeklyUsage(status, cost) {
   return typeof used === "number" ? `7d:${Math.round(used)}%` : "";
 }
 
-function formatCopilotOrganization(status) {
-  const organization = queryCopilotOrganization(status.username);
-  return organization ? `@${stripAt(organization)}` : "";
+function formatCopilotIdentity(status) {
+  const statusLogin = firstString(status.username);
+  const identity = queryCopilotIdentity(statusLogin);
+  const login = statusLogin || identity.login;
+  const organization = identity.organization;
+
+  if (login && organization) {
+    return `${login} bill:@${stripAt(organization)}`;
+  }
+  return login || (organization ? `bill:@${stripAt(organization)}` : "");
 }
 
-function queryCopilotOrganization(activeLogin) {
-  if (!activeLogin) {
-    return "";
-  }
-
-  const cached = readOrganizationCache(activeLogin);
+function queryCopilotIdentity(activeLogin) {
+  const cacheKey = activeLogin || "active-account";
+  const cached = readOrganizationCache(cacheKey);
   if (cached) {
-    return loginsMatch(activeLogin, cached.login) ? cached.organization : "";
+    return {
+      login: activeLogin || cached.login,
+      organization:
+        !activeLogin || loginsMatch(activeLogin, cached.login)
+          ? cached.organization
+          : "",
+    };
   }
 
   try {
@@ -177,7 +187,7 @@ function queryCopilotOrganization(activeLogin) {
       [
         "api",
         "--cache",
-        "1h",
+        "5m",
         "/copilot_internal/user",
         "--jq",
         '[.login, (.organization_login_list[0] // .organization_list[0].login // "")] | @tsv',
@@ -189,12 +199,18 @@ function queryCopilotOrganization(activeLogin) {
       }
     ).trim();
     const [apiLogin, organization] = response.split("\t");
-    writeOrganizationCache(activeLogin, apiLogin, organization);
+    writeOrganizationCache(cacheKey, apiLogin, organization);
 
-    return loginsMatch(activeLogin, apiLogin) ? organization || "" : "";
+    return {
+      login: activeLogin || apiLogin || "",
+      organization:
+        !activeLogin || loginsMatch(activeLogin, apiLogin)
+          ? organization || ""
+          : "",
+    };
   } catch {
-    writeOrganizationCache(activeLogin, activeLogin, "", 5 * 60 * 1000);
-    return "";
+    writeOrganizationCache(cacheKey, activeLogin, "", 5 * 60 * 1000);
+    return { login: activeLogin, organization: "" };
   }
 }
 

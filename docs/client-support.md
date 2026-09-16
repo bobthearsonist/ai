@@ -40,9 +40,12 @@ Copilot also discovers project-local skills from `.github/skills/<name>/SKILL.md
 
 For the repo-backed custom status line, point user settings at the script in this repo:
 
-The gray `@organization` segment comes from the Copilot access organizations
-returned by `gh api /copilot_internal/user`. Authenticate GitHub CLI with the
-same account used by Copilot CLI; the response is cached for one hour.
+The gray `<login> bill:@<organization>` segment comes from the Copilot access
+organization returned by `gh api /copilot_internal/user`. Authenticate GitHub
+CLI with the same account used by Copilot CLI; the response is cached for five
+minutes. The script queries GitHub CLI directly because some Copilot CLI
+versions omit `username` from the status-line payload. This reports the active
+server-side Copilot entitlement, not merely GitHub organization membership.
 
 Windows:
 
