@@ -185,10 +185,13 @@ Copilot CLI uses:
 ~/.copilot/mcp-config.json
 ```
 
-Manage it with:
+Manage it with `/mcp` or the non-interactive CLI commands. This machine routes Copilot CLI through MCPX:
 
-```text
-/mcp
+```bash
+copilot mcp add --transport http \
+  --header "x-lunar-consumer-tag: copilot-cli" \
+  mcpx http://localhost:9000/mcp
+copilot mcp list
 ```
 
 This is separate from VS Code's native Copilot MCP config:
