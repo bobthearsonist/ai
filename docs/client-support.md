@@ -40,12 +40,15 @@ Copilot also discovers project-local skills from `.github/skills/<name>/SKILL.md
 
 For the repo-backed custom status line, point user settings at the script in this repo:
 
-The gray `<login> bill:@<organization>` segment comes from the Copilot access
-organization returned by `gh api /copilot_internal/user`. Authenticate GitHub
-CLI with the same account used by Copilot CLI; the response is cached for five
-minutes. The script queries GitHub CLI directly because some Copilot CLI
-versions omit `username` from the status-line payload. This reports the active
-server-side Copilot entitlement, not merely GitHub organization membership.
+The gray identity segment shows `<login> bill:@<organization>`. The script
+queries the live Copilot entitlement tier and every candidate organization's
+live GitHub account tier. It shows a billed organization only when exactly one
+candidate is compatible with the active Copilot tier; ambiguous results fail
+closed by showing only the login. It never trusts candidate array order and
+does not maintain an account-to-payer mapping.
+
+Entitlement data is cached for five minutes and organization account tiers for
+one hour. Authenticate GitHub CLI with the same account used by Copilot CLI.
 
 An MCP segment appears only when a server is unhealthy: red `mcp! <names>` for
 failed servers, yellow `mcp? <names>` for servers needing auth, and dim
