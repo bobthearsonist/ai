@@ -127,9 +127,8 @@ atomic on 2026-08-18; do not reintroduce the failure from the other end.
   and recreate them afterwards, or the edges are gone.
 - **The gateway rejects large payloads with HTTP 413.** Batch by serialised bytes and halve on failure —
   a 289-entity recreate needed three batches, and the ceiling is lower than it looks.
-- **If the MCP tools hang**, the client is holding a stale SSE session after a container restart. The server
-  is fine. Reach it over HTTP at `localhost:9000/mcp` (initialize, then `tools/call` with the returned
-  `mcp-session-id`) rather than editing the file to work around it.
+- **If the memory tools hang or are missing**, that is a client connection problem, not permission to touch
+  the file. Reconnect the client's MCP connection, or stop and tell the user.
 
 The same rule applies to any store a service owns while running: `graphify-out/graph.json`, the Qdrant
 collections, and the indexer state files. Go through the owning process.
