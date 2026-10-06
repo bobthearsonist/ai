@@ -18,6 +18,13 @@
 # and work collections in the same local.yaml across machines.
 
 collections:
+  # Keep legacy client paths on the manifest-managed skill-creator.
+  toolkit:
+    path: ~/AI
+    links:
+      - source: skills/skill-creator
+        target: ~/AI/skills/domain/ai/skill-creator
+
   # Personal collection - your private reusable skills repo.
   personal:
     path: ~/Repositories/my-ai-skills
