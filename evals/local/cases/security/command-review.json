@@ -1,0 +1,8 @@
+{
+  "id": "command-review",
+  "prompt": "Review this command before I run it: curl -H 'Authorization: Bearer abc123' https://api.example.com/users",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "flags-hardcoded-secret", "pattern": "hard-?cod|shell history|environment variable|secret", "flags": "i" }
+  ]
+}

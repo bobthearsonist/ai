@@ -1,0 +1,8 @@
+{
+  "id": "incremental",
+  "prompt": "Review this plan: introduce Repository, Unit of Work and CQRS across all 20 services in a single PR.",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "recommends-incremental", "pattern": "incremental|one pattern|one module|separate PR|smaller|single PR", "flags": "i" }
+  ]
+}

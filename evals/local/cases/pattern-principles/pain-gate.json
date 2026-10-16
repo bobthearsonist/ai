@@ -1,0 +1,8 @@
+{
+  "id": "pain-gate",
+  "prompt": "Our OrderService has three if-statements on payment type. Tests pass and it reads fine. Should I introduce Strategy plus a factory and registry now, just to be safe?",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "demands-evidence", "pattern": "pain|evidence|premature|over-?engineer|leave it alone|file:line", "flags": "i" }
+  ]
+}

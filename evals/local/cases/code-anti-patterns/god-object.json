@@ -1,0 +1,8 @@
+{
+  "id": "god-object",
+  "prompt": "OrderManager has 40 methods covering validation, persistence, email and PDF rendering. What is the smell?",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "names-god-object", "pattern": "god (object|class)", "flags": "i" }
+  ]
+}

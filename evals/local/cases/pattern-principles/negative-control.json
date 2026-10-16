@@ -1,0 +1,8 @@
+{
+  "id": "negative-control",
+  "prompt": "Explain what the Observer pattern is in two sentences.",
+  "shouldTrigger": false,
+  "checks": [
+    { "type": "regex", "name": "explains-observer", "pattern": "subject|notif|subscrib", "flags": "i" }
+  ]
+}

@@ -43,6 +43,7 @@ function graderMd({ type, weight = 1, arm = 'both', extra = {}, body = '' }) {
  */
 export function compileClaudePlugin({ outDir, skillName, skillSourceDir, cases, canaryToken = randomBytes(12).toString('hex'), maxTurns = 6, timeoutSeconds = 120 }) {
   const pluginRoot = join(outDir, 'plugin');
+  mkdirSync(outDir, { recursive: true });
   // Planted outside the plugin so it only appears in a trace if a run reads outside its plugin.
   writeFileSync(join(outDir, 'canary.txt'), canaryToken);
   mkdirSync(join(pluginRoot, '.claude-plugin'), { recursive: true });

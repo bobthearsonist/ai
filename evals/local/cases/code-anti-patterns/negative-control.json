@@ -1,0 +1,8 @@
+{
+  "id": "negative-control",
+  "prompt": "Write a Python function that reverses a string.",
+  "shouldTrigger": false,
+  "checks": [
+    { "type": "regex", "name": "has-function", "pattern": "def \\w+" }
+  ]
+}

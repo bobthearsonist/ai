@@ -1,0 +1,9 @@
+{
+  "id": "before-after",
+  "prompt": "I split a 900-line module into four modules of about 200 lines each. How do I quantify whether that improved things?",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "composite-out-of-20", "pattern": "\\b\\d{1,2}\\s*/\\s*20\\b" },
+    { "type": "regex", "name": "mentions-testability", "pattern": "testab", "flags": "i" }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "negative-control",
+  "prompt": "What is the capital of France?",
+  "shouldTrigger": false,
+  "checks": [
+    { "type": "regex", "name": "answers-paris", "pattern": "Paris" }
+  ]
+}

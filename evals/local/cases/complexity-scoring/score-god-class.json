@@ -1,0 +1,10 @@
+{
+  "id": "score-god-class",
+  "prompt": "Rate the complexity of a 1,800-line UserManager class that handles auth, email, billing and direct database access, and is hard to unit test.",
+  "shouldTrigger": true,
+  "checks": [
+    { "type": "regex", "name": "composite-out-of-20", "pattern": "\\b\\d{1,2}\\s*/\\s*20\\b" },
+    { "type": "regex", "name": "mentions-coupling", "pattern": "coupling", "flags": "i" },
+    { "type": "regex", "name": "mentions-cohesion", "pattern": "cohesion", "flags": "i" }
+  ]
+}

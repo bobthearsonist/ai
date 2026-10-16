@@ -78,6 +78,17 @@ test('file_exists and tool_order checks compile', () => {
   assert.equal(readFileSync(join(out, 'canary.txt'), 'utf8'), r.canaryToken);
 });
 
+test('every shipped suite loads and has a negative control', () => {
+  const root = fileURLToPath(new URL('../local/cases', import.meta.url));
+  const suites = fsSync.readdirSync(root);
+  assert.ok(suites.length >= 5);
+  for (const s of suites) {
+    const cases = loadSuite(join(root, s));
+    assert.equal(cases.length, 3, s);
+    assert.ok(cases.some((c) => !c.shouldTrigger), `${s} needs a negative control`);
+  }
+});
+
 test('approval gate blocks without --approve-sessions', () => {
   const r = spawnSync(process.execPath, [cli, 'run', '--exe', process.execPath], { encoding: 'utf8' });
   assert.equal(r.status, 4);

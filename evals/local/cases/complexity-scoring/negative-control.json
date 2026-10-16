@@ -1,0 +1,8 @@
+{
+  "id": "negative-control",
+  "prompt": "What does cyclomatic complexity mean? One sentence.",
+  "shouldTrigger": false,
+  "checks": [
+    { "type": "regex", "name": "mentions-paths", "pattern": "path", "flags": "i" }
+  ]
+}
