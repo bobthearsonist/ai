@@ -1,7 +1,0 @@
-collections:
-  private:
-    path: ~/Repositories/ai-private
-    skills:
-      - example
-      - source: another-source
-        name: another-name

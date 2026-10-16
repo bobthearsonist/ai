@@ -1,8 +1,0 @@
-ARG CLIENT_IMAGE
-FROM ${CLIENT_IMAGE}
-COPY constants.mjs case-spec.mjs task-policy.mjs native-events.mjs native-spec.mjs native-evidence.mjs native-session.mjs task-files.mjs task-capture.mjs /opt/fixture/
-USER 1000:1000
-ENV HOME=/work/home XDG_CONFIG_HOME=/work/config XDG_CACHE_HOME=/work/cache XDG_DATA_HOME=/work/data XDG_STATE_HOME=/work/state
-ENV OPENCODE_DISABLE_MODELS_FETCH=1 OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_LSP_DOWNLOAD=1 OPENCODE_DISABLE_CLAUDE_CODE=1 OPENCODE_DISABLE_EXTERNAL_SKILLS=1
-WORKDIR /opt/fixture
-ENTRYPOINT ["/opt/client/node_modules/opencode-linux-x64/bin/opencode"]

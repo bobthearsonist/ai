@@ -1,9 +1,0 @@
-*
-!package.json
-!package-lock.json
-!Dockerfile
-!runtime.mjs
-!policy.mjs
-!task-runtime.mjs
-!task-policy.mjs
-!mock-protocol.mjs
