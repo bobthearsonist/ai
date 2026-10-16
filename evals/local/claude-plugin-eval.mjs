@@ -21,8 +21,8 @@ export function plannedSessions({ caseCount, runs, ablation }) {
   return caseCount * runs * (ablation === 'with-without' ? 2 : 1);
 }
 
-export function buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, caseId }) {
-  const args = ['plugin', 'eval', pluginRoot, '--runs', String(runs), '-j', '1', '--ablation', ablation,
+export function buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, caseId, concurrency = 1 }) {
+  const args = ['plugin', 'eval', pluginRoot, '--runs', String(runs), '-j', String(concurrency), '--ablation', ablation,
     '--max-cost-usd', String(maxCostUsd), '--no-publish', '--keep-temp', '--trust-plugin',
     '--output-dir', outputDir, '--json', join(outputDir, 'stdout.json')];
   if (caseId) args.push('--case', caseId);
@@ -69,8 +69,8 @@ export function createClaudeRunner({ exe = 'claude' } = {}) {
       return { ok: problems.length === 0, version: v.stdout.trim(), problems };
     },
     plannedSessions,
-    async run(suite, { pluginRoot, outputDir, runs, ablation, maxCostUsd = 5, caseId }) {
-      const proc = run(buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, caseId }));
+    async run(suite, { pluginRoot, outputDir, runs, ablation, maxCostUsd = 5, caseId, concurrency = 1 }) {
+      const proc = run(buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, caseId, concurrency }));
       const base = { client: 'claude', outputDir, caveats: ['subscription login used; not hermetic', 'cost is a list-price estimate'] };
       if (proc.error) return makeRunResult({ ...base, status: CLIENT_STATUS.ERROR, caveats: [...base.caveats, proc.error.message] });
       const aggPath = findAggregate(outputDir);

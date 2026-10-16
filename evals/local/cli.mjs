@@ -18,6 +18,7 @@ const { values, positionals } = parseArgs({
     case: { type: 'string' },
     'approve-sessions': { type: 'string' },
     'max-cost-usd': { type: 'string', default: '5' },
+    concurrency: { type: 'string', default: '1' },
     exe: { type: 'string' },
     'skill-root': { type: 'string' },
   },
@@ -71,13 +72,13 @@ if (!(approved >= planned && planned > 0)) {
   process.exit(4);
 }
 
-const ts = new Date().toISOString().replace(/[:.]/g, '-');
+const ts = `${new Date().toISOString().replace(/[:.]/g, '-')}-${values.suite}`;
 const outDir = resolve(here, '..', '.work', 'local-runs', `${ts}-${command}`);
 mkdirSync(outDir, { recursive: true });
 const { pluginRoot, skillHash, canaryToken } = compileClaudePlugin({
   outDir, skillName: values.suite, skillSourceDir: skillDir, fixturesDir: existsSync(fixturesDir) ? fixturesDir : null, cases,
 });
-const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId });
+const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId, concurrency: Number(values.concurrency) });
 const normalized = { ...result, skillSha256: skillHash, canaryToken, command, runs, ablation, plannedSessions: planned };
 writeFileSync(join(outDir, 'normalized.json'), JSON.stringify(normalized, null, 2));
 console.log(JSON.stringify(normalized, null, 2));
