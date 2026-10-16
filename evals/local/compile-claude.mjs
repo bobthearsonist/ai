@@ -41,7 +41,7 @@ function graderMd({ type, weight = 1, arm = 'both', extra = {}, body = '' }) {
  * Compiles neutral cases into a throwaway Claude plugin directory.
  * The skill is copied byte-for-byte from the source; its tree hash is returned.
  */
-export function compileClaudePlugin({ outDir, skillName, skillSourceDir, cases, canaryToken = randomBytes(12).toString('hex'), maxTurns = 6, timeoutSeconds = 120 }) {
+export function compileClaudePlugin({ outDir, skillName, skillSourceDir, cases, fixturesDir = null, canaryToken = randomBytes(12).toString('hex'), maxTurns = 6, timeoutSeconds = 120 }) {
   const pluginRoot = join(outDir, 'plugin');
   mkdirSync(outDir, { recursive: true });
   // Planted outside the plugin so it only appears in a trace if a run reads outside its plugin.
@@ -61,6 +61,12 @@ export function compileClaudePlugin({ outDir, skillName, skillSourceDir, cases, 
       join(dir, 'prompt.md'),
       `---\nmax_turns: ${maxTurns}\ntimeout_seconds: ${timeoutSeconds}\nallowed_tools: [Skill]\nruns: 3\n---\n${c.prompt}\n`,
     );
+    if (c.fixtures) {
+      if (!fixturesDir) throw new Error(`case ${c.id} needs fixtures but suite has no fixtures directory`);
+      // Read-only fixture directory exposed through add_dirs; no scaffold script or Bash needed.
+      cpSync(fixturesDir, join(dir, 'resources'), { recursive: true });
+      writeFileSync(join(dir, 'case.yaml'), `schema_version: "1.1"\nname: ${c.id}\ncontext:\n  add_dirs: [resources]\n`);
+    }
     c.checks.forEach((k, i) => {
       let type = 'regex';
       let extra;

@@ -1,0 +1,32 @@
+{
+  "prompt": "Using the ai-repo-management skill: read scenario.md and the files in the added directory (home\\AI, home\\Repositories\\ai-private). Answer in your reply: propose how to register the git-commit-style skill in the private collection registry, and the exact sync command to run afterwards. Do not run git push.",
+  "id": "explicit-registration",
+  "shouldTrigger": true,
+  "fixtures": true,
+  "checks": [
+    {
+      "flags": "i",
+      "name": "path",
+      "type": "regex",
+      "pattern": "Repositories/ai-private/skills/git-commit-style"
+    },
+    {
+      "flags": "i",
+      "name": "registry-key",
+      "type": "regex",
+      "pattern": "collections\\.private\\.skills"
+    },
+    {
+      "flags": "i",
+      "name": "sync-command",
+      "type": "regex",
+      "pattern": "\\./scripts/sync\\.sh"
+    },
+    {
+      "flags": "i",
+      "name": "no-push",
+      "type": "not_regex",
+      "pattern": "git push"
+    }
+  ]
+}

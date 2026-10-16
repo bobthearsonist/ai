@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -23,7 +23,9 @@ const { values, positionals } = parseArgs({
   },
 });
 
-const SKILL_ROOT = values['skill-root'] ?? process.env.EVAL_SKILL_ROOT ?? join(here, '..', '..', '..', 'ai-private', 'skills');
+const SKILL_ROOTS = (values['skill-root'] ?? process.env.EVAL_SKILL_ROOT ?? '').split(';').filter(Boolean);
+if (!SKILL_ROOTS.length) SKILL_ROOTS.push(join(here, '..', '..', 'skills'), join(here, '..', '..', '..', 'ai-private', 'skills'));
+const findSkill = (name) => SKILL_ROOTS.map((r) => join(r, name)).find((p) => existsSync(join(p, 'SKILL.md')));
 const command = positionals[0];
 createClaudeRunner(values.exe ? { exe: values.exe } : {});
 registerStubs();
@@ -40,7 +42,14 @@ if (command !== 'smoke' && command !== 'run') {
   process.exit(64);
 }
 
-const cases = loadSuite(join(here, 'cases', values.suite));
+const suiteDir = join(here, 'cases', values.suite);
+const cases = loadSuite(suiteDir);
+const fixturesDir = join(suiteDir, 'fixtures');
+const skillDir = findSkill(values.suite);
+if (!skillDir) {
+  console.error(`skill "${values.suite}" not found under: ${SKILL_ROOTS.join('; ')}`);
+  process.exit(1);
+}
 const smoke = command === 'smoke';
 const caseId = smoke ? (values.case ?? cases[0].id) : values.case;
 const runs = smoke ? 1 : Number(values.runs ?? 3);
@@ -66,7 +75,7 @@ const ts = new Date().toISOString().replace(/[:.]/g, '-');
 const outDir = resolve(here, '..', '.work', 'local-runs', `${ts}-${command}`);
 mkdirSync(outDir, { recursive: true });
 const { pluginRoot, skillHash, canaryToken } = compileClaudePlugin({
-  outDir, skillName: values.suite, skillSourceDir: join(SKILL_ROOT, values.suite), cases,
+  outDir, skillName: values.suite, skillSourceDir: skillDir, fixturesDir: existsSync(fixturesDir) ? fixturesDir : null, cases,
 });
 const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId });
 const normalized = { ...result, skillSha256: skillHash, canaryToken, command, runs, ablation, plannedSessions: planned };

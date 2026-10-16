@@ -84,7 +84,7 @@ test('every shipped suite loads and has a negative control', () => {
   assert.ok(suites.length >= 5);
   for (const s of suites) {
     const cases = loadSuite(join(root, s));
-    assert.equal(cases.length, 3, s);
+    assert.ok(cases.length >= 3, s);
     assert.ok(cases.some((c) => !c.shouldTrigger), `${s} needs a negative control`);
   }
 });

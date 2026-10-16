@@ -62,6 +62,7 @@ export function validateCase(c) {
   if (typeof c.prompt !== 'string' || !c.prompt.trim()) problems.push('prompt required');
   if (typeof c.shouldTrigger !== 'boolean') problems.push('shouldTrigger must be boolean');
   if (!Array.isArray(c.checks) || c.checks.length === 0) problems.push('checks must be a non-empty array');
+  if (c.fixtures !== undefined && typeof c.fixtures !== 'boolean') problems.push('fixtures must be boolean');
   for (const k of c.checks ?? []) {
     if (!['regex', 'not_regex', 'file_exists', 'tool_order'].includes(k.type)) problems.push(`unsupported check type ${k.type}`);
     if (['regex', 'not_regex'].includes(k.type) && typeof k.pattern !== 'string') problems.push('check needs pattern');

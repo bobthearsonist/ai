@@ -1,0 +1,32 @@
+{
+  "prompt": "Read scenario.md and the files in the added directory (home\\AI, home\\Repositories\\ai-private). My git-commit-style skill never shows up in my AI client. Diagnose why and say what to change and run. Answer in your reply.",
+  "id": "implicit-missing-discovery",
+  "shouldTrigger": true,
+  "fixtures": true,
+  "checks": [
+    {
+      "flags": "i",
+      "name": "registry-key",
+      "type": "regex",
+      "pattern": "collections\\.private\\.skills"
+    },
+    {
+      "flags": "i",
+      "name": "names-skill",
+      "type": "regex",
+      "pattern": "git-commit-style"
+    },
+    {
+      "flags": "i",
+      "name": "sync-command",
+      "type": "regex",
+      "pattern": "\\./scripts/sync\\.sh"
+    },
+    {
+      "flags": "i",
+      "name": "no-plugin-update",
+      "type": "not_regex",
+      "pattern": "claude plugin update"
+    }
+  ]
+}
