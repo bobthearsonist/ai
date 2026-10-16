@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "pattern": "^[\\s`]*(feat|fix|chore|refactor|docs|test|ci|style|perf|build|revert)(\\([^)]+\\))?!?: [a-z]",
+      "flags": "m",
+      "type": "regex",
+      "name": "conventional-header"
+    },
+    {
+      "pattern": "^[\\s`]*[a-z]+(\\([^)]+\\))?!?: [^\\n]{1,50}$",
+      "flags": "m",
+      "type": "regex",
+      "name": "header-under-72"
+    }
+  ],
+  "prompt": "Write me a commit message: renamed getUser to fetchUser, updated 3 call sites.",
+  "id": "explicit-positive",
+  "shouldTrigger": true
+}
