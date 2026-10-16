@@ -1,0 +1,1215 @@
+{
+  "protocol": "claude-offline-probe@1",
+  "mockProvider": true,
+  "live": false,
+  "realQuality": false,
+  "transport": "offline-mock",
+  "arm": "no-skill",
+  "scenario": "normal",
+  "artifactTargets": [
+    "answer.md",
+    "message.txt"
+  ],
+  "artifactWrites": [
+    {
+      "path": "/workspace/answer.md",
+      "content": "SYNTHETIC_OFFLINE_ARTIFACT_ANSWER\n"
+    },
+    {
+      "path": "/workspace/message.txt",
+      "content": "fix: write synthetic offline artifact\n"
+    }
+  ],
+  "forbiddenFilesCreated": [],
+  "version": "2.1.291 (Claude Code)",
+  "nodeVersion": "22.22.1",
+  "help": "Usage: claude [options] [command] [prompt]\n\nClaude Code - starts an interactive session by default, use -p/--print for\nnon-interactive output\n\nArguments:\n  prompt                                Your prompt\n\nOptions:\n  --add-dir <directories...>            Additional directories to allow tool\n                                        access to\n  --agent <agent>                       Agent for the current session. Overrides\n                                        the 'agent' setting.\n  --agents <json-or-file>               JSON object defining custom agents, or\n                                        with --print the path to a file that\n                                        holds one (e.g. '{\"reviewer\":\n                                        {\"description\": \"Reviews code\",\n                                        \"prompt\": \"You are a code reviewer\"}}')\n  --allow-dangerously-skip-permissions  Enable bypassing all permission checks\n                                        as an option, without it being enabled\n                                        by default. Recommended only for\n                                        sandboxes with no internet access.\n  --allowedTools, --allowed-tools <tools...>\n      Comma or space-separated list of tool names to allow (e.g. \"Bash(git *)\n      Edit\")\n  --append-system-prompt <prompt>       Append a system prompt to the default\n                                        system prompt\n  --autocompact <auto|tokens>           Auto-compact window size (auto, or\n                                        100k–1M tokens)\n  --ax-screen-reader                    Render screen-reader friendly output\n                                        (flat text, no decorative borders or\n                                        animations).\n  --bg, --background                    Start the session in the background and\n                                        return immediately. Prints the id that\n                                        `claude attach`, `logs`, `stop` and `rm`\n                                        take; `claude agents` lists them. With\n                                        --resume <session-id>, continues that\n                                        session in the background under the same\n                                        ID, or starts a copy and says so when\n                                        the session is already running\n  --bare                                Minimal mode: skip hooks (those defined\n                                        in settings and by installed plugins;\n                                        features built into Claude Code are\n                                        unaffected), LSP, plugin sync,\n                                        attribution, auto-memory, background\n                                        prefetches, keychain reads, and\n                                        CLAUDE.md auto-discovery. Sets\n                                        CLAUDE_CODE_SIMPLE=1. Anthropic auth is\n                                        strictly ANTHROPIC_API_KEY or\n                                        apiKeyHelper via --settings (OAuth and\n                                        keychain are never read). 3P providers\n                                        (Bedrock/Vertex/Foundry) use their own\n                                        credentials. Skills still resolve via\n                                        /skill-name. Explicitly provide context\n                                        via: --system-prompt[-file],\n                                        --append-system-prompt[-file], --add-dir\n                                        (CLAUDE.md dirs), --mcp-config,\n                                        --settings, --agents, --plugin-dir.\n  --betas <betas...>                    Beta headers to include in API requests\n                                        (API key users only)\n  --brief                               Enable SendUserMessage tool for\n                                        agent-to-user communication\n  --chrome                              Enable Claude in Chrome integration\n  --cloud [description|session_id|url]  Create a cloud session with the given\n                                        description, or attach to an existing\n                                        one by session ID or claude.ai/code URL\n  -c, --continue                        Continue the most recent conversation in\n                                        the current directory\n  --dangerously-skip-permissions        Bypass all permission checks.\n                                        Recommended only for sandboxes with no\n                                        internet access.\n  -d, --debug [filter]                  Enable debug mode with optional category\n                                        filtering (e.g., \"api,hooks\" or\n                                        \"!1p,!file\")\n  --debug-file <path>                   Write debug logs to a specific file path\n                                        (implicitly enables debug mode)\n  --desktop                             Open in the Claude Desktop app instead\n                                        of the terminal (with --continue or\n                                        --resume <id> to pick the session)\n  --disable-slash-commands              Disable all skills\n  --disallowedTools, --disallowed-tools <tools...>\n      Comma or space-separated list of tool names to deny (e.g. \"Bash(git *)\n      Edit\")\n  --effort <level>                      Effort level for the current session\n                                        (low, medium, high, xhigh, max)\n  --environment <environment_id>        Create a new cloud session that runs on\n                                        the given self-hosted environment\n                                        (ccpool_...).\n  --exclude-dynamic-system-prompt-sections\n      Move per-machine sections (cwd, env info, memory paths, git status) from\n      the system prompt into the first user message. Improves cross-user\n      prompt-cache reuse. Only applies with the default system prompt (ignored\n      with --system-prompt). (default: false)\n  --fallback-model <model>              Enable automatic fallback to specified\n                                        model(s) when the default model is\n                                        overloaded or not available. Accepts a\n                                        comma-separated list to try each in\n                                        order. Re-tries the primary at the start\n                                        of each user turn.\n  --file <specs...>                     File resources to download at startup.\n                                        Format: file_id:relative_path (e.g.,\n                                        --file file_abc:doc.txt\n                                        file_def:img.png)\n  --fork-session                        When resuming, create a new session ID\n                                        instead of reusing the original (use\n                                        with --resume or --continue)\n  --forward-subagent-text               Forward subagent text and thinking\n                                        blocks as assistant/user messages with\n                                        parent_tool_use_id set (only works with\n                                        --print and --output-format=stream-json)\n  --from-pr [value]                     Resume a session linked to a PR by PR\n                                        number/URL, or open interactive picker\n                                        with optional search term\n  -h, --help                            Display help for command\n  --ide                                 Automatically connect to IDE on startup\n                                        if exactly one valid IDE is available\n  --include-hook-events                 Include all hook lifecycle events in the\n                                        output stream (only works with\n                                        --output-format=stream-json)\n  --include-partial-messages            Include partial message chunks as they\n                                        arrive (only works with --print and\n                                        --output-format=stream-json)\n  --input-format <format>               Input format (only works with --print):\n                                        \"text\" (default), or \"stream-json\"\n                                        (realtime streaming input) (choices:\n                                        \"text\", \"stream-json\")\n  --json-schema <schema>                JSON Schema for structured output\n                                        validation. Example:\n                                        {\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}},\"required\":[\"name\"]}\n  --max-budget-usd <amount>             Maximum dollar amount to spend on API\n                                        calls (only works with --print)\n  --mcp-config <configs...>             Load MCP servers from JSON files or\n                                        strings (space-separated)\n  --model <model>                       Model for the current session. Provide\n                                        an alias for the latest model (e.g.\n                                        'fable', 'opus', or 'sonnet') or a\n                                        model's full name.\n  -n, --name <name>                     Set a display name for this session\n                                        (shown in the prompt box, /resume\n                                        picker, and terminal title)\n  --no-chrome                           Disable Claude in Chrome integration\n  --no-session-persistence              Disable session persistence - sessions\n                                        will not be saved to disk and cannot be\n                                        resumed (only works with --print)\n  --output-format <format>              Output format (only works with --print):\n                                        \"text\" (default), \"json\" (single\n                                        result), or \"stream-json\" (realtime\n                                        streaming) (choices: \"text\", \"json\",\n                                        \"stream-json\")\n  --permission-mode <mode>              Permission mode to use for the session\n                                        (choices: \"acceptEdits\", \"auto\",\n                                        \"bypassPermissions\", \"manual\",\n                                        \"dontAsk\", \"plan\")\n  --permission-prompts <target>         Who answers permission prompts with\n                                        --print: \"host\" (the SDK host or\n                                        --permission-prompt-tool) or \"none\"\n                                        (nobody: anything that would prompt is\n                                        denied automatically; the permission\n                                        mode still decides everything else)\n                                        (choices: \"host\", \"none\", default:\n                                        \"host\")\n  --plugin-dir <path>                   Load a plugin from a directory or .zip\n                                        for this session only; a folder of\n                                        plugins loads each child (repeatable:\n                                        --plugin-dir A --plugin-dir B.zip)\n                                        (default: [])\n  --plugin-url <url>                    Fetch a plugin .zip from a URL for this\n                                        session only (repeatable: --plugin-url A\n                                        --plugin-url B) (default: [])\n  -p, --print                           Print response and exit (useful for\n                                        pipes). Note: The workspace trust dialog\n                                        is skipped when Claude is run in\n                                        non-interactive mode (via -p, or when\n                                        stdout is not a TTY, e.g. piped or\n                                        redirected output). Only use this in\n                                        directories you trust. Settings files\n                                        that fail validation are silently\n                                        ignored in this mode (no error dialog is\n                                        shown).\n  --prompt-suggestions [value]          Enable prompt suggestions. In print/SDK\n                                        mode, emits a prompt_suggestion message\n                                        after each turn with a predicted next\n                                        user prompt (choices: \"true\", \"false\",\n                                        \"1\", \"0\", \"yes\", \"no\", \"on\", \"off\",\n                                        preset: \"true\")\n  --remote-control [name]               Start an interactive session with Remote\n                                        Control enabled (optionally named)\n  --remote-control-session-name-prefix <prefix>\n      Prefix for auto-generated Remote Control session names (default: hostname)\n  --replay-user-messages                Re-emit user messages from stdin back on\n                                        stdout for acknowledgment (only works\n                                        with --input-format=stream-json and\n                                        --output-format=stream-json)\n  --restricted                          Restricted mode: removes the built-in\n                                        tools that run commands or code (Bash,\n                                        PowerShell, REPL and the other\n                                        code-running tools) and WebFetch unless\n                                        --tools names them, and ignores user,\n                                        project and local settings files\n                                        (managed settings and --settings still\n                                        apply; add --strict-mcp-config to skip\n                                        MCP servers too). Also confines the file\n                                        tools to the working directories\n                                        (--add-dir included), refuses\n                                        bypassPermissions, and lets only a\n                                        person or the configured permission\n                                        handler approve writes to settings, git\n                                        and tool-configuration files.\n  -r, --resume [value]                  Resume a conversation by session ID, or\n                                        open interactive picker with optional\n                                        search term\n  --safe-mode                           Start with all customizations\n                                        (CLAUDE.md, skills, installed plugins,\n                                        hooks, MCP servers, custom commands and\n                                        agents, output styles, workflows, custom\n                                        themes, keybindings, and more) disabled\n                                        — useful for troubleshooting a broken\n                                        configuration. Admin-managed (policy)\n                                        settings still apply. Auth, model\n                                        selection, built-in tools and plugins,\n                                        and permissions work normally. Sets\n                                        CLAUDE_CODE_SAFE_MODE=1.\n  --session-id <uuid>                   Use a specific session ID for the\n                                        conversation (must be a valid UUID)\n  --setting-sources <sources>           Comma-separated list of setting sources\n                                        to load (user, project, local).\n  --settings <file-or-json>             Path to a settings JSON file or a JSON\n                                        string to load additional settings from\n  --strict-mcp-config                   Only use MCP servers from --mcp-config,\n                                        ignoring all other MCP configurations\n  --system-prompt <prompt>              System prompt to use for the session\n  --system-prompt-snapshot <on|off>     Record the system prompt once per\n                                        conversation and reuse it verbatim on\n                                        every request and resume. on (the\n                                        default): the prompt is rendered on the\n                                        conversation's first request — a\n                                        --system-prompt or\n                                        --append-system-prompt included — sent,\n                                        and recorded; every later request and\n                                        resume sends the record as-is, even when\n                                        a later launch passes different text,\n                                        until the conversation is compacted.\n                                        off: never record; the prompt is\n                                        rendered fresh every request (for\n                                        iterating on prompt text). No effect\n                                        where system-prompt recording is not yet\n                                        enabled. (choices: \"on\", \"off\")\n  --teleport [session]                  Resume a teleport session, optionally\n                                        specify session ID\n  --tmux                                Create a tmux session for the worktree\n                                        (requires --worktree). Uses iTerm2\n                                        native panes when available; use\n                                        --tmux=classic for traditional tmux.\n  --tools <tools...>                    Specify the list of available tools from\n                                        the built-in set. Use \"\" to disable all\n                                        tools, \"default\" to use all tools, or\n                                        specify tool names (e.g.\n                                        \"Bash,Edit,Read\").\n  --verbose                             Override verbose mode setting from\n                                        config\n  -v, --version                         Output the version number\n  -w, --worktree [name]                 Create a new git worktree for this\n                                        session (optionally specify a name)\n\nCommands:\n  agents [options]                      Manage background agents\n  attach <id|name>                      Open a background session in this\n                                        terminal. <id> is the short id that\n                                        `claude --bg` prints and `claude agents`\n                                        lists. Part of the session name works\n                                        too\n  auth                                  Manage authentication\n  auto-mode                             Inspect or reset auto mode classifier\n                                        configuration\n  doctor                                Check the health of your Claude Code\n                                        installation. Reads settings files in\n                                        the current directory without a trust\n                                        prompt. For a full checkup that can also\n                                        fix issues, run /doctor in a session.\n  gateway [options]                     Run the enterprise auth/telemetry\n                                        gateway\n  import [options] [source]             Import config from another AI coding\n                                        agent into Claude Code\n  install [options] [target]            Install Claude Code native build. Use\n                                        [target] to specify version (stable,\n                                        latest, or specific version)\n  logs <id|name>                        Print a background session's recent\n                                        terminal output\n  mcp                                   Configure and manage MCP servers\n  plugin|plugins                        Manage Claude Code plugins\n  purge [options] [path]                Delete all Claude Code state for a\n                                        project (transcripts, tasks, file\n                                        history, config entry)\n  respawn [options] [id]                Restart a background session, or all of\n                                        them with --all, so it runs the current\n                                        Claude Code version\n  rm <id>                               Delete a background session, and its\n                                        worktree when that is safe. Works on\n                                        sessions that have already exited\n  setup-token                           Set up a long-lived authentication token\n                                        (requires Claude subscription)\n  stop|kill <id>                        Stop a background session. Its\n                                        conversation is kept: `claude attach\n                                        <id>` opens it again, `claude --resume`\n                                        works once it is stopped\n  ultrareview [options] [target]        Run a cloud-hosted multi-agent code\n                                        review of the current branch (or a PR\n                                        number / base branch) and print the\n                                        findings\n  update|upgrade                        Check for updates and install if\n                                        available\n",
+  "args": [
+    "--print",
+    "--verbose",
+    "--output-format",
+    "stream-json",
+    "--permission-mode",
+    "dontAsk",
+    "--permission-prompts",
+    "none",
+    "--tools",
+    "Skill,Read,Write",
+    "--allowedTools",
+    "Skill(offline-fixture-skill)",
+    "--disallowedTools",
+    "Bash,Edit,WebFetch,WebSearch",
+    "--settings",
+    "/probe/settings.json",
+    "--setting-sources",
+    "project",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--model",
+    "claude-sonnet-4-6",
+    "Exercise the offline fixture skill and read its companion. This is a scripted mock inference probe, not model-quality evidence."
+  ],
+  "exit": {
+    "code": 0,
+    "signal": null
+  },
+  "timedOut": false,
+  "outputLimited": false,
+  "stdout": "{\"type\":\"system\",\"subtype\":\"ui_invalidate\",\"event\":\"ui.render\",\"uuid\":\"03956011-3d64-47bc-bc57-00555fab70eb\",\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\"}\n{\"type\":\"system\",\"subtype\":\"init\",\"cwd\":\"/workspace\",\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"tools\":[\"Read\",\"Skill\",\"Write\"],\"mcp_servers\":[],\"model\":\"claude-sonnet-4-6\",\"permissionMode\":\"dontAsk\",\"slash_commands\":[\"deep-research\",\"dataviz\",\"update-config\",\"verify\",\"debug\",\"code-review\",\"simplify\",\"batch\",\"fewer-permission-prompts\",\"doctor\",\"loop\",\"claude-api\",\"workflow-authoring\",\"run\",\"run-skill-generator\",\"plugin-authoring\",\"agents\",\"auto-mode-setup\",\"autocompact\",\"clear\",\"color\",\"compact\",\"config\",\"output-style\",\"context\",\"effort\",\"fast\",\"focus\",\"heapdump\",\"init\",\"mcp\",\"model\",\"__remote-workflow\",\"workflow-launch-exec\",\"reload-plugins\",\"reload-skills\",\"rename\",\"security-review\",\"usage\",\"insights\",\"recap\",\"goal\",\"list-agents\",\"team-onboarding\"],\"terminal_slash_commands\":[\"doctor\",\"color\",\"focus\",\"reload-plugins\"],\"apiKeySource\":\"ANTHROPIC_API_KEY\",\"claude_code_version\":\"2.1.291\",\"output_style\":\"default\",\"agents\":[\"claude\",\"Explore\",\"general-purpose\",\"Plan\",\"statusline-setup\"],\"skills\":[\"deep-research\",\"dataviz\",\"update-config\",\"verify\",\"debug\",\"code-review\",\"simplify\",\"batch\",\"fewer-permission-prompts\",\"doctor\",\"loop\",\"claude-api\",\"workflow-authoring\",\"run\",\"run-skill-generator\",\"plugin-authoring\"],\"plugins\":[{\"name\":\"cc-plugin-agents-md\",\"path\":\"builtin\",\"source\":\"cc-plugin-agents-md@builtin\"},{\"name\":\"cc-plugin-plugin-authoring\",\"path\":\"builtin\",\"source\":\"cc-plugin-plugin-authoring@builtin\"}],\"capabilities\":[\"interrupt_receipt_v1\",\"interrupt_cancel_queued_v1\",\"interrupt_send_now_v1\",\"msg_lifecycle_v1\",\"sdk_mcp_tools_list_changed\",\"sdk_mcp_manifests\",\"mcp_read_resource_v1\",\"mcp_tool_ui_meta_v1\",\"ui_surface_v1\"],\"analytics_disabled\":true,\"product_feedback_disabled\":true,\"uuid\":\"891b4acb-b8f2-4bd8-be8f-5f05749a7e2e\",\"messaging_socket_path\":\"/scratch/cc-socks/23.sock\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"per_turn_effort_active\":false,\"view_mode\":\"default\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_0\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_0\",\"name\":\"Skill\",\"input\":{\"skill\":\"offline-fixture-skill\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"ba38b8ac-afe7-407f-988a-05765a0051b4\",\"timestamp\":\"2026-10-07T18:48:26.723Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_0\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"365876e0-f2f6-417a-80aa-987385342b3d\",\"timestamp\":\"2026-10-07T18:48:26.740Z\",\"tool_use_result\":\"Error: Unknown skill: offline-fixture-skill\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_1\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_1\",\"name\":\"Read\",\"input\":{\"file_path\":\"/workspace/fixtures/companion.txt\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"cf0f18a6-c3e7-40de-ade4-4719b95eabad\",\"timestamp\":\"2026-10-07T18:48:26.778Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"tool_use_id\":\"toolu_offline_1\",\"type\":\"tool_result\",\"content\":\"1\\tSYNTHETIC_COMPANION_7b924d\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"c0fb12fc-90f4-42ad-94a4-b929c7a92062\",\"timestamp\":\"2026-10-07T18:48:26.822Z\",\"tool_use_result\":{\"type\":\"text\",\"file\":{\"filePath\":\"/workspace/fixtures/companion.txt\",\"content\":\"SYNTHETIC_COMPANION_7b924d\",\"numLines\":1,\"startLine\":1,\"totalLines\":1}}}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_2\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_2\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/answer.md\",\"content\":\"SYNTHETIC_OFFLINE_ARTIFACT_ANSWER\\n\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"99f79530-0ffb-43c3-85b5-555e4bbf3f10\",\"timestamp\":\"2026-10-07T18:48:26.869Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"tool_use_id\":\"toolu_offline_2\",\"type\":\"tool_result\",\"content\":\"File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"0f0f45db-e225-4ad3-878d-a591add56811\",\"timestamp\":\"2026-10-07T18:48:26.924Z\",\"tool_use_result\":{\"type\":\"create\",\"filePath\":\"/workspace/answer.md\",\"content\":\"SYNTHETIC_OFFLINE_ARTIFACT_ANSWER\\n\",\"structuredPatch\":[],\"originalFile\":null,\"userModified\":false}}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_3\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_3\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/message.txt\",\"content\":\"fix: write synthetic offline artifact\\n\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"8834f296-6b10-4f34-8c4d-0efaa16c4722\",\"timestamp\":\"2026-10-07T18:48:26.952Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"tool_use_id\":\"toolu_offline_3\",\"type\":\"tool_result\",\"content\":\"File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"96884551-42ea-4fb1-85bd-a183f006a832\",\"timestamp\":\"2026-10-07T18:48:27.011Z\",\"tool_use_result\":{\"type\":\"create\",\"filePath\":\"/workspace/message.txt\",\"content\":\"fix: write synthetic offline artifact\\n\",\"structuredPatch\":[],\"originalFile\":null,\"userModified\":false}}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_4\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_4\",\"name\":\"Read\",\"input\":{\"file_path\":\"/proc/self/environ\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"88658272-1a82-419b-9102-7a76af925692\",\"timestamp\":\"2026-10-07T18:48:27.027Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_4\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"483b08cd-ce98-4e85-80bf-1383abc43885\",\"timestamp\":\"2026-10-07T18:48:27.030Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_5\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_5\",\"name\":\"Read\",\"input\":{\"file_path\":\"/private/credentials\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"df2c57a4-b36e-4503-a6c2-343c6f3b5c2b\",\"timestamp\":\"2026-10-07T18:48:27.046Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_5\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"88861e0c-51f7-484f-9752-a1ec4453ad35\",\"timestamp\":\"2026-10-07T18:48:27.048Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_6\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_6\",\"name\":\"Read\",\"input\":{\"file_path\":\"/workspace/../private/credentials\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"e6926f52-ecdc-41ed-879e-e3b447ee33b7\",\"timestamp\":\"2026-10-07T18:48:27.071Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_6\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"20a3b67e-6859-40a3-b7fc-9012791d407c\",\"timestamp\":\"2026-10-07T18:48:27.107Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_7\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_7\",\"name\":\"Read\",\"input\":{\"file_path\":\"/workspace/private-sentinel.txt\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"5cfb05be-291a-4f75-a611-8a780f65fae3\",\"timestamp\":\"2026-10-07T18:48:27.165Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_7\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"6a1dd771-619f-4a22-bc4c-09546082b2eb\",\"timestamp\":\"2026-10-07T18:48:27.177Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_8\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_8\",\"name\":\"Read\",\"input\":{\"file_path\":\"/workspace/fixtures/escape.txt\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"34b63af1-2967-4929-8106-d8faff814d23\",\"timestamp\":\"2026-10-07T18:48:27.233Z\"}\n{\"type\":\"system\",\"subtype\":\"permission_denied\",\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_8\",\"decision_reason_type\":\"rule\",\"message\":\"Permission to read /workspace/fixtures/escape.txt has been denied.\",\"uuid\":\"3004d39a-1ad8-4b45-b819-b9e006bfbabb\",\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"Permission to read /workspace/fixtures/escape.txt has been denied.\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_8\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"1e92b119-56d2-4c24-84ef-5665107fd876\",\"timestamp\":\"2026-10-07T18:48:27.243Z\",\"tool_use_result\":\"Error: Permission to read /workspace/fixtures/escape.txt has been denied.\",\"tool_result_meta\":[{\"id\":\"toolu_offline_8\",\"non_execution_kind\":\"permission-rule\"}]}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_9\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_9\",\"name\":\"Bash\",\"input\":{\"command\":\"cat /private/credentials\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"04259832-e06c-454f-ae96-dba6efa7da98\",\"timestamp\":\"2026-10-07T18:48:27.279Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_9\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"48aad06c-d4d1-4473-bbe0-bc67e032d002\",\"timestamp\":\"2026-10-07T18:48:27.282Z\",\"tool_use_result\":\"Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_10\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_10\",\"name\":\"WebFetch\",\"input\":{\"url\":\"https://example.invalid\",\"prompt\":\"Fetch\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"7a99d6cd-fb84-465e-9dd6-8c563b50debe\",\"timestamp\":\"2026-10-07T18:48:27.337Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_10\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"202855e6-8367-4903-81ae-9e7964eddd29\",\"timestamp\":\"2026-10-07T18:48:27.343Z\",\"tool_use_result\":\"Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_11\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_11\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/fixtures/forbidden.txt\",\"content\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"bfab2f01-7c1f-4eb2-9a7d-c866a628b58e\",\"timestamp\":\"2026-10-07T18:48:27.434Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_11\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"4e99a750-b611-4b0c-9de2-622c92048a75\",\"timestamp\":\"2026-10-07T18:48:27.437Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_12\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_12\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/not-selected.md\",\"content\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"81b83e97-3b0f-40a2-98ba-f23f5451606a\",\"timestamp\":\"2026-10-07T18:48:27.470Z\"}\n{\"type\":\"system\",\"subtype\":\"permission_denied\",\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_12\",\"decision_reason_type\":\"mode\",\"message\":\"Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\",\"uuid\":\"57863857-94b3-48bb-8e40-bbffdf156c2f\",\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_12\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"e3585bb4-7f2f-47d5-b4c6-f01b3f4a90aa\",\"timestamp\":\"2026-10-07T18:48:27.511Z\",\"tool_use_result\":\"Error: Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\",\"tool_result_meta\":[{\"id\":\"toolu_offline_12\",\"non_execution_kind\":\"permission-rule\"}]}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_13\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_13\",\"name\":\"Write\",\"input\":{\"file_path\":\"/home/node/.claude/forbidden.json\",\"content\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"f9f3a846-b8a6-45b4-8415-e1d5cc64ab32\",\"timestamp\":\"2026-10-07T18:48:27.544Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_13\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"94bf3a0e-ce7a-4121-bb4e-0c1d531feec1\",\"timestamp\":\"2026-10-07T18:48:27.547Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_14\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_14\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/.claude/settings.json\",\"content\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"b0b01f90-c3d7-43bf-9529-9b70a5de217f\",\"timestamp\":\"2026-10-07T18:48:27.611Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_14\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"e2095e94-8932-40b1-9ddc-70c30caef30f\",\"timestamp\":\"2026-10-07T18:48:27.614Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_15\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_15\",\"name\":\"Write\",\"input\":{\"file_path\":\"/workspace/fixtures/companion.txt\",\"content\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"787dc76e-36cc-4aa1-9707-1e759bba88aa\",\"timestamp\":\"2026-10-07T18:48:27.653Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_15\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"7fc520f2-6837-45ba-9640-16400349ea93\",\"timestamp\":\"2026-10-07T18:48:27.709Z\",\"tool_use_result\":\"Error: File is in a directory that is denied by your permission settings.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_16\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"tool_use\",\"id\":\"toolu_offline_16\",\"name\":\"Edit\",\"input\":{\"file_path\":\"/workspace/fixtures/companion.txt\",\"old_string\":\"SYNTHETIC_COMPANION_7b924d\",\"new_string\":\"forbidden\"}}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"85959307-9bb8-408d-9d07-f20ff5305475\",\"timestamp\":\"2026-10-07T18:48:27.733Z\"}\n{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"<tool_use_error>Error: No such tool available: Edit. Edit is disabled for this session, in subagents as well as here.</tool_use_error>\",\"is_error\":true,\"tool_use_id\":\"toolu_offline_16\"}]},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"61137e25-d754-4129-9ae2-b76523724552\",\"timestamp\":\"2026-10-07T18:48:27.736Z\",\"tool_use_result\":\"Error: No such tool available: Edit. Edit is disabled for this session, in subagents as well as here.\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"msg_offline_17\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"claude-sonnet-4-6\",\"content\":[{\"type\":\"text\",\"text\":\"MOCK_INFERENCE_COMPLETE_NOT_MODEL_QUALITY\"}],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"uuid\":\"67d01c1c-b9e1-4e0b-82f2-957dc250a6dd\",\"timestamp\":\"2026-10-07T18:48:27.793Z\"}\n{\"duration_api_ms\":581,\"stop_reason\":\"end_turn\",\"session_id\":\"5cb1fae7-7a04-48e6-a290-001b2396a0bf\",\"total_cost_usd\":0.000324,\"usage\":{\"input_tokens\":18,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":18,\"output_tokens_details\":{\"thinking_tokens\":0},\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\",\"fallback_credit\":null},\"modelUsage\":{\"claude-sonnet-4-6\":{\"inputTokens\":18,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000324,\"contextWindow\":200000,\"maxOutputTokens\":32000,\"thinkingTokens\":0,\"canonicalModel\":\"claude-sonnet-4-6\",\"provider\":\"firstParty\",\"costBasis\":\"list\"}},\"permission_denials\":[{\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_4\",\"tool_input\":{\"file_path\":\"/proc/self/environ\"}},{\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_5\",\"tool_input\":{\"file_path\":\"/private/credentials\"}},{\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_6\",\"tool_input\":{\"file_path\":\"/private/credentials\"}},{\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_7\",\"tool_input\":{\"file_path\":\"/workspace/private-sentinel.txt\"}},{\"tool_name\":\"Read\",\"tool_use_id\":\"toolu_offline_8\",\"tool_input\":{\"file_path\":\"/workspace/fixtures/escape.txt\"}},{\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_11\",\"tool_input\":{\"file_path\":\"/workspace/fixtures/forbidden.txt\",\"content\":\"forbidden\"}},{\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_12\",\"tool_input\":{\"file_path\":\"/workspace/not-selected.md\",\"content\":\"forbidden\"}},{\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_13\",\"tool_input\":{\"file_path\":\"/home/node/.claude/forbidden.json\",\"content\":\"forbidden\"}},{\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_14\",\"tool_input\":{\"file_path\":\"/workspace/.claude/settings.json\",\"content\":\"forbidden\"}},{\"tool_name\":\"Write\",\"tool_use_id\":\"toolu_offline_15\",\"tool_input\":{\"file_path\":\"/workspace/fixtures/companion.txt\",\"content\":\"forbidden\"}}],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":false,\"num_turns\":18,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"MOCK_INFERENCE_COMPLETE_NOT_MODEL_QUALITY\",\"ttft_ms\":208,\"type\":\"result\",\"duration_ms\":1293,\"uuid\":\"b2f3f125-9bee-499e-a70e-7ea8390b078e\",\"ttft_stream_ms\":205,\"time_to_request_ms\":173,\"first_content_frame_ms\":206,\"queued_turn_count\":0,\"result_index\":0}\n",
+  "stderr": "",
+  "wire": [
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": []
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_12",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_12"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_13",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_12"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_13"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_14",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_12"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_13"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_14"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_15",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/messages?beta=true",
+      "tools": [
+        "Read",
+        "Skill",
+        "Write"
+      ],
+      "toolResults": [
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Unknown skill: offline-fixture-skill</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_0"
+        },
+        {
+          "tool_use_id": "toolu_offline_1",
+          "type": "tool_result",
+          "content": "1\tSYNTHETIC_COMPANION_7b924d\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_2",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/answer.md (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "tool_use_id": "toolu_offline_3",
+          "type": "tool_result",
+          "content": "File created successfully at: /workspace/message.txt (file state is current in your context — no need to Read it back)\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_4"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_5"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_6"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_7"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to read /workspace/fixtures/escape.txt has been denied.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_8"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_9"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_10"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_11"
+        },
+        {
+          "type": "tool_result",
+          "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed.\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_12"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_13"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_14"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_15"
+        },
+        {
+          "type": "tool_result",
+          "content": "<tool_use_error>Error: No such tool available: Edit. Edit is disabled for this session, in subagents as well as here.</tool_use_error>\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+          "is_error": true,
+          "tool_use_id": "toolu_offline_16",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ]
+    }
+  ],
+  "rawCanaryObserved": false,
+  "fixtureChanged": false,
+  "forbiddenWriteExists": false,
+  "image": "sha256:69b30c9aab4566d5dd1a84a7aedae9785c51d46ec6be40007c7ecb7c9e56be35",
+  "imageSpec": {
+    "id": "sha256:69b30c9aab4566d5dd1a84a7aedae9785c51d46ec6be40007c7ecb7c9e56be35",
+    "repoDigests": [
+      "skill-eval-claude-e8cbe12a-1a04-43ac-a3b7-f1fa67ab0d60@sha256:69b30c9aab4566d5dd1a84a7aedae9785c51d46ec6be40007c7ecb7c9e56be35"
+    ],
+    "baseImage": "node@sha256:4f77a690f2f8946ab16fe1e791a3ac0667ae1c3575c3e4d0d4589e9ed5bfaf3d",
+    "os": "linux",
+    "architecture": "amd64",
+    "nodeVersion": "22.22.1",
+    "engineVersion": "29.7.2"
+  },
+  "boundary": {
+    "network": "none",
+    "readOnly": true,
+    "user": "1000:1000",
+    "mounts": [],
+    "memory": 805306368,
+    "pids": 64,
+    "capDrop": [
+      "ALL"
+    ],
+    "securityOpt": [
+      "no-new-privileges"
+    ],
+    "tmpfs": {
+      "/home/node": "rw,noexec,nosuid,size=16m,uid=1000,gid=1000",
+      "/private": "rw,noexec,nosuid,size=4m,uid=1000,gid=1000",
+      "/probe": "rw,noexec,nosuid,size=4m,uid=1000,gid=1000",
+      "/scratch": "rw,noexec,nosuid,size=32m,uid=1000,gid=1000",
+      "/workspace": "rw,noexec,nosuid,size=16m,uid=1000,gid=1000"
+    }
+  },
+  "workspace": {
+    "cwd": "/workspace",
+    "home": "/home/node",
+    "fresh": true,
+    "containerId": "26423f433eba6171ff06aecb1c124e3741057fe3065be4131824ec7cd11d1b63"
+  },
+  "cleanup": {
+    "scoped": true,
+    "containersRemoved": true,
+    "imageTagRemoved": true,
+    "hostConfigRemoved": true
+  }
+}

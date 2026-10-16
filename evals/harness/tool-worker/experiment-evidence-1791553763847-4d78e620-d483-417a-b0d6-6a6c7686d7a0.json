@@ -1,0 +1,873 @@
+{
+  "experiment": "new-credential-free-socket-worker",
+  "startedAt": "2026-10-09T13:49:05.642Z",
+  "scope": "actual-Docker-worker-and-synthetic-Node-peers-not-native-client-auth-or-Skill",
+  "evidenceScope": "worker-filesystem-only",
+  "authenticationVerified": false,
+  "liveAccepted": false,
+  "nativeDiscoveryVerified": false,
+  "initialWorker": {
+    "protocol": "eval-filesystem-tools@1",
+    "task": {
+      "invocationId": "worker-2db276ea-a7d6-4c96-89a6-c9968e6405f2",
+      "caseId": "new-synthetic-worker-custody",
+      "client": "claude-code",
+      "arm": "candidate",
+      "repeat": 1
+    },
+    "taskHash": "36977f540ecc54a2d0343b1228068c6c597dbf84a6ca31d7c830ce43cd1cc106",
+    "sourceHash": "6ebb1ae23d6294e9bf4397a37a051f24207f4efb9fbfecd558a922518ba53eb5",
+    "workerProgramHash": "521090f7f0b1ac27e032a4df55724836d57b9b4f32b2cf3cf76aee53742db032",
+    "shimHash": "10deea2bde97f31c3375ea25d9bbc70f1492e1c3a73dfe63e6d2349a5d3c01f2",
+    "runtimeVersion": "22.22.1",
+    "publicFiles": [
+      {
+        "path": "skills/synthetic-worker/SKILL.md",
+        "bytes": 167,
+        "sha256": "06d1d5bc3c18f843e772fbb15e4ba2ff9157c8e7d4ca4685eaaf0fe06fc72579"
+      },
+      {
+        "path": "inputs/public.txt",
+        "bytes": 65,
+        "sha256": "151cd49b76d3c96dc231c13a8c41a982ee06ed83f0d4ff4b795eabdbf910a96b"
+      }
+    ],
+    "artifactTargets": [
+      "artifacts/report.txt"
+    ],
+    "limits": {
+      "files": 32,
+      "targets": 8,
+      "fileBytes": 16384,
+      "sourceBytes": 131072,
+      "artifactBytes": 131072,
+      "requests": 64,
+      "requestBytes": 32768,
+      "totalRequestBytes": 262144,
+      "outputBytes": 524288,
+      "timeoutMs": 60000
+    },
+    "confinement": {
+      "network": "none",
+      "rootfsReadOnly": true,
+      "uid": 10002,
+      "gid": 10002,
+      "supplementalGid": 21000,
+      "pidMode": "private-default",
+      "userNamespaceMode": "daemon-default",
+      "capDrop": [
+        "ALL"
+      ],
+      "noNewPrivileges": true,
+      "bindMounts": [],
+      "socketVolumeOnly": true,
+      "tmpfs": {
+        "/workspace": "rw,noexec,nosuid,nodev,size=2m,mode=700,uid=10002,gid=10002",
+        "/scratch": "rw,noexec,nosuid,nodev,size=1m,mode=700,uid=10002,gid=10002"
+      },
+      "logging": "none",
+      "memoryBytes": 134217728,
+      "pidsLimit": 32
+    },
+    "kernel": {
+      "runtimeVersion": "22.22.1",
+      "uid": 10002,
+      "gid": 10002,
+      "supplementaryGroups": [
+        10002,
+        21000
+      ],
+      "namespaces": {
+        "pid": "7e1420bf5cc183f8630959d38ee2d08fc1a03693d1a6f29f8159e0da40ca451f",
+        "mnt": "f2fe9c6c4bc4bfe7aa692c751a02ac09434e1a23a230a1b41e619dcb74b2d2b5",
+        "user": "fbfaac399c8fe723cda0c8e2d058b326a85899efe86987442a903a07bef02015",
+        "net": "60cc099b8465802b496a81ed95ee820a406e7611d249ff65e436843c220066e7",
+        "ipc": "0b1f40476b80dd8308b08484f44bbdfb009c4247ae69775d79f869154c3df442"
+      },
+      "procStatus": {
+        "Uid": "10002\t10002\t10002\t10002",
+        "Gid": "10002\t10002\t10002\t10002",
+        "Groups": "10002 21000",
+        "CapEff": "0000000000000000",
+        "NoNewPrivs": "1",
+        "NSpid": "7"
+      },
+      "environmentNames": [
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ],
+      "interfaces": [
+        "lo"
+      ],
+      "checks": {
+        "/var/run/docker.sock": "ENOENT",
+        "/run/docker.sock": "ENOENT",
+        "/root/.config": "EACCES",
+        "/home/node/.config": "ENOENT",
+        "/synthetic-credentials/credential-canary.txt": "ENOENT",
+        "readOnlyRootWrite": "EROFS"
+      },
+      "mounts": [
+        {
+          "target": "/",
+          "options": [
+            "ro",
+            "relatime"
+          ],
+          "filesystem": "overlay"
+        },
+        {
+          "target": "/scratch",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        },
+        {
+          "target": "/workspace",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        },
+        {
+          "target": "/tool-rpc",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        }
+      ],
+      "mountinfoHash": "29e74daa17c1bfa884394a320cef7e3740424849e8416d71d4720b0b6bea8db4",
+      "socket": {
+        "uid": 10002,
+        "gid": 21000,
+        "mode": "0660",
+        "directoryMode": "0710",
+        "entries": [
+          "worker.sock"
+        ]
+      }
+    },
+    "stats": {
+      "requests": 0,
+      "requestBytes": 0,
+      "outputBytes": 0,
+      "writtenBytes": 0
+    },
+    "events": [],
+    "evidenceScope": "worker-filesystem-only",
+    "authenticationVerified": false,
+    "liveAccepted": false,
+    "nativeDiscoveryVerified": false,
+    "diagnosticHash": "3185b78eaf48752ca6f9980cef2b3a36acd1229ae3ee08914060fbd47b14705b"
+  },
+  "originalAuthorityDenials": [
+    {
+      "label": "copied-worker",
+      "scope": "host-original-handle-authority",
+      "code": "ORIGINAL_WORKER_SCOPE_REQUIRED"
+    },
+    {
+      "label": "copied-task",
+      "scope": "host-original-handle-authority",
+      "code": "ORIGINAL_TASK_REQUIRED"
+    },
+    {
+      "label": "copied-lease",
+      "scope": "host-original-handle-authority",
+      "code": "ORIGINAL_TRANSPORT_LEASE_REQUIRED"
+    },
+    {
+      "label": "copied-binding",
+      "scope": "host-original-handle-authority",
+      "code": "ORIGINAL_TRANSPORT_BINDING_REQUIRED"
+    },
+    {
+      "label": "cross-task",
+      "scope": "host-original-handle-authority",
+      "code": "ORIGINAL_WORKER_SCOPE_REQUIRED"
+    }
+  ],
+  "socketPermissionDenial": {
+    "scope": "kernel-socket-permissions",
+    "outcome": "EACCES",
+    "uid": 1000,
+    "gid": 1000,
+    "groups": [
+      1000
+    ],
+    "cleanup": {
+      "exactOwnedPeerRemoved": true,
+      "ownedDirectoryRemoved": true
+    }
+  },
+  "peers": [
+    {
+      "scope": "credential-free-node-peer-only",
+      "kernel": {
+        "uid": 1000,
+        "gid": 1000,
+        "groups": [
+          1000,
+          21000
+        ],
+        "namespaces": {
+          "pid": "b20b7ab1af7645a616a7430c0a38a5f7ebe44e8674e8ad3336469d59af1123d8",
+          "mnt": "48f3ae262243dccfe31f908eb524151e53865ea3a52dccb160a263971c25a514",
+          "user": "fbfaac399c8fe723cda0c8e2d058b326a85899efe86987442a903a07bef02015",
+          "net": "f3bc289fb8e5577b9114ca7a4593d0efa2bf992cace98f075215ee1e0db1091a",
+          "ipc": "b86431349a82ea5ef4024e4fa99279adf9a145e1314ca5eb1c58f1abbbd111b6"
+        },
+        "environmentNames": [
+          "LANG",
+          "PATH",
+          "SYNTHETIC_CREDENTIAL_CANARY",
+          "TMPDIR"
+        ]
+      },
+      "canary": {
+        "fileHash": "1c1c13635265c2bf1b89ffb2fc8c6869fbd00e9b7f78bed45af231841b7cea83",
+        "environmentHash": "1c1c13635265c2bf1b89ffb2fc8c6869fbd00e9b7f78bed45af231841b7cea83",
+        "procEnvironmentObserved": true
+      },
+      "positives": [
+        {
+          "operation": "public-skill-bytes-read",
+          "sha256": "06d1d5bc3c18f843e772fbb15e4ba2ff9157c8e7d4ca4685eaaf0fe06fc72579"
+        },
+        {
+          "operation": "public-input-bytes-read",
+          "sha256": "151cd49b76d3c96dc231c13a8c41a982ee06ed83f0d4ff4b795eabdbf910a96b"
+        },
+        {
+          "operation": "artifact-write-and-on-disk-readback",
+          "sha256": "1a586431b3831815dd50c4715339360ebc87c20df9dad329570f835abda817e6"
+        }
+      ],
+      "kernelDenials": [
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "socket-volume-listing",
+          "outcome": "EACCES"
+        },
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "socket-volume-write",
+          "outcome": "EROFS"
+        },
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "worker-workspace-visibility",
+          "outcome": "ENOENT"
+        }
+      ],
+      "denials": [
+        {
+          "label": "traversal",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "absolute-host",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "windows-host",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "undeclared-public",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "UNDECLARED_PUBLIC",
+          "diagnosticHash": "6c43415a568cb8a4419b24d22e20d7ab70c27904b52722a8f97e11bd30143422"
+        },
+        {
+          "label": "case-alias",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "UNDECLARED_PUBLIC",
+          "diagnosticHash": "6c43415a568cb8a4419b24d22e20d7ab70c27904b52722a8f97e11bd30143422"
+        },
+        {
+          "label": "private-grading-namespace",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "credential-namespace",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "peer-synthetic-credential-file",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "proc-environment",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "foreign-proc-root",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "docker-socket",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "home-import",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "config-namespace",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "client-config-file",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "undeclared-target",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "UNDECLARED_ARTIFACT",
+          "diagnosticHash": "7f79087ad768229515343ecc1e236f5f10a6b5bc51e8b9b1674f7c35a4b4ea3e"
+        },
+        {
+          "label": "public-source-write",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "artifact-traversal",
+          "scope": "actual-worker-tool-protocol",
+          "outcome": "INVALID_PATH",
+          "diagnosticHash": "bbcf04eaa8a9b9be8d23194f095b3026ad168928bbbf00bba01952a62afebacd"
+        },
+        {
+          "label": "symlink-import",
+          "scope": "fixed-mcp-shim-schema",
+          "outcome": -32602
+        },
+        {
+          "label": "hardlink-import",
+          "scope": "fixed-mcp-shim-schema",
+          "outcome": -32602
+        },
+        {
+          "label": "private-expected-metadata",
+          "scope": "fixed-mcp-shim-schema",
+          "outcome": -32602
+        },
+        {
+          "label": "environment-override",
+          "scope": "fixed-mcp-shim-schema",
+          "outcome": -32602
+        },
+        {
+          "label": "shell-tool",
+          "scope": "fixed-mcp-shim-schema",
+          "outcome": -32601
+        }
+      ],
+      "authenticationVerified": false,
+      "nativeDiscoveryVerified": false,
+      "liveAccepted": false,
+      "cleanup": {
+        "exactOwnedPeerRemoved": true,
+        "ownedDirectoryRemoved": true
+      }
+    },
+    {
+      "scope": "credential-free-node-peer-only",
+      "kernel": {
+        "uid": 10001,
+        "gid": 10001,
+        "groups": [
+          10001,
+          21000
+        ],
+        "namespaces": {
+          "pid": "b20b7ab1af7645a616a7430c0a38a5f7ebe44e8674e8ad3336469d59af1123d8",
+          "mnt": "48f3ae262243dccfe31f908eb524151e53865ea3a52dccb160a263971c25a514",
+          "user": "fbfaac399c8fe723cda0c8e2d058b326a85899efe86987442a903a07bef02015",
+          "net": "f3bc289fb8e5577b9114ca7a4593d0efa2bf992cace98f075215ee1e0db1091a",
+          "ipc": "b86431349a82ea5ef4024e4fa99279adf9a145e1314ca5eb1c58f1abbbd111b6"
+        },
+        "environmentNames": [
+          "LANG",
+          "PATH",
+          "SYNTHETIC_CREDENTIAL_CANARY",
+          "TMPDIR"
+        ]
+      },
+      "canary": {
+        "fileHash": "f93f9c179ca7ad751533384af6ce0929b62dd1cdac9cd550800c29d4979b36f5",
+        "environmentHash": "f93f9c179ca7ad751533384af6ce0929b62dd1cdac9cd550800c29d4979b36f5",
+        "procEnvironmentObserved": true
+      },
+      "positives": [
+        {
+          "operation": "public-skill-bytes-read",
+          "sha256": "06d1d5bc3c18f843e772fbb15e4ba2ff9157c8e7d4ca4685eaaf0fe06fc72579"
+        },
+        {
+          "operation": "public-input-bytes-read",
+          "sha256": "151cd49b76d3c96dc231c13a8c41a982ee06ed83f0d4ff4b795eabdbf910a96b"
+        },
+        {
+          "operation": "artifact-write-and-on-disk-readback",
+          "sha256": "1a586431b3831815dd50c4715339360ebc87c20df9dad329570f835abda817e6"
+        }
+      ],
+      "kernelDenials": [
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "socket-volume-listing",
+          "outcome": "EACCES"
+        },
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "socket-volume-write",
+          "outcome": "EROFS"
+        },
+        {
+          "scope": "peer-kernel-filesystem",
+          "label": "worker-workspace-visibility",
+          "outcome": "ENOENT"
+        }
+      ],
+      "denials": [],
+      "authenticationVerified": false,
+      "nativeDiscoveryVerified": false,
+      "liveAccepted": false,
+      "cleanup": {
+        "exactOwnedPeerRemoved": true,
+        "ownedDirectoryRemoved": true
+      }
+    }
+  ],
+  "capture": {
+    "captureHash": "abb14b858ad272488dbcfeb6a2341125d67f8beee58bccf5d9ab812c44ad0d22",
+    "artifacts": [
+      {
+        "path": "artifacts/report.txt",
+        "bytes": 61,
+        "sha256": "1a586431b3831815dd50c4715339360ebc87c20df9dad329570f835abda817e6"
+      }
+    ],
+    "missing": [],
+    "actualDiskBytesRead": true,
+    "gradingPerformed": false
+  },
+  "finalWorker": {
+    "protocol": "eval-filesystem-tools@1",
+    "task": {
+      "invocationId": "worker-2db276ea-a7d6-4c96-89a6-c9968e6405f2",
+      "caseId": "new-synthetic-worker-custody",
+      "client": "claude-code",
+      "arm": "candidate",
+      "repeat": 1
+    },
+    "taskHash": "36977f540ecc54a2d0343b1228068c6c597dbf84a6ca31d7c830ce43cd1cc106",
+    "sourceHash": "6ebb1ae23d6294e9bf4397a37a051f24207f4efb9fbfecd558a922518ba53eb5",
+    "workerProgramHash": "521090f7f0b1ac27e032a4df55724836d57b9b4f32b2cf3cf76aee53742db032",
+    "shimHash": "10deea2bde97f31c3375ea25d9bbc70f1492e1c3a73dfe63e6d2349a5d3c01f2",
+    "runtimeVersion": "22.22.1",
+    "publicFiles": [
+      {
+        "path": "skills/synthetic-worker/SKILL.md",
+        "bytes": 167,
+        "sha256": "06d1d5bc3c18f843e772fbb15e4ba2ff9157c8e7d4ca4685eaaf0fe06fc72579"
+      },
+      {
+        "path": "inputs/public.txt",
+        "bytes": 65,
+        "sha256": "151cd49b76d3c96dc231c13a8c41a982ee06ed83f0d4ff4b795eabdbf910a96b"
+      }
+    ],
+    "artifactTargets": [
+      "artifacts/report.txt"
+    ],
+    "limits": {
+      "files": 32,
+      "targets": 8,
+      "fileBytes": 16384,
+      "sourceBytes": 131072,
+      "artifactBytes": 131072,
+      "requests": 64,
+      "requestBytes": 32768,
+      "totalRequestBytes": 262144,
+      "outputBytes": 524288,
+      "timeoutMs": 60000
+    },
+    "confinement": {
+      "network": "none",
+      "rootfsReadOnly": true,
+      "uid": 10002,
+      "gid": 10002,
+      "supplementalGid": 21000,
+      "pidMode": "private-default",
+      "userNamespaceMode": "daemon-default",
+      "capDrop": [
+        "ALL"
+      ],
+      "noNewPrivileges": true,
+      "bindMounts": [],
+      "socketVolumeOnly": true,
+      "tmpfs": {
+        "/workspace": "rw,noexec,nosuid,nodev,size=2m,mode=700,uid=10002,gid=10002",
+        "/scratch": "rw,noexec,nosuid,nodev,size=1m,mode=700,uid=10002,gid=10002"
+      },
+      "logging": "none",
+      "memoryBytes": 134217728,
+      "pidsLimit": 32
+    },
+    "kernel": {
+      "runtimeVersion": "22.22.1",
+      "uid": 10002,
+      "gid": 10002,
+      "supplementaryGroups": [
+        10002,
+        21000
+      ],
+      "namespaces": {
+        "pid": "7e1420bf5cc183f8630959d38ee2d08fc1a03693d1a6f29f8159e0da40ca451f",
+        "mnt": "f2fe9c6c4bc4bfe7aa692c751a02ac09434e1a23a230a1b41e619dcb74b2d2b5",
+        "user": "fbfaac399c8fe723cda0c8e2d058b326a85899efe86987442a903a07bef02015",
+        "net": "60cc099b8465802b496a81ed95ee820a406e7611d249ff65e436843c220066e7",
+        "ipc": "0b1f40476b80dd8308b08484f44bbdfb009c4247ae69775d79f869154c3df442"
+      },
+      "procStatus": {
+        "Uid": "10002\t10002\t10002\t10002",
+        "Gid": "10002\t10002\t10002\t10002",
+        "Groups": "10002 21000",
+        "CapEff": "0000000000000000",
+        "NoNewPrivs": "1",
+        "NSpid": "7"
+      },
+      "environmentNames": [
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ],
+      "interfaces": [
+        "lo"
+      ],
+      "checks": {
+        "/var/run/docker.sock": "ENOENT",
+        "/run/docker.sock": "ENOENT",
+        "/root/.config": "EACCES",
+        "/home/node/.config": "ENOENT",
+        "/synthetic-credentials/credential-canary.txt": "ENOENT",
+        "readOnlyRootWrite": "EROFS"
+      },
+      "mounts": [
+        {
+          "target": "/",
+          "options": [
+            "ro",
+            "relatime"
+          ],
+          "filesystem": "overlay"
+        },
+        {
+          "target": "/scratch",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        },
+        {
+          "target": "/workspace",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        },
+        {
+          "target": "/tool-rpc",
+          "options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime"
+          ],
+          "filesystem": "tmpfs"
+        }
+      ],
+      "mountinfoHash": "29e74daa17c1bfa884394a320cef7e3740424849e8416d71d4720b0b6bea8db4",
+      "socket": {
+        "uid": 10002,
+        "gid": 21000,
+        "mode": "0660",
+        "directoryMode": "0710",
+        "entries": [
+          "worker.sock"
+        ]
+      }
+    },
+    "stats": {
+      "requests": 26,
+      "requestBytes": 1731,
+      "outputBytes": 7759,
+      "writtenBytes": 122
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "requestHash": "aa81160295872dbf64e8cee89c93e19de6746e727028f6ca2253c89b289496b4",
+        "responseHash": "ad88abc4e7939310fdf7d6b37f6b26c6f13308d3d301fe309fc46fcb57adc7c2",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 2,
+        "requestHash": "d23ee150f6a1995440ca875924220f702a228782b7e99bc9da05f45f94dbc239",
+        "responseHash": "2c5351af7ec020a38ec74dd4d4b7fbc85300f15f4836cdda08653a71d993207c",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 3,
+        "requestHash": "604c6e04024de7849a24420365070f469ed8427395fd8f7ad8806e4ff1a748bd",
+        "responseHash": "8f256b2f2dad25f8be30762fb090cb6c43754e26cfd96cae76faadd9612eb1e6",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 4,
+        "requestHash": "45086dd9d97efbab210ba1956e04608bb8155c8a0f6f8b7b3d69cb1188bb0633",
+        "responseHash": "8f256b2f2dad25f8be30762fb090cb6c43754e26cfd96cae76faadd9612eb1e6",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 5,
+        "requestHash": "d69ad819bc03a9b62811a7fb985a36f160f7d059f54f0fcded342bb59d682f81",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 6,
+        "requestHash": "6891b1376349d378a7218dabda7d86b5df8dde9af4bfa8fab62b65915bb6f646",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 7,
+        "requestHash": "2cc085dffd44d5fc99e7a02d00028914404f0afa9f22b40a0e1d3681da9e794c",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 8,
+        "requestHash": "b602015c1dd8d95f611a25879d675b4be538347291c606f384a63612589b6dc8",
+        "responseHash": "ac3f29ede8b25dfaa7640e975aab9a7bc376cd265608e7955ce8f8643ae65fe5",
+        "outcome": "UNDECLARED_PUBLIC"
+      },
+      {
+        "sequence": 9,
+        "requestHash": "b79a1407abd4a1836db800e763cd7589584b1db89ce9e11d6cc7ffde0dfbf51c",
+        "responseHash": "ac3f29ede8b25dfaa7640e975aab9a7bc376cd265608e7955ce8f8643ae65fe5",
+        "outcome": "UNDECLARED_PUBLIC"
+      },
+      {
+        "sequence": 10,
+        "requestHash": "84a69bbebc0a77b93f50cfdc6059accfd0cf7c6af0b50ea6168ad87f2240916c",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 11,
+        "requestHash": "04a12fae77f7212ec4085e3e10568552dabb074d90b2f9cc21cf67d90eff7b1e",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 12,
+        "requestHash": "6246d014002ef58a3336d3ff0dda64b8a44d30ca2e7734e87f7a40c3e9e89b63",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 13,
+        "requestHash": "2b6620d7eda5fc7139a095b00d94fecacc73aa3e8500f2880621daec12b8f1bc",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 14,
+        "requestHash": "4629ee2e34dd832f58e07fad692c5198e54ca288104906bddfd142546102201f",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 15,
+        "requestHash": "d93dd8c6a34496fbfec32838e86a6d2ec6fc4912198c7578cd1785db1a64d704",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 16,
+        "requestHash": "8b737122cb49b161e2410994df8666b989a5a694c2d1f9c997b8a780f927874b",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 17,
+        "requestHash": "6f0e2434e3eef2702c1748aba35a101ed55e32ce402199dec27996a701587135",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 18,
+        "requestHash": "b22263e559267096cfe2a53fc2c5aedfef191193673a697cb7e29e4be526a5c0",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 19,
+        "requestHash": "5b83f0b9a1e3df28b70dcb60cc5f2de3434ebd16e6df3ab1869658d77252d316",
+        "responseHash": "41c6bc4de6f6ab0eac00bf475720feef411ff1bcfb8713007895751e95779756",
+        "outcome": "UNDECLARED_ARTIFACT"
+      },
+      {
+        "sequence": 20,
+        "requestHash": "89efb68fde9750646d4c363a4528b765e2a48f238df787bb39ca61cc5785d6f5",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 21,
+        "requestHash": "2ebc1097b9a4dfae026cb9636fbba7bb7919938b758ee031dd090c877a309290",
+        "responseHash": "a63a8db15f1fef5ae40cd05419d7700f9d914d4f99568e861de8d7b0895244a1",
+        "outcome": "INVALID_PATH"
+      },
+      {
+        "sequence": 22,
+        "requestHash": "aa81160295872dbf64e8cee89c93e19de6746e727028f6ca2253c89b289496b4",
+        "responseHash": "ad88abc4e7939310fdf7d6b37f6b26c6f13308d3d301fe309fc46fcb57adc7c2",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 23,
+        "requestHash": "d23ee150f6a1995440ca875924220f702a228782b7e99bc9da05f45f94dbc239",
+        "responseHash": "2c5351af7ec020a38ec74dd4d4b7fbc85300f15f4836cdda08653a71d993207c",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 24,
+        "requestHash": "604c6e04024de7849a24420365070f469ed8427395fd8f7ad8806e4ff1a748bd",
+        "responseHash": "8f256b2f2dad25f8be30762fb090cb6c43754e26cfd96cae76faadd9612eb1e6",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 25,
+        "requestHash": "45086dd9d97efbab210ba1956e04608bb8155c8a0f6f8b7b3d69cb1188bb0633",
+        "responseHash": "8f256b2f2dad25f8be30762fb090cb6c43754e26cfd96cae76faadd9612eb1e6",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      },
+      {
+        "sequence": 26,
+        "requestHash": "45086dd9d97efbab210ba1956e04608bb8155c8a0f6f8b7b3d69cb1188bb0633",
+        "responseHash": "8f256b2f2dad25f8be30762fb090cb6c43754e26cfd96cae76faadd9612eb1e6",
+        "outcome": "FILESYSTEM_OPERATION_COMPLETE"
+      }
+    ],
+    "evidenceScope": "worker-filesystem-only",
+    "authenticationVerified": false,
+    "liveAccepted": false,
+    "nativeDiscoveryVerified": false,
+    "diagnosticHash": "cf153c996927f00509c1f6b9564f1e10416605ba1f4e6ef8d491d9ba2e09e410"
+  },
+  "kernelComparison": [
+    {
+      "peerUid": 1000,
+      "peerGid": 1000,
+      "pidNamespaceSeparated": true,
+      "mountNamespaceSeparated": true,
+      "networkNamespaceSeparated": true,
+      "userNamespaceSeparated": false,
+      "distinctUnprivilegedUid": true,
+      "workerDidNotInheritSyntheticCanaryEnvironment": true,
+      "workerSyntheticCredentialPathOutcome": "ENOENT"
+    },
+    {
+      "peerUid": 10001,
+      "peerGid": 10001,
+      "pidNamespaceSeparated": true,
+      "mountNamespaceSeparated": true,
+      "networkNamespaceSeparated": true,
+      "userNamespaceSeparated": false,
+      "distinctUnprivilegedUid": true,
+      "workerDidNotInheritSyntheticCanaryEnvironment": true,
+      "workerSyntheticCredentialPathOutcome": "ENOENT"
+    }
+  ],
+  "status": "completed-worker-only-experiment",
+  "cleanup": {
+    "containerRemoved": true,
+    "volumeRemoved": true,
+    "ownedDirectoryRemoved": true,
+    "attachment": {
+      "forced": true,
+      "processClosed": true,
+      "outputBytes": 10702
+    },
+    "exactOwnedCleanup": true,
+    "evidenceScope": "worker-filesystem-only",
+    "authenticationVerified": false,
+    "liveAccepted": false,
+    "nativeDiscoveryVerified": false
+  },
+  "finishedAt": "2026-10-09T13:49:23.847Z",
+  "remainingBlockers": [
+    "Native original candidate/builders must consume and recheck the original transport lease/binding, not copied mount/command fields.",
+    "Native built-in arbitrary file/shell tools and ambient MCP/configuration must be disabled; only this explicit fixed MCP stdio shim may be enabled.",
+    "Native issuer must verify the selected candidate actual UID/GID (1000 or10001), preserve it, and add supplemental GID21000; this module does not verify a caller identity assertion.",
+    "Native consumer lifetime/removal must be joined to worker cancellation before exact socket-volume cleanup.",
+    "No native client/catalog/model/auth/Skill event was observed. MCP public-byte reading is not native Skill loading.",
+    "Docker daemon-default user namespaces may be shared; distinct UID and PID/mount namespaces are measured separately."
+  ],
+  "evidenceHash": "5f3c2ec5a60f26b9be89a99c48b16e7fa4e986563b892c08d95eab03a615c414"
+}

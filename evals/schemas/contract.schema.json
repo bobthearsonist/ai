@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai.local/evals/contract-v2",
+  "definitions": {
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "text": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?![/\\\\])(?![A-Za-z]:)(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+$" },
+    "client": { "enum": ["claude-code", "opencode", "copilot"] },
+    "clients": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/client" } },
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "class", "type", "target", "expected"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "class": { "enum": ["correctness", "safety"] },
+        "type": { "enum": ["artifact-exists", "artifact-contains", "artifact-not-contains", "trace-event", "manual-evidence"] },
+        "target": { "$ref": "#/definitions/text" },
+        "expected": { "type": ["string", "boolean", "number"] }
+      }
+    },
+    "dependency": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "availability", "visibility"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "kind": { "enum": ["document", "fixture", "companion-skill", "distractor-skill", "service", "home-layout"] },
+        "availability": { "enum": ["provided", "unavailable"] },
+        "visibility": { "enum": ["agent", "judge"] },
+        "path": { "$ref": "#/definitions/path" },
+        "mountRoot": { "enum": ["home", "workspace"], "default": "workspace" },
+        "mount": { "$ref": "#/definitions/path" },
+        "description": { "$ref": "#/definitions/text" }
+      }
+    },
+    "suite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contractVersion", "id", "skill", "clients", "context", "cases"],
+      "properties": {
+        "contractVersion": { "const": 2 },
+        "id": { "$ref": "#/definitions/id" },
+        "skill": { "$ref": "#/definitions/id" },
+        "clients": { "$ref": "#/definitions/clients" },
+        "context": {
+          "type": "object", "additionalProperties": false,
+          "required": ["dependencies"],
+          "properties": { "dependencies": { "type": "array", "items": { "$ref": "#/definitions/dependency" } } }
+        },
+        "cases": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "prompt", "expectation", "hardChecks"],
+            "properties": {
+              "id": { "$ref": "#/definitions/id" },
+              "prompt": { "$ref": "#/definitions/text" },
+              "expectation": { "enum": ["explicit", "implicit", "negative"] },
+              "hardChecks": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/check" } }
+            }
+          }
+        }
+      }
+    },
+    "model": {
+      "type": "object", "additionalProperties": false, "required": ["requested", "observed"],
+      "properties": { "requested": { "$ref": "#/definitions/text" }, "observed": { "type": ["string", "null"], "minLength": 1 } }
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contractVersion", "id", "runner", "image", "clients", "auth", "limits", "earlyExit", "cache"],
+      "properties": {
+        "contractVersion": { "const": 2 },
+        "id": { "$ref": "#/definitions/id" },
+        "runner": { "$ref": "#/definitions/text" },
+        "image": { "type": "string", "pattern": "^.+@sha256:[a-f0-9]{64}$" },
+        "clients": {
+          "type": "object", "minProperties": 1, "additionalProperties": false,
+          "properties": {
+            "claude-code": { "$ref": "#/definitions/clientPin" },
+            "opencode": { "$ref": "#/definitions/clientPin" },
+            "copilot": { "$ref": "#/definitions/clientPin" }
+          }
+        },
+        "auth": { "$ref": "#/definitions/text" },
+        "limits": {
+          "type": "object", "additionalProperties": false, "required": ["turns", "tokens", "seconds", "concurrency"],
+          "properties": {
+            "turns": { "type": "integer", "minimum": 1 }, "tokens": { "type": "integer", "minimum": 1 },
+            "seconds": { "type": "integer", "minimum": 1 }, "concurrency": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "earlyExit": { "const": false }, "cache": { "const": false }
+      },
+      "allOf": [{
+        "if": { "type": "object", "required": ["auth"], "properties": { "auth": { "const": "none-offline" } } },
+        "then": { "type": "object", "properties": {
+          "clients": { "type": "object", "additionalProperties": {
+            "type": "object", "properties": { "runtimeImage": false }
+          } }
+        } }
+      }]
+    },
+    "clientPin": {
+      "type": "object", "additionalProperties": false, "required": ["version", "model", "endpoint", "settings"],
+      "properties": {
+        "version": { "$ref": "#/definitions/text" }, "model": { "$ref": "#/definitions/text" },
+        "endpoint": { "$ref": "#/definitions/text" }, "settings": { "type": "object" },
+        "runtimeImage": { "$ref": "#/definitions/runtimeImage" }
+      }
+    },
+    "runtimeImage": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "manifestDigest", "configDigest"],
+      "properties": {
+        "kind": { "const": "local-oci" },
+        "manifestDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "configDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    },
+    "snapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contractVersion", "snapshotId", "source", "files"],
+      "properties": {
+        "contractVersion": { "const": 2 }, "snapshotId": { "$ref": "#/definitions/hash" },
+        "source": {
+          "type": "object", "additionalProperties": false, "required": ["repo", "commit", "mode", "dirtyPaths", "deletedPaths"],
+          "properties": {
+            "repo": { "$ref": "#/definitions/text" }, "commit": { "type": "string", "pattern": "^[a-f0-9]{40,64}$" },
+            "mode": { "const": "working-tree" },
+            "dirtyPaths": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/path" } },
+            "deletedPaths": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/path" } }
+          }
+        },
+        "files": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes", "origin", "executable"],
+            "properties": {
+              "path": { "$ref": "#/definitions/path" }, "sha256": { "$ref": "#/definitions/hash" },
+              "bytes": { "type": "integer", "minimum": 0 }, "origin": { "enum": ["tracked", "untracked"] },
+              "executable": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "baseline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contractVersion", "snapshotId", "profileHash", "provenance", "approval"],
+      "properties": {
+        "contractVersion": { "const": 2 }, "snapshotId": { "$ref": "#/definitions/hash" }, "profileHash": { "$ref": "#/definitions/hash" },
+        "provenance": {
+          "type": "object", "additionalProperties": false, "required": ["kind", "reference"],
+          "properties": { "kind": { "enum": ["released", "bootstrap"] }, "reference": { "$ref": "#/definitions/text" } }
+        },
+        "approval": {
+          "type": "object", "additionalProperties": false, "required": ["approved", "by", "at", "snapshotId"],
+          "properties": {
+            "approved": { "const": true }, "by": { "$ref": "#/definitions/text" },
+            "at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$" }, "snapshotId": { "$ref": "#/definitions/hash" }
+          }
+        }
+      }
+    },
+    "metric": {
+      "type": "object", "additionalProperties": false, "required": ["value", "provenance"],
+      "properties": { "value": { "type": ["number", "null"], "minimum": 0 }, "provenance": { "$ref": "#/definitions/text" } }
+    },
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runId", "invocationId", "caseId", "client", "arm", "repeat", "fresh", "status", "snapshotId", "profileHash", "fixtureHash", "model", "runtime", "trigger", "checks", "usage", "artifacts", "error"],
+      "properties": {
+        "runId": { "$ref": "#/definitions/text" }, "invocationId": { "$ref": "#/definitions/text" },
+        "caseId": { "$ref": "#/definitions/id" }, "client": { "$ref": "#/definitions/client" },
+        "arm": { "enum": ["candidate", "baseline", "no-skill"] }, "repeat": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "fresh": { "type": "boolean" }, "status": { "enum": ["completed", "error", "timeout", "cancelled", "skipped"] },
+        "snapshotId": { "anyOf": [{ "$ref": "#/definitions/hash" }, { "type": "null" }] },
+        "profileHash": { "$ref": "#/definitions/hash" }, "fixtureHash": { "$ref": "#/definitions/hash" },
+        "model": { "$ref": "#/definitions/model" },
+        "runtime": {
+          "type": "object", "additionalProperties": false, "required": ["clientVersion", "image", "auth", "isolationEvidence"],
+          "properties": {
+            "clientVersion": { "$ref": "#/definitions/text" }, "image": { "$ref": "#/definitions/text" },
+            "auth": { "$ref": "#/definitions/text" }, "isolationEvidence": { "$ref": "#/definitions/text" },
+            "runtimeImage": { "$ref": "#/definitions/runtimeImage" }
+          }
+        },
+        "trigger": {
+          "type": "object", "additionalProperties": false, "required": ["loaded", "evidence"],
+          "properties": {
+            "loaded": { "type": ["boolean", "null"] },
+            "evidence": { "type": "array", "items": {
+              "type": "object", "additionalProperties": false, "required": ["kind", "skill", "ref"],
+              "properties": { "kind": { "enum": ["skill-load", "discovery-audit"] }, "skill": { "$ref": "#/definitions/id" }, "ref": { "$ref": "#/definitions/text" } }
+            } }
+          }
+        },
+        "checks": {
+          "type": "array", "items": {
+            "type": "object", "additionalProperties": false, "required": ["id", "class", "status", "evidence"],
+            "properties": {
+              "id": { "$ref": "#/definitions/id" }, "class": { "enum": ["correctness", "safety"] },
+              "status": { "enum": ["passed", "failed", "error", "skipped"] }, "evidence": { "$ref": "#/definitions/text" }
+            }
+          }
+        },
+        "usage": {
+          "type": "object", "additionalProperties": false, "required": ["inputTokens", "outputTokens", "elapsedMs", "usd", "credits"],
+          "properties": {
+            "inputTokens": { "$ref": "#/definitions/metric" }, "outputTokens": { "$ref": "#/definitions/metric" },
+            "elapsedMs": { "$ref": "#/definitions/metric" }, "usd": { "$ref": "#/definitions/metric" }, "credits": { "$ref": "#/definitions/metric" }
+          }
+        },
+        "artifacts": { "type": "array", "items": { "$ref": "#/definitions/path" } },
+        "error": { "type": ["string", "null"] }
+      }
+    },
+    "results": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contractVersion", "invocationId", "suiteId", "profile", "selection", "snapshots", "baseline", "runs"],
+      "properties": {
+        "contractVersion": { "const": 2 }, "invocationId": { "$ref": "#/definitions/text" }, "suiteId": { "$ref": "#/definitions/id" },
+        "profile": { "$ref": "#/definitions/profile" },
+        "selection": {
+          "type": "object", "additionalProperties": false, "required": ["cases", "clients", "arms"],
+          "properties": {
+            "cases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/id" } },
+            "clients": { "$ref": "#/definitions/clients" },
+            "arms": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "enum": ["candidate", "baseline", "no-skill"] } }
+          }
+        },
+        "snapshots": {
+          "type": "object", "additionalProperties": false, "required": ["candidate", "baseline"],
+          "properties": { "candidate": { "$ref": "#/definitions/snapshot" }, "baseline": { "$ref": "#/definitions/snapshot" } }
+        },
+        "baseline": { "$ref": "#/definitions/baseline" },
+        "runs": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/run" } }
+      }
+    }
+  }
+}

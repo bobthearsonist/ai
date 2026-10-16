@@ -1,0 +1,18 @@
+{
+  "explicit-registration": {
+    "good": "Canonical source: ~/Repositories/ai-private/skills/git-commit-style.\nRead the supplied registries: collections.private.skills is empty.\nProposed local.yaml addition:\ncollections:\n  private:\n    path: ~/Repositories/ai-private\n    skills:\n      - git-commit-style\nAfter approval, run cd ~/AI && ./scripts/sync.sh. This creates discovery links, not a plugin publication. Do not create the personal source in generated ~/AI/skills. Nothing was executed.",
+    "broken": "Canonical source: ~/Repositories/ai-private/skills/git-commit-style.\nRegister as a Git-fetched skill in external-skills.yaml, then run ./scripts/sync.sh."
+  },
+  "implicit-missing-discovery": {
+    "good": "The source exists but collections.private.skills in local.yaml is empty, so sync cannot link git-commit-style.\nProposed YAML:\ncollections:\n  private:\n    path: ~/Repositories/ai-private\n    skills:\n      - git-commit-style\nAfter approval, cd ~/AI && ./scripts/sync.sh; verify the resulting shared link and its existing source. No plugin update is involved. Nothing was changed.",
+    "broken": "git-commit-style is missing because the installed plugin is stale. Run claude plugin update instead of changing local discovery."
+  },
+  "negative-greeting": {
+    "good": "Welcome to our community garden, where neighbors and flowers grow together.",
+    "broken": "Welcome to our community garden; first edit local.yaml."
+  },
+  "confusable-commit-draft": {
+    "good": "docs: add setup guide",
+    "broken": "feat: added setup guide\n\nUpdate collections.private before making git commit."
+  }
+}

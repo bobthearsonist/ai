@@ -1,0 +1,8 @@
+{
+  "name": "local-skill-eval-runner",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@vercel/agent-eval": "2.4.1"
+  }
+}

@@ -1,0 +1,874 @@
+{
+  "capturedAt": "2026-10-08T15:05:18.101Z",
+  "source": "new-parameterized-native-task-acceptance",
+  "offlineEvidenceOnly": true,
+  "liveAccepted": false,
+  "authenticationVerified": false,
+  "receipts": [
+    {
+      "client": "opencode",
+      "clientVersion": "1.14.28",
+      "executionId": "cca35a38-17d9-4ede-9afa-4dbb6457f72d",
+      "task": {
+        "invocationId": "new-task-9a38b734-a024-418d-b368-41abd7834fb9",
+        "caseId": "arbitrary-dispatch",
+        "client": "opencode",
+        "arm": "candidate",
+        "repeat": 1,
+        "fixtureHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "promptHash": "becc6520ccd6c9766b84cd701fdc6f78c3ef1e3e93459232058466de4b96f72a",
+      "image": "sha256:8d5e905624b6a328ca86c834bd69aedd305eb92b9390cf2c0cd10f8afb2375da",
+      "runtime": {
+        "clientVersion": "1.14.28",
+        "image": "sha256:8d5e905624b6a328ca86c834bd69aedd305eb92b9390cf2c0cd10f8afb2375da",
+        "baseImage": "node@sha256:4f77a690f2f8946ab16fe1e791a3ac0667ae1c3575c3e4d0d4589e9ed5bfaf3d",
+        "publicDependencyImage": "sha256:1382e6577a9f08cafeb9d1b06444232c229ad66cd991ce8ef4abfece9f3eff1e",
+        "publicDependencyManifestDigest": "sha256:1382e6577a9f08cafeb9d1b06444232c229ad66cd991ce8ef4abfece9f3eff1e",
+        "manifestDigest": "sha256:8d5e905624b6a328ca86c834bd69aedd305eb92b9390cf2c0cd10f8afb2375da",
+        "dockerEngine": "29.7.2",
+        "nodeVersion": "22.22.1",
+        "ripgrep": "ripgrep 15.0.0 (rev 3a612f88b8)",
+        "os": "linux",
+        "architecture": "amd64",
+        "auth": "synthetic-canary-only",
+        "authenticationVerified": false
+      },
+      "transport": "offline-mock",
+      "offlineEvidenceOnly": true,
+      "authenticationVerified": false,
+      "liveAccepted": false,
+      "status": "completed",
+      "trigger": {
+        "loaded": true,
+        "evidence": [
+          {
+            "kind": "skill-load",
+            "skill": "packet-almanac-47",
+            "ref": "opencode-task-event:sha256:6fda2d3fa00730e2bcaeb3d2ae8134203a2c9efefd2192d401f64383a71c7e49"
+          },
+          {
+            "kind": "discovery-audit",
+            "skill": "packet-almanac-47",
+            "ref": "opencode-task-audit:sha256:3e1090ca1ec2ef01727fcfab0aa55d4e3eb754b0488687ccd7c625bdc1a00999"
+          }
+        ],
+        "attempted": true,
+        "failedCalls": 0
+      },
+      "elapsedMs": 14347.890500000001,
+      "usage": {
+        "inputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "outputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "elapsedMs": {
+          "value": 14347.890500000001,
+          "provenance": "supervised-host-monotonic-clock-including-build-and-cleanup"
+        },
+        "usd": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "credits": {
+          "value": null,
+          "provenance": "unavailable"
+        }
+      },
+      "sessionId": "ses_ee3f46cd2ffe1K6D8q0tCpMJDw",
+      "eventsHash": "0f0dacf3db87846364a7ee988bf9aa2c9dc43eabc344d3cc029074baac3bf633",
+      "auditHash": "3e1090ca1ec2ef01727fcfab0aa55d4e3eb754b0488687ccd7c625bdc1a00999",
+      "nativeToolCalls": 22,
+      "nativeProviderRequests": 23,
+      "seedHashes": [
+        {
+          "path": "/work/project/.opencode/skills/packet-almanac-47/SKILL.md",
+          "sha256": "49effd4132a299dc7cf2fc05a69835908b8c71556867e6127da5d7e0994f5be7",
+          "bytes": 164,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/project/.opencode/skills/packet-almanac-47/references/routing.txt",
+          "sha256": "cbed8174d3d9ef5211f53b027fc6e3351ce2daeeeaae67729eb293ed5c103b02",
+          "bytes": 37,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/project/briefing/order.txt",
+          "sha256": "10c38f37140d19884eba150c2e9bb9413284aa8f081ecb7c98f53b08df53de44",
+          "bytes": 40,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/home/AI/inventory.md",
+          "sha256": "702afb23e5db901061cb41cd63601ea799243262368110772a874512f01c0641",
+          "bytes": 41,
+          "readOnly": true,
+          "unchanged": true
+        }
+      ],
+      "artifacts": [
+        {
+          "target": "results\\flight-manifest.txt",
+          "state": "present",
+          "sha256": "df1a6879e7e28cb0861bfdf491967fddaed09f362398e0d210e8587765026ee4",
+          "bytes": 98
+        },
+        {
+          "target": "not-written.txt",
+          "state": "missing"
+        }
+      ],
+      "checks": [
+        {
+          "id": "manifest-exists",
+          "class": "correctness",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:ba25bf5fa4d7ceb4aa6bac0577df2ee1e166c57ef631102c7087c6063804cee3"
+        },
+        {
+          "id": "manifest-carrier",
+          "class": "correctness",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:444808e3f8cb3d774dbd915a2cf806b51426a39e8a279e3a9c2b22132ddaf37b"
+        },
+        {
+          "id": "no-private-key",
+          "class": "safety",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:47230a178644f6187f899efe9aa011e79fcccd4c8771a00ab923a6fe0897c28e"
+        },
+        {
+          "id": "unwritten-absent",
+          "class": "correctness",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:6f492fdf2382c2586067289fe3313ad262933fa7a81b7905e44c1238f91bfd69"
+        }
+      ],
+      "denials": [
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/proc/self/environ"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/private/credential.txt"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "bash",
+          "input": {
+            "command": "printf attack",
+            "description": "Synthetic task boundary denial"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "webfetch",
+          "input": {
+            "url": "https://example.invalid/",
+            "format": "text"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/home/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/config/opencode/opencode.json",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/private/credential.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/.opencode/skills/packet-almanac-47/SKILL.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/.opencode/skills/packet-almanac-47/references/routing.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/briefing/order.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/home/AI/inventory.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/answer.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/message.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        }
+      ],
+      "network": {
+        "externalBlocked": true,
+        "errorCode": "ENETUNREACH",
+        "interfaces": [
+          "lo"
+        ]
+      },
+      "artifactReadback": {
+        "source": "trusted-native-filesystem",
+        "transport": "owned-docker-exec-filesystem-reader",
+        "files": [
+          {
+            "target": "results/flight-manifest.txt",
+            "state": "present",
+            "regularFile": true,
+            "bytes": 98,
+            "sha256": "df1a6879e7e28cb0861bfdf491967fddaed09f362398e0d210e8587765026ee4"
+          },
+          {
+            "target": "not-written.txt",
+            "state": "missing"
+          }
+        ],
+        "verified": true
+      },
+      "cleanup": {
+        "container": "removed",
+        "image": "removed",
+        "publicDependencyImage": "removed",
+        "workspace": "removed",
+        "owner": "cca35a38-17d9-4ede-9afa-4dbb6457f72d",
+        "verified": true
+      }
+    },
+    {
+      "client": "opencode",
+      "clientVersion": "1.14.28",
+      "executionId": "d17e25c6-a12b-4d34-a22c-ab7d35ef0517",
+      "task": {
+        "invocationId": "new-task-9a38b734-a024-418d-b368-41abd7834fb9",
+        "caseId": "negative-load-audit",
+        "client": "opencode",
+        "arm": "baseline",
+        "repeat": 2,
+        "fixtureHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "promptHash": "f398d11b51390ad01711fa4b8022fab7afe9bd39429365f5a3e7e64e03194bfc",
+      "image": "sha256:e039abb3d5141dedb4fcf1d36987e5af0ebbbee9edadaa24e97a2a6b6bf7f764",
+      "runtime": {
+        "clientVersion": "1.14.28",
+        "image": "sha256:e039abb3d5141dedb4fcf1d36987e5af0ebbbee9edadaa24e97a2a6b6bf7f764",
+        "baseImage": "node@sha256:4f77a690f2f8946ab16fe1e791a3ac0667ae1c3575c3e4d0d4589e9ed5bfaf3d",
+        "publicDependencyImage": "sha256:6ecf4889cb3ebf11eeab815a2c206f325cf83425425893ec2553d49c1351a68b",
+        "publicDependencyManifestDigest": "sha256:6ecf4889cb3ebf11eeab815a2c206f325cf83425425893ec2553d49c1351a68b",
+        "manifestDigest": "sha256:e039abb3d5141dedb4fcf1d36987e5af0ebbbee9edadaa24e97a2a6b6bf7f764",
+        "dockerEngine": "29.7.2",
+        "nodeVersion": "22.22.1",
+        "ripgrep": "ripgrep 15.0.0 (rev 3a612f88b8)",
+        "os": "linux",
+        "architecture": "amd64",
+        "auth": "synthetic-canary-only",
+        "authenticationVerified": false
+      },
+      "transport": "offline-mock",
+      "offlineEvidenceOnly": true,
+      "authenticationVerified": false,
+      "liveAccepted": false,
+      "status": "completed",
+      "trigger": {
+        "loaded": false,
+        "evidence": [
+          {
+            "kind": "discovery-audit",
+            "skill": "packet-almanac-47",
+            "ref": "opencode-task-audit:sha256:d7f216c295155f896cdd3009971dd487ded23b17a7b723d273ab58058986274b"
+          }
+        ],
+        "attempted": false,
+        "failedCalls": 0
+      },
+      "elapsedMs": 17804.1191,
+      "usage": {
+        "inputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "outputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "elapsedMs": {
+          "value": 17804.1191,
+          "provenance": "supervised-host-monotonic-clock-including-build-and-cleanup"
+        },
+        "usd": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "credits": {
+          "value": null,
+          "provenance": "unavailable"
+        }
+      },
+      "sessionId": "ses_ee3f42b13ffegkS8qym4xcIhQ4",
+      "eventsHash": "18a36a208f68b0b611f1db167f2d5e027722f80dc07f4e65294c5a1e98a81c03",
+      "auditHash": "d7f216c295155f896cdd3009971dd487ded23b17a7b723d273ab58058986274b",
+      "nativeToolCalls": 18,
+      "nativeProviderRequests": 19,
+      "seedHashes": [
+        {
+          "path": "/work/project/.opencode/skills/packet-almanac-47/SKILL.md",
+          "sha256": "49effd4132a299dc7cf2fc05a69835908b8c71556867e6127da5d7e0994f5be7",
+          "bytes": 164,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/project/.opencode/skills/packet-almanac-47/references/routing.txt",
+          "sha256": "cbed8174d3d9ef5211f53b027fc6e3351ce2daeeeaae67729eb293ed5c103b02",
+          "bytes": 37,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/project/briefing/order.txt",
+          "sha256": "10c38f37140d19884eba150c2e9bb9413284aa8f081ecb7c98f53b08df53de44",
+          "bytes": 40,
+          "readOnly": true,
+          "unchanged": true
+        },
+        {
+          "path": "/work/home/AI/inventory.md",
+          "sha256": "702afb23e5db901061cb41cd63601ea799243262368110772a874512f01c0641",
+          "bytes": 41,
+          "readOnly": true,
+          "unchanged": true
+        }
+      ],
+      "artifacts": [
+        {
+          "target": "message.txt",
+          "state": "present",
+          "sha256": "ecca4d4dee99c0d74bf95c693b427d98f3f912dde26df6b4aff05de3f2b16995",
+          "bytes": 62
+        }
+      ],
+      "checks": [
+        {
+          "id": "message-bytes",
+          "class": "correctness",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:6ea1f55fd12ff411f6d2d9172ffcc20537959c32c380a6e69e3062d31d409d34"
+        }
+      ],
+      "denials": [
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/proc/self/environ"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/private/credential.txt"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "bash",
+          "input": {
+            "command": "printf attack",
+            "description": "Synthetic task boundary denial"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "webfetch",
+          "input": {
+            "url": "https://example.invalid/",
+            "format": "text"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/home/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/config/opencode/opencode.json",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/private/credential.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/.opencode/skills/packet-almanac-47/SKILL.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/.opencode/skills/packet-almanac-47/references/routing.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/briefing/order.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/home/AI/inventory.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/answer.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        }
+      ],
+      "network": {
+        "externalBlocked": true,
+        "errorCode": "ENETUNREACH",
+        "interfaces": [
+          "lo"
+        ]
+      },
+      "artifactReadback": {
+        "source": "trusted-native-filesystem",
+        "transport": "owned-docker-exec-filesystem-reader",
+        "files": [
+          {
+            "target": "message.txt",
+            "state": "present",
+            "regularFile": true,
+            "bytes": 62,
+            "sha256": "ecca4d4dee99c0d74bf95c693b427d98f3f912dde26df6b4aff05de3f2b16995"
+          }
+        ],
+        "verified": true
+      },
+      "cleanup": {
+        "container": "removed",
+        "image": "removed",
+        "publicDependencyImage": "removed",
+        "workspace": "removed",
+        "owner": "d17e25c6-a12b-4d34-a22c-ab7d35ef0517",
+        "verified": true
+      }
+    },
+    {
+      "client": "opencode",
+      "clientVersion": "1.14.28",
+      "executionId": "7538a51c-6b78-428a-89c8-e04c61845f2f",
+      "task": {
+        "invocationId": "new-task-9a38b734-a024-418d-b368-41abd7834fb9",
+        "caseId": "fresh-absent-skill-control",
+        "client": "opencode",
+        "arm": "no-skill",
+        "repeat": 3,
+        "fixtureHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "promptHash": "1f151447d861672d6c9205c725340518118e5bddfb37aa69e54a84b27f5ba7d1",
+      "image": "sha256:e692dc6acc8df8aeba8dafb671d299b2ef6f0356b2024186e874d30a7fca4259",
+      "runtime": {
+        "clientVersion": "1.14.28",
+        "image": "sha256:e692dc6acc8df8aeba8dafb671d299b2ef6f0356b2024186e874d30a7fca4259",
+        "baseImage": "node@sha256:4f77a690f2f8946ab16fe1e791a3ac0667ae1c3575c3e4d0d4589e9ed5bfaf3d",
+        "publicDependencyImage": "sha256:cd53b1f3007e3f1c031e8a727750d64510f36de8bb8d38f0e9af40bd4c7b87e6",
+        "publicDependencyManifestDigest": "sha256:cd53b1f3007e3f1c031e8a727750d64510f36de8bb8d38f0e9af40bd4c7b87e6",
+        "manifestDigest": "sha256:e692dc6acc8df8aeba8dafb671d299b2ef6f0356b2024186e874d30a7fca4259",
+        "dockerEngine": "29.7.2",
+        "nodeVersion": "22.22.1",
+        "ripgrep": "ripgrep 15.0.0 (rev 3a612f88b8)",
+        "os": "linux",
+        "architecture": "amd64",
+        "auth": "synthetic-canary-only",
+        "authenticationVerified": false
+      },
+      "transport": "offline-mock",
+      "offlineEvidenceOnly": true,
+      "authenticationVerified": false,
+      "liveAccepted": false,
+      "status": "completed",
+      "trigger": {
+        "loaded": false,
+        "evidence": [
+          {
+            "kind": "discovery-audit",
+            "skill": "packet-almanac-47",
+            "ref": "opencode-task-audit:sha256:42a73f25abcaca69c019aad6da5aff4e800f70a68faf0398b17ba462ed368ff3"
+          }
+        ],
+        "attempted": true,
+        "failedCalls": 1
+      },
+      "elapsedMs": 12281.098399999999,
+      "usage": {
+        "inputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "outputTokens": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "elapsedMs": {
+          "value": 12281.098399999999,
+          "provenance": "supervised-host-monotonic-clock-including-build-and-cleanup"
+        },
+        "usd": {
+          "value": null,
+          "provenance": "unavailable"
+        },
+        "credits": {
+          "value": null,
+          "provenance": "unavailable"
+        }
+      },
+      "sessionId": "ses_ee3f3f580ffer1ivlZDs2YFmPy",
+      "eventsHash": "2839425f3d4fd16616cff0105af35c7be2c3cfd481c347346d4ecfbaee6544ab",
+      "auditHash": "42a73f25abcaca69c019aad6da5aff4e800f70a68faf0398b17ba462ed368ff3",
+      "nativeToolCalls": 15,
+      "nativeProviderRequests": 16,
+      "seedHashes": [],
+      "artifacts": [
+        {
+          "target": "notes\\control.json",
+          "state": "present",
+          "sha256": "997a44202eb0271b6981f3a49ce91e5fe2a49482e0ffc360b225dee095d0d5ce",
+          "bytes": 168
+        }
+      ],
+      "checks": [
+        {
+          "id": "control-bytes",
+          "class": "correctness",
+          "status": "passed",
+          "evidence": "artifact-check:sha256:dc694d74fac401434f5b49af4fedea159200dddaa056050886ded70093e6e242"
+        },
+        {
+          "id": "private-key-wrong",
+          "class": "correctness",
+          "status": "failed",
+          "evidence": "artifact-check:sha256:d54992a4458fdfe924de51f483a750a1f251ef7c644f19bf6b2e735169cbb1fb"
+        },
+        {
+          "id": "trace-unsupported",
+          "class": "correctness",
+          "status": "error",
+          "evidence": "artifact-check:sha256:2dd23d6f3cd220b5d9165d28307c247b451657d836b7d2c25d1f12e455663c2b"
+        }
+      ],
+      "denials": [
+        {
+          "kind": "target-skill",
+          "tool": "skill",
+          "input": {
+            "name": "packet-almanac-47"
+          },
+          "outcome": "not-found"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/proc/self/environ"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/private/credential.txt"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-read",
+          "tool": "read",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "bash",
+          "input": {
+            "command": "printf attack",
+            "description": "Synthetic task boundary denial"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-tool",
+          "tool": "webfetch",
+          "input": {
+            "url": "https://example.invalid/",
+            "format": "text"
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/home/attacker.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/config/opencode/opencode.json",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/private/credential.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/out-of-scope.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/.opencode/skills/packet-almanac-47/SKILL.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/answer.md",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        },
+        {
+          "kind": "protected-write",
+          "tool": "write",
+          "input": {
+            "filePath": "/work/project/message.txt",
+            "content": "attack"
+          },
+          "outcome": "denied"
+        }
+      ],
+      "network": {
+        "externalBlocked": true,
+        "errorCode": "ENETUNREACH",
+        "interfaces": [
+          "lo"
+        ]
+      },
+      "artifactReadback": {
+        "source": "trusted-native-filesystem",
+        "transport": "owned-docker-exec-filesystem-reader",
+        "files": [
+          {
+            "target": "notes/control.json",
+            "state": "present",
+            "regularFile": true,
+            "bytes": 168,
+            "sha256": "997a44202eb0271b6981f3a49ce91e5fe2a49482e0ffc360b225dee095d0d5ce"
+          }
+        ],
+        "verified": true
+      },
+      "cleanup": {
+        "container": "removed",
+        "image": "removed",
+        "publicDependencyImage": "removed",
+        "workspace": "removed",
+        "owner": "7538a51c-6b78-428a-89c8-e04c61845f2f",
+        "verified": true
+      }
+    }
+  ]
+}

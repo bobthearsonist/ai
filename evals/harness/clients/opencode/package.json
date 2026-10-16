@@ -1,0 +1,10 @@
+{
+  "name": "skill-eval-opencode-offline",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "opencode-ai": "1.14.28",
+    "opencode-linux-x64": "1.14.28",
+    "@vscode/ripgrep-linux-x64": "1.18.0"
+  }
+}

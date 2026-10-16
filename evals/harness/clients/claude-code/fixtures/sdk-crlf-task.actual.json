@@ -1,0 +1,468 @@
+{
+  "protocol": "claude-offline-sdk-root-acceptance@1",
+  "verifiedAt": "2026-10-08T15:30:41.085Z",
+  "client": "claude-code",
+  "clientVersion": "2.1.291",
+  "executionId": "99984f94-0f7b-4985-9a3b-228fb8be76b3",
+  "task": {
+    "invocationId": "c239c35e-4050-4d2c-8c24-bcbb8119594e",
+    "caseId": "explicit",
+    "client": "claude-code",
+    "arm": "candidate",
+    "repeat": 1,
+    "fixtureHash": "65251c6dbe62e6a811367f4ef91bad2c94f7f225d28844718d90f99994e8c9c5"
+  },
+  "image": "sha256:604c88a881abc46d1d3980f704b3e714b26ff711d68ffcd0f129d8f9f7c8d420",
+  "imageSpec": {
+    "id": "sha256:604c88a881abc46d1d3980f704b3e714b26ff711d68ffcd0f129d8f9f7c8d420",
+    "repoDigests": [
+      "skill-eval-claude-task-99984f94-0f7b-4985-9a3b-228fb8be76b3@sha256:604c88a881abc46d1d3980f704b3e714b26ff711d68ffcd0f129d8f9f7c8d420"
+    ],
+    "baseImage": "node@sha256:4f77a690f2f8946ab16fe1e791a3ac0667ae1c3575c3e4d0d4589e9ed5bfaf3d",
+    "nodeVersion": "22.22.1",
+    "engineVersion": "29.7.2",
+    "os": "linux",
+    "architecture": "amd64"
+  },
+  "runtime": {
+    "clientVersion": "2.1.291",
+    "actualVersion": "2.1.291 (Claude Code)",
+    "image": "sha256:604c88a881abc46d1d3980f704b3e714b26ff711d68ffcd0f129d8f9f7c8d420",
+    "nodeVersion": "22.22.1",
+    "engineVersion": "29.7.2",
+    "auth": "none-offline",
+    "authenticationVerified": false,
+    "isolationEvidence": "38ef72874d7b4a1cf682bb4e9bcd1c5a07f14739afc13f21ee8306bdbd63e3ea"
+  },
+  "promptHash": "6ca18a836324e3ec3f74c22523161d642e13e04ba5c460d6ad9fb0e1d06835aa",
+  "status": "completed",
+  "transport": "offline-mock",
+  "offlineEvidenceOnly": true,
+  "authenticationVerified": false,
+  "liveAccepted": false,
+  "trigger": {
+    "loaded": true,
+    "evidence": [
+      {
+        "kind": "discovery-audit",
+        "skill": "example-skill",
+        "ref": "claude-task:sha256:38ef72874d7b4a1cf682bb4e9bcd1c5a07f14739afc13f21ee8306bdbd63e3ea:discovery"
+      },
+      {
+        "kind": "skill-load",
+        "skill": "example-skill",
+        "ref": "claude-task:sha256:38ef72874d7b4a1cf682bb4e9bcd1c5a07f14739afc13f21ee8306bdbd63e3ea:toolu_task_0"
+      }
+    ],
+    "skillId": "example-skill",
+    "requested": true,
+    "discovered": true,
+    "auditComplete": true,
+    "source": "actual-native-tool-result-and-complete-event-audit",
+    "toolUseIds": [
+      "toolu_task_0"
+    ]
+  },
+  "artifacts": [
+    {
+      "target": "plan.txt",
+      "state": "present",
+      "sha256": "f7a39d1bca293c0ea3d38c105393bfb8879de29c6e048b4d839f960569f28d41",
+      "bytes": 30
+    }
+  ],
+  "checks": [
+    {
+      "id": "plan-present",
+      "class": "correctness",
+      "status": "passed",
+      "evidence": "artifact-check:sha256:8bc7a69acc23a6f5d8eb04cf1caf461c5f81485c4f007c9722eede913ce64bcb"
+    }
+  ],
+  "rawCaptureHash": "38ef72874d7b4a1cf682bb4e9bcd1c5a07f14739afc13f21ee8306bdbd63e3ea",
+  "sourceEvidence": [
+    {
+      "path": "/workspace/.claude/skills/example-skill/SKILL.md",
+      "toolUseId": "toolu_task_1",
+      "suppliedHash": "a7ea94d3a0d08fc5a8c51301c50d57ab0b631124e945d38a402917975238cc09",
+      "nativeContentHash": "a7ea94d3a0d08fc5a8c51301c50d57ab0b631124e945d38a402917975238cc09",
+      "wireResultHash": "ef9251478981097a27206fc94b31d8c36e685641bf33cb3408fbbe04b5da6abe",
+      "source": "actual-native-Read-and-provider-request",
+      "complete": true,
+      "presentation": {
+        "lineEndings": "identity",
+        "crlfPairs": 0,
+        "suppliedBytes": 93,
+        "nativeContentBytes": 93,
+        "lineCount": 6,
+        "numbering": "one-based-tab",
+        "providerFinalEmptyLineTabRemoved": true,
+        "providerSuffix": "pinned-native-total-tokens-reminder"
+      }
+    },
+    {
+      "path": "/workspace/.claude/skills/example-skill/references/guide.txt",
+      "toolUseId": "toolu_task_2",
+      "suppliedHash": "557e30a84313ab6b18c38db6739e9aaf24352a646d1b69934f4dc6a0c1d9b911",
+      "nativeContentHash": "557e30a84313ab6b18c38db6739e9aaf24352a646d1b69934f4dc6a0c1d9b911",
+      "wireResultHash": "81279c591758010989afb05b2787fdda8a8481e5827e4f15b50053a565b36f51",
+      "source": "actual-native-Read-and-provider-request",
+      "complete": true,
+      "presentation": {
+        "lineEndings": "identity",
+        "crlfPairs": 0,
+        "suppliedBytes": 31,
+        "nativeContentBytes": 31,
+        "lineCount": 2,
+        "numbering": "one-based-tab",
+        "providerFinalEmptyLineTabRemoved": true,
+        "providerSuffix": "pinned-native-total-tokens-reminder"
+      }
+    },
+    {
+      "path": "/workspace/docs/guide.txt",
+      "toolUseId": "toolu_task_3",
+      "suppliedHash": "174d64607f60d19c050c7717e1e7f2734d3511602171d80fb37d40e32fb67fc8",
+      "nativeContentHash": "496c6bbd345ac44f2d0a827241c37748a4f9b3eca71230ef74f28660e9a59f73",
+      "wireResultHash": "9faebf4f63c29c0ad5e209822dff45a46ba1a2fca9b0b8e92c3cbda287a24a09",
+      "source": "actual-native-Read-and-provider-request",
+      "complete": true,
+      "presentation": {
+        "lineEndings": "crlf-to-lf",
+        "crlfPairs": 1,
+        "suppliedBytes": 85,
+        "nativeContentBytes": 84,
+        "lineCount": 2,
+        "numbering": "one-based-tab",
+        "providerFinalEmptyLineTabRemoved": true,
+        "providerSuffix": "pinned-native-total-tokens-reminder"
+      }
+    }
+  ],
+  "sourceState": [
+    {
+      "path": "/workspace/.claude/skills/example-skill/SKILL.md",
+      "bytes": 93,
+      "sha256": "a7ea94d3a0d08fc5a8c51301c50d57ab0b631124e945d38a402917975238cc09",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/.claude/skills/example-skill/references/guide.txt",
+      "bytes": 31,
+      "sha256": "557e30a84313ab6b18c38db6739e9aaf24352a646d1b69934f4dc6a0c1d9b911",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/docs/guide.txt",
+      "bytes": 85,
+      "sha256": "174d64607f60d19c050c7717e1e7f2734d3511602171d80fb37d40e32fb67fc8",
+      "unchanged": true
+    }
+  ],
+  "nativeReadEvidence": [
+    {
+      "path": "/workspace/.claude/skills/example-skill/SKILL.md",
+      "nativeResult": {
+        "type": "text",
+        "file": {
+          "filePath": "/workspace/.claude/skills/example-skill/SKILL.md",
+          "content": "---\nname: example-skill\ndescription: Explicit native mock fixture.\n---\ncandidate skill bytes\n",
+          "numLines": 6,
+          "startLine": 1,
+          "totalLines": 6
+        }
+      },
+      "nativeToolResult": {
+        "tool_use_id": "toolu_task_1",
+        "type": "tool_result",
+        "content": "1\t---\n2\tname: example-skill\n3\tdescription: Explicit native mock fixture.\n4\t---\n5\tcandidate skill bytes\n6\t"
+      },
+      "wireResult": {
+        "tool_use_id": "toolu_task_1",
+        "type": "tool_result",
+        "content": "1\t---\n2\tname: example-skill\n3\tdescription: Explicit native mock fixture.\n4\t---\n5\tcandidate skill bytes\n6\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+        "cache_control": {
+          "type": "ephemeral"
+        }
+      }
+    },
+    {
+      "path": "/workspace/.claude/skills/example-skill/references/guide.txt",
+      "nativeResult": {
+        "type": "text",
+        "file": {
+          "filePath": "/workspace/.claude/skills/example-skill/references/guide.txt",
+          "content": "Selected supporting skill file\n",
+          "numLines": 2,
+          "startLine": 1,
+          "totalLines": 2
+        }
+      },
+      "nativeToolResult": {
+        "tool_use_id": "toolu_task_2",
+        "type": "tool_result",
+        "content": "1\tSelected supporting skill file\n2\t"
+      },
+      "wireResult": {
+        "tool_use_id": "toolu_task_2",
+        "type": "tool_result",
+        "content": "1\tSelected supporting skill file\n2\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+        "cache_control": {
+          "type": "ephemeral"
+        }
+      }
+    },
+    {
+      "path": "/workspace/docs/guide.txt",
+      "nativeResult": {
+        "type": "text",
+        "file": {
+          "filePath": "/workspace/docs/guide.txt",
+          "content": "Synthetic test-only guide: describe a safe offline plan without executing commands.\n",
+          "numLines": 2,
+          "startLine": 1,
+          "totalLines": 2
+        }
+      },
+      "nativeToolResult": {
+        "tool_use_id": "toolu_task_3",
+        "type": "tool_result",
+        "content": "1\tSynthetic test-only guide: describe a safe offline plan without executing commands.\n2\t"
+      },
+      "wireResult": {
+        "tool_use_id": "toolu_task_3",
+        "type": "tool_result",
+        "content": "1\tSynthetic test-only guide: describe a safe offline plan without executing commands.\n2\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+        "cache_control": {
+          "type": "ephemeral"
+        }
+      }
+    }
+  ],
+  "artifactEvidence": [
+    {
+      "target": "plan.txt",
+      "state": "present",
+      "bytes": 30,
+      "sha256": "f7a39d1bca293c0ea3d38c105393bfb8879de29c6e048b4d839f960569f28d41",
+      "toolUseId": "toolu_task_4",
+      "source": "actual-native-Write-and-filesystem-readback"
+    }
+  ],
+  "denialEvidence": [
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/proc/self/environ"
+      },
+      "toolUseId": "toolu_task_5",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/private/credentials"
+      },
+      "toolUseId": "toolu_task_6",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/workspace/../private/credentials"
+      },
+      "toolUseId": "toolu_task_7",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/workspace/private-sentinel.txt"
+      },
+      "toolUseId": "toolu_task_8",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/workspace/fixtures/escape.txt"
+      },
+      "toolUseId": "toolu_task_9",
+      "denied": true,
+      "reason": "Permission to read /workspace/fixtures/escape.txt has been denied."
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/probe/settings.json"
+      },
+      "toolUseId": "toolu_task_10",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/home/node/.claude.json"
+      },
+      "toolUseId": "toolu_task_11",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Bash",
+      "input": {
+        "command": "cat /private/credentials"
+      },
+      "toolUseId": "toolu_task_12",
+      "denied": true,
+      "reason": "<tool_use_error>Error: No such tool available: Bash. Bash is disabled for this session, in subagents as well as here.</tool_use_error>"
+    },
+    {
+      "name": "WebFetch",
+      "input": {
+        "url": "https://example.invalid",
+        "prompt": "Fetch"
+      },
+      "toolUseId": "toolu_task_13",
+      "denied": true,
+      "reason": "<tool_use_error>Error: No such tool available: WebFetch. WebFetch is disabled for this session, in subagents as well as here.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/fixtures/forbidden.txt",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_14",
+      "denied": true,
+      "reason": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/not-selected.md",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_15",
+      "denied": true,
+      "reason": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/home/node/.claude/forbidden.json",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_16",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/.claude/settings.json",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_17",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/.claude/skills/example-skill/SKILL.md",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_18",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/private/credentials",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_19",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/probe/forbidden.json",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_20",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/.claude/skills/example-skill/references/guide.txt",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_21",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Write",
+      "input": {
+        "file_path": "/workspace/docs/guide.txt",
+        "content": "SYNTHETIC_FORBIDDEN_TASK_WRITE"
+      },
+      "toolUseId": "toolu_task_22",
+      "denied": true,
+      "reason": "<tool_use_error>File is in a directory that is denied by your permission settings.</tool_use_error>"
+    },
+    {
+      "name": "Edit",
+      "input": {
+        "file_path": "/workspace/.claude/skills/example-skill/SKILL.md",
+        "old_string": "synthetic",
+        "new_string": "forbidden"
+      },
+      "toolUseId": "toolu_task_23",
+      "denied": true,
+      "reason": "<tool_use_error>Error: No such tool available: Edit. Edit is disabled for this session, in subagents as well as here.</tool_use_error>"
+    }
+  ],
+  "nativeSessionId": "5b452c97-a47a-4c78-b0e7-96078e1cb44f",
+  "cleanup": {
+    "scoped": true,
+    "containersRemoved": true,
+    "imageTagRemoved": true,
+    "hostConfigRemoved": true,
+    "sourceSeedsRemoved": true,
+    "artifactReadbackRemoved": true
+  },
+  "usage": {
+    "inputTokens": {
+      "value": null,
+      "provenance": "unavailable"
+    },
+    "outputTokens": {
+      "value": null,
+      "provenance": "unavailable"
+    },
+    "elapsedMs": {
+      "value": 141018.8529,
+      "provenance": "trusted-host-monotonic-build-native-capture-cleanup"
+    },
+    "usd": {
+      "value": null,
+      "provenance": "unavailable"
+    },
+    "credits": {
+      "value": null,
+      "provenance": "unavailable"
+    }
+  }
+}

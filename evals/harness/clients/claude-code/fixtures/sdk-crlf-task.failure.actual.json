@@ -1,0 +1,62 @@
+{
+  "protocol": "claude-offline-sdk-root-failure@1",
+  "observedAt": "2026-10-08T15:23:52.560Z",
+  "client": "claude-code",
+  "task": {
+    "invocationId": "eea24747-ca40-4c1c-bbc1-066cda3ff788",
+    "caseId": "explicit",
+    "client": "claude-code",
+    "arm": "candidate",
+    "repeat": 1,
+    "fixtureHash": "65251c6dbe62e6a811367f4ef91bad2c94f7f225d28844718d90f99994e8c9c5"
+  },
+  "promptHash": "6ca18a836324e3ec3f74c22523161d642e13e04ba5c460d6ad9fb0e1d06835aa",
+  "transport": "offline-mock",
+  "offlineEvidenceOnly": true,
+  "authenticationVerified": false,
+  "liveAccepted": false,
+  "error": {
+    "name": "OfflineTaskError",
+    "message": "Complete source file bytes were not observed in native Read and provider capture",
+    "code": "OFFLINE_TASK_SOURCE_UNSUPPORTED",
+    "failureClass": "infrastructure",
+    "executionId": "a99b391f-5ee6-470d-942a-d1481b0352cb",
+    "evidence": {
+      "path": "/workspace/docs/guide.txt",
+      "toolUseId": "toolu_task_3",
+      "suppliedBytes": 85,
+      "suppliedHash": "174d64607f60d19c050c7717e1e7f2734d3511602171d80fb37d40e32fb67fc8",
+      "nativeResult": {
+        "type": "text",
+        "file": {
+          "filePath": "/workspace/docs/guide.txt",
+          "content": "Synthetic test-only guide: describe a safe offline plan without executing commands.\n",
+          "numLines": 2,
+          "startLine": 1,
+          "totalLines": 2
+        }
+      },
+      "nativeToolResult": {
+        "tool_use_id": "toolu_task_3",
+        "type": "tool_result",
+        "content": "1\tSynthetic test-only guide: describe a safe offline plan without executing commands.\n2\t"
+      },
+      "wireResult": {
+        "tool_use_id": "toolu_task_3",
+        "type": "tool_result",
+        "content": "1\tSynthetic test-only guide: describe a safe offline plan without executing commands.\n2\n\n<system-reminder>\n<total_tokens>14999998 tokens left</total_tokens>\n</system-reminder>",
+        "cache_control": {
+          "type": "ephemeral"
+        }
+      }
+    },
+    "cleanup": {
+      "scoped": true,
+      "containersRemoved": true,
+      "imageTagRemoved": true,
+      "hostConfigRemoved": true,
+      "sourceSeedsRemoved": true,
+      "artifactReadbackRemoved": true
+    }
+  }
+}

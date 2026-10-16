@@ -1,0 +1,15 @@
+{
+  "contractVersion": 2,
+  "id": "offline-example",
+  "runner": "contract-test@1",
+  "image": "example.invalid/offline@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "clients": {
+    "claude-code": { "version": "test-only", "model": "model-test", "endpoint": "https://provider.invalid", "settings": { "wireModel": "wire-model-test" } },
+    "opencode": { "version": "test-only", "model": "model-test", "endpoint": "https://provider.invalid", "settings": { "wireModel": "wire-model-test" } },
+    "copilot": { "version": "test-only", "model": "model-test", "endpoint": "https://provider.invalid", "settings": { "wireModel": "wire-model-test" } }
+  },
+  "auth": "native-client-auth-test-only",
+  "limits": { "turns": 10, "tokens": 10000, "seconds": 60, "concurrency": 1 },
+  "earlyExit": false,
+  "cache": false
+}

@@ -1,0 +1,40 @@
+{
+  "experiment": "new-credential-free-socket-worker",
+  "startedAt": "2026-10-09T13:45:06.510Z",
+  "scope": "actual-Docker-worker-and-synthetic-Node-peers-not-native-client-auth-or-Skill",
+  "evidenceScope": "worker-filesystem-only",
+  "authenticationVerified": false,
+  "liveAccepted": false,
+  "nativeDiscoveryVerified": false,
+  "status": "explicit-cleanup-error",
+  "error": {
+    "code": "CLEANUP_FAILED",
+    "diagnosticHash": "f7a54f045622dd7eabe7f8e003a5aeab419a9f65002476758496e3afc2fc062e"
+  },
+  "cleanupError": {
+    "code": "CLEANUP_FAILED",
+    "causeCode": "SOCKET_MOUNT_MISMATCH"
+  },
+  "finishedAt": "2026-10-09T13:45:08.546Z",
+  "remainingBlockers": [
+    "Native original candidate/builders must consume and recheck the original transport lease/binding, not copied mount/command fields.",
+    "Native built-in arbitrary file/shell tools and ambient MCP/configuration must be disabled; only this explicit fixed MCP stdio shim may be enabled.",
+    "Native issuer must verify the selected candidate actual UID/GID (1000 or10001), preserve it, and add supplemental GID21000; this module does not verify a caller identity assertion.",
+    "Native consumer lifetime/removal must be joined to worker cancellation before exact socket-volume cleanup.",
+    "No native client/catalog/model/auth/Skill event was observed. MCP public-byte reading is not native Skill loading.",
+    "Docker daemon-default user namespaces may be shared; distinct UID and PID/mount namespaces are measured separately."
+  ],
+  "setupFailure": "Docker omits false HostConfig.Mounts[].ReadOnly; Docker CLI absence text is lowercase; the worker process was never started.",
+  "recoveryCleanup": {
+    "scope": "exact recorded own startup-attempt resources after original broker exited; not public API serialized-handle recovery",
+    "containerIdHash": "92b52760aae631cf850ca83c055f23a0af22cdb6d3f3c146fac24b3d1cb61a01",
+    "ownerHash": "6224a306161826face1de32777b48bc6eee099c3d3b65f7f9c929f414f19a8ba",
+    "containerAbsence": true,
+    "volumeAbsence": true,
+    "ownedNonceDirectoryAbsence": true,
+    "authenticationVerified": false,
+    "nativeDiscoveryVerified": false,
+    "liveAccepted": false
+  },
+  "evidenceHash": "124e2ff69fa4210fdee81914f77ea4763812bbd68f498ed23422b73a60bc934e"
+}

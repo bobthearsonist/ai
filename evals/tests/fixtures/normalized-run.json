@@ -1,0 +1,34 @@
+{
+  "runId": "test-invocation-explicit-copilot-candidate-1",
+  "invocationId": "test-invocation",
+  "caseId": "explicit",
+  "client": "copilot",
+  "arm": "candidate",
+  "repeat": 1,
+  "fresh": true,
+  "status": "completed",
+  "snapshotId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "profileHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "fixtureHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "model": { "requested": "model-test", "observed": null },
+  "runtime": {
+    "clientVersion": "test-only",
+    "image": "example.invalid/offline@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "auth": "native-client-auth-test-only",
+    "isolationEvidence": "test-only: synthetic offline evidence, not live isolation verification"
+  },
+  "trigger": {
+    "loaded": true,
+    "evidence": [{ "kind": "skill-load", "skill": "example-skill", "ref": "trace.jsonl#event-1" }]
+  },
+  "checks": [{ "id": "plan-present", "class": "correctness", "status": "passed", "evidence": "artifacts/plan.txt" }],
+  "usage": {
+    "inputTokens": { "value": null, "provenance": "unavailable" },
+    "outputTokens": { "value": 42, "provenance": "client-reported" },
+    "elapsedMs": { "value": 100, "provenance": "runner-monotonic-clock" },
+    "usd": { "value": null, "provenance": "unavailable" },
+    "credits": { "value": 0.5, "provenance": "copilot-usage-output" }
+  },
+  "artifacts": ["artifacts/plan.txt", "trace.jsonl"],
+  "error": null
+}

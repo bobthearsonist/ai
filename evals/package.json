@@ -1,0 +1,12 @@
+{
+  "name": "ai-skill-evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "eval": "node harness/cli.mjs"
+  },
+  "dependencies": { "ajv": "8.17.1" }
+}
