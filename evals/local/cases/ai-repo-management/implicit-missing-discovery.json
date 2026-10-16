@@ -1,5 +1,5 @@
 {
-  "prompt": "Read scenario.md and the files in the added directory (home\\AI, home\\Repositories\\ai-private). My git-commit-style skill never shows up in my AI client. Diagnose why and say what to change and run. Answer in your reply.",
+  "prompt": "read scenario.md and the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). My git-commit-style skill never shows up in my AI client. Diagnose why and say what to change and run. Answer in your reply.",
   "id": "implicit-missing-discovery",
   "shouldTrigger": true,
   "fixtures": true,

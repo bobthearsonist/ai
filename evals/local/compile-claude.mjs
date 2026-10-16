@@ -59,7 +59,7 @@ export function compileClaudePlugin({ outDir, skillName, skillSourceDir, cases, 
     mkdirSync(join(dir, 'graders'), { recursive: true });
     writeFileSync(
       join(dir, 'prompt.md'),
-      `---\nmax_turns: ${maxTurns}\ntimeout_seconds: ${timeoutSeconds}\nallowed_tools: [Skill]\nruns: 3\n---\n${c.prompt}\n`,
+      `---\nmax_turns: ${maxTurns}\ntimeout_seconds: ${timeoutSeconds}\nallowed_tools: [${c.fixtures ? 'Skill, Read, Glob, Grep' : 'Skill'}]\nruns: 3\n---\n${c.fixtures ? c.prompt.replaceAll('{{fixtures}}', join(dir, 'resources')) : c.prompt}\n`,
     );
     if (c.fixtures) {
       if (!fixturesDir) throw new Error(`case ${c.id} needs fixtures but suite has no fixtures directory`);
