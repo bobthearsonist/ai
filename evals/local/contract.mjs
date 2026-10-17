@@ -63,6 +63,10 @@ export function validateCase(c) {
   if (typeof c.shouldTrigger !== 'boolean') problems.push('shouldTrigger must be boolean');
   if (!Array.isArray(c.checks) || c.checks.length === 0) problems.push('checks must be a non-empty array');
   if (c.fixtures !== undefined && typeof c.fixtures !== 'boolean') problems.push('fixtures must be boolean');
+  if (c.samples !== undefined) {
+    const s = c.samples;
+    if (!s || !Array.isArray(s.pass) || !Array.isArray(s.fail) || ![...s.pass, ...s.fail].every((x) => typeof x === 'string')) problems.push('samples must be { pass: string[], fail: string[] }');
+  }
   for (const k of c.checks ?? []) {
     if (!['regex', 'not_regex', 'file_exists', 'tool_order'].includes(k.type)) problems.push(`unsupported check type ${k.type}`);
     if (['regex', 'not_regex'].includes(k.type) && typeof k.pattern !== 'string') problems.push('check needs pattern');
@@ -70,4 +74,15 @@ export function validateCase(c) {
     if (k.type === 'tool_order' && (typeof k.before !== 'string' || typeof k.after !== 'string')) problems.push('tool_order needs before and after');
   }
   return problems;
+}
+
+// Applies a case's text checks to a hand-written answer; used to validate graders against known samples.
+export function gradeSample(c, text) {
+  const failed = [];
+  for (const k of c.checks) {
+    if (k.type !== 'regex' && k.type !== 'not_regex') continue;
+    const hit = new RegExp(k.pattern, k.flags ?? '').test(text);
+    if (k.type === 'regex' ? !hit : hit) failed.push(k.name ?? k.pattern);
+  }
+  return { passed: failed.length === 0, failed };
 }

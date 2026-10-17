@@ -1,8 +1,20 @@
 {
   "id": "god-object",
+  "purpose": "guard: a strong baseline also names this well-known smell, so no lift is expected",
   "prompt": "OrderManager has 40 methods covering validation, persistence, email and PDF rendering. What is the smell?",
   "shouldTrigger": true,
   "checks": [
-    { "type": "regex", "name": "names-god-object", "pattern": "god (object|class)", "flags": "i" }
-  ]
+    { "type": "regex", "name": "names-god-object", "pattern": "god[\\s-]?(object|class)|\\bblob\\b", "flags": "i" },
+    { "type": "regex", "name": "splits-by-responsibility", "pattern": "(split|extract|separate|break)[\\s\\S]{0,80}(class|service|component|responsibilit)|single[- ]responsibility", "flags": "i" }
+  ],
+  "samples": {
+    "pass": [
+      "This is a God Object. Split it by responsibility: a validator, a repository, a mailer and a PDF renderer.",
+      "Classic god-class. Extract separate services for persistence, email and rendering so each has one responsibility."
+    ],
+    "fail": [
+      "This looks like a large class with too many methods. It is hard to read.",
+      "It is a God Object, which is bad."
+    ]
+  }
 }

@@ -8,10 +8,11 @@ import { parseArgs } from 'node:util';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { values } = parseArgs({
-  options: { concurrency: { type: 'string', default: '4' }, runs: { type: 'string', default: '3' }, 'approve-sessions': { type: 'string' } },
+  options: { concurrency: { type: 'string', default: '4' }, runs: { type: 'string', default: '3' }, 'approve-sessions': { type: 'string' }, suites: { type: 'string' } },
 });
 const casesRoot = join(here, 'cases');
-const suites = readdirSync(casesRoot).filter((s) => existsSync(join(casesRoot, s)) && readdirSync(join(casesRoot, s)).some((f) => f.endsWith('.json')));
+const only = values.suites?.split(',');
+const suites = readdirSync(casesRoot).filter((s) => (!only || only.includes(s)) && existsSync(join(casesRoot, s)) && readdirSync(join(casesRoot, s)).some((f) => f.endsWith('.json')));
 const runs = Number(values.runs);
 const perSuite = (s) => readdirSync(join(casesRoot, s)).filter((f) => f.endsWith('.json')).length * runs * 2;
 const total = suites.reduce((n, s) => n + perSuite(s), 0);
@@ -32,6 +33,6 @@ let cost = 0;
 for (const r of results) {
   cost += r.costUsd ?? 0;
   console.log(`${r.suite}: ${r.status} score=${r.overallScore?.toFixed?.(2)} cost=$${r.costUsd?.toFixed?.(2)}`);
-  for (const c of r.cases ?? []) console.log(`  ${c.id}: with=${c.withScore?.toFixed(2)} without=${c.withoutScore?.toFixed(2)} delta=${c.delta?.toFixed(2)}`);
+  for (const c of r.cases ?? []) console.log(`  ${c.id}: with=${c.withScore?.toFixed(2)} without=${c.withoutScore?.toFixed(2)} delta=${c.delta?.toFixed(2)}${c.invalidRuns ? ` (${c.invalidRuns} invalid run(s) excluded)` : ''}`);
 }
 console.log(`total cost ~$${cost.toFixed(2)}`);

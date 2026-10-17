@@ -3,6 +3,17 @@
   "prompt": "Our OrderService has three if-statements on payment type. Tests pass and it reads fine. Should I introduce Strategy plus a factory and registry now, just to be safe?",
   "shouldTrigger": true,
   "checks": [
-    { "type": "regex", "name": "demands-evidence", "pattern": "pain|evidence|premature|over-?engineer|leave it alone|file:line", "flags": "i" }
-  ]
+    { "type": "regex", "name": "wants-evidence-of-pain", "pattern": "\\bpain\\b|evidence|\\bmeasure|file:line|concrete (problem|need|pain)|actual(ly)? (cause|caus|hurt)", "flags": "i" },
+    { "type": "regex", "name": "advises-against-now", "pattern": "leave (it|this|the code)( alone| as[- ]is)|(don'?t|do not|no need to|not worth|wouldn'?t|i'?d (not|skip))[\\s\\S]{0,40}(introduc|add|adopt|refactor|use strategy)|keep (it|them|the (if|code))[\\s\\S]{0,20}(as is|simple|for now)|not (yet|now)|hold off|premature", "flags": "i" }
+  ],
+  "samples": {
+    "pass": [
+      "No. Three branches that read fine with passing tests is not pain. Leave it alone until you have concrete evidence it is hurting you.",
+      "I wouldn't add a Strategy, factory and registry yet. That is premature without a measured problem; keep the ifs and revisit if a fourth type arrives with real bugs."
+    ],
+    "fail": [
+      "Yes, Strategy with a factory and registry is the clean way to handle payment types. Here is how to set it up.",
+      "It depends. Strategy is a good pattern for payment handling and would make the code more extensible."
+    ]
+  }
 }

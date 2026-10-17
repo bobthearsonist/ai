@@ -3,6 +3,17 @@
   "prompt": "Review this plan: introduce Repository, Unit of Work and CQRS across all 20 services in a single PR.",
   "shouldTrigger": true,
   "checks": [
-    { "type": "regex", "name": "recommends-incremental", "pattern": "incremental|one pattern|one module|separate PR|smaller|single PR", "flags": "i" }
-  ]
+    { "type": "regex", "name": "splits-the-work", "pattern": "(separate|multiple|several|smaller|individual|one per|one) (PRs?|pull requests?|changes?|changesets?)|one (pattern|module|service) (at a time|per)|incremental|phase[ds]?\\b", "flags": "i" },
+    { "type": "regex", "name": "asks-for-pain-evidence", "pattern": "\\bpain\\b|evidence|file:line|concrete (problem|need|pain)|what (problem|pain)|justif|which services? (actually|really)", "flags": "i" }
+  ],
+  "samples": {
+    "pass": [
+      "Don't do this in one PR. Do one pattern in one service at a time, and only where you can show concrete pain with file:line evidence.",
+      "Break it into separate PRs per service. Before adopting CQRS anywhere, what problem does it solve? Show the evidence."
+    ],
+    "fail": [
+      "Looks reasonable. Make sure CI is green and get two reviewers.",
+      "That is a big PR, so split it into several smaller PRs."
+    ]
+  }
 }

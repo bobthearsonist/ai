@@ -6,9 +6,9 @@ import { join } from 'node:path';
 import * as fsSync from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { registerRunner, validateCase } from '../local/contract.mjs';
+import { registerRunner, validateCase, gradeSample } from '../local/contract.mjs';
 import { compileClaudePlugin, loadSuite } from '../local/compile-claude.mjs';
-import { buildArgs, normalizeAggregate, plannedSessions, versionAtLeast } from '../local/claude-plugin-eval.mjs';
+import { buildArgs, normalizeAggregate, plannedSessions, versionAtLeast, isCompleteRun } from '../local/claude-plugin-eval.mjs';
 import { registerStubs } from '../local/stubs.mjs';
 import { getRunner } from '../local/contract.mjs';
 
@@ -95,3 +95,31 @@ test('approval gate blocks without --approve-sessions', () => {
   assert.match(r.stderr, /--approve-sessions 18/);
 });
 
+
+test('graders classify each case hand-written samples as declared', () => {
+  const root = fileURLToPath(new URL('../local/cases', import.meta.url));
+  let checked = 0;
+  for (const s of fsSync.readdirSync(root)) {
+    for (const c of loadSuite(join(root, s))) {
+      for (const text of c.samples?.pass ?? []) {
+        const r = gradeSample(c, text);
+        assert.ok(r.passed, `${s}/${c.id} should pass: ${JSON.stringify(text)} failed ${r.failed}`);
+        checked++;
+      }
+      for (const text of c.samples?.fail ?? []) {
+        assert.ok(!gradeSample(c, text).passed, `${s}/${c.id} should fail: ${JSON.stringify(text)}`);
+        checked++;
+      }
+    }
+  }
+  assert.ok(checked >= 20);
+});
+
+test('runs that never produced a result are excluded from scores', () => {
+  const files = { good: '{"type":"assistant"}\n{"duration_api_ms":1,"type":"result"}\n', bad: '{"type":"assistant"}\n' };
+  const io = { exists: () => true, read: (p) => files[p] };
+  assert.equal(isCompleteRun({ tracePath: 'good' }, io), true);
+  assert.equal(isCompleteRun({ tracePath: 'bad' }, io), false);
+  const n = normalizeAggregate({ cases: [{ name: 'a', arms: { with: [{ score: 1, tracePath: join(tmpdir(), 'nope-trace.jsonl') }, { score: 0 }], without: [{ score: 0.5 }] } }] });
+  assert.equal(n.cases[0].invalidRuns, 0);
+});

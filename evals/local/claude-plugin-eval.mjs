@@ -29,21 +29,31 @@ export function buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, c
   return args;
 }
 
+// A run that never reached a final result (e.g. the session ended right after the skill loaded)
+// says nothing about answer quality, so it is excluded from scores instead of counted as a failure.
+export function isCompleteRun(run, { exists = existsSync, read = (p) => readFileSync(p, 'utf8') } = {}) {
+  if (!run?.tracePath || !exists(run.tracePath)) return true;
+  return /"type":"result"/.test(read(run.tracePath));
+}
+
 export function normalizeAggregate(agg) {
   const cases = (agg.cases ?? []).map((c) => {
     const a = c.aggregates ?? {};
+    const valid = (runs) => (runs ?? []).filter((r) => isCompleteRun(r));
     const mean = (runs) => (runs?.length ? runs.reduce((s, r) => s + (r.score ?? 0), 0) / runs.length : null);
     const sum = (...arms) => {
       const costs = arms.flatMap((r) => r ?? []).map((r) => r.costUsd).filter((x) => typeof x === 'number');
       return costs.length ? costs.reduce((s, x) => s + x, 0) : null;
     };
-    const withScore = mean(c.arms?.with) ?? a.score ?? null;
-    const withoutScore = mean(c.arms?.without) ?? a.baselineScore ?? a.withoutScore ?? null;
+    const invalidRuns = ['with', 'without'].reduce((n, k) => n + (c.arms?.[k]?.length ?? 0) - valid(c.arms?.[k]).length, 0);
+    const withScore = mean(valid(c.arms?.with)) ?? a.score ?? null;
+    const withoutScore = mean(valid(c.arms?.without)) ?? a.baselineScore ?? a.withoutScore ?? null;
     return {
       id: c.id ?? c.name ?? c.case ?? 'unknown',
       withScore,
       withoutScore,
-      delta: a.delta ?? (withScore != null && withoutScore != null ? withScore - withoutScore : null),
+      delta: withScore != null && withoutScore != null ? withScore - withoutScore : (a.delta ?? null),
+      invalidRuns,
       partial: Boolean(c.partial),
       partialReason: c.partialReason ?? null,
       costUsd: sum(c.arms?.with, c.arms?.without),

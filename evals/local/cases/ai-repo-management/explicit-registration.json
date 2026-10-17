@@ -1,32 +1,22 @@
 {
-  "prompt": "Using the ai-repo-management skill: read scenario.md and the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). Answer in your reply: propose how to register the git-commit-style skill in the private collection registry, and the exact sync command to run afterwards.",
   "id": "explicit-registration",
+  "prompt": "Using the ai-repo-management skill: read scenario.md and the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). Answer in your reply: propose how to register the git-commit-style skill in the private collection registry, and the exact sync command to run afterwards.",
   "shouldTrigger": true,
   "fixtures": true,
   "checks": [
-    {
-      "flags": "i",
-      "name": "path",
-      "type": "regex",
-      "pattern": "Repositories/ai-private/skills/git-commit-style"
-    },
-    {
-      "flags": "i",
-      "name": "registry-key",
-      "type": "regex",
-      "pattern": "collections\\.private\\.skills"
-    },
-    {
-      "flags": "i",
-      "name": "sync-command",
-      "type": "regex",
-      "pattern": "\\./scripts/sync\\.sh"
-    },
-    {
-      "flags": "i",
-      "name": "no-push",
-      "type": "not_regex",
-      "pattern": "`git push"
-    }
-  ]
+    { "type": "regex", "name": "path", "pattern": "Repositories/ai-private/skills/git-commit-style", "flags": "i" },
+    { "type": "regex", "name": "registry-key", "pattern": "collections\\.private\\.skills|private:[\\s\\S]{0,120}skills:", "flags": "i" },
+    { "type": "regex", "name": "sync-command", "pattern": "\\./scripts/sync\\.sh", "flags": "i" },
+    { "type": "not_regex", "name": "no-push-command", "pattern": "`git push", "flags": "i" }
+  ],
+  "samples": {
+    "pass": [
+      "Add `~/Repositories/ai-private/skills/git-commit-style` under collections.private.skills in local.yaml, then run ./scripts/sync.sh.",
+      "In local.yaml:\n```yaml\ncollections:\n  private:\n    skills:\n      - ~/Repositories/ai-private/skills/git-commit-style\n```\nThen run `./scripts/sync.sh`."
+    ],
+    "fail": [
+      "Copy the skill into ~/AI/skills/git-commit-style and restart your client.",
+      "Add it to collections.private.skills, then run `git push` to publish."
+    ]
+  }
 }
