@@ -9,6 +9,7 @@ import { createClaudeRunner } from './claude-plugin-eval.mjs';
 import { registerStubs } from './stubs.mjs';
 import { recordRun } from './summary.mjs';
 import { regradeRun } from './regrade.mjs';
+import { resolveConfig, suiteSettings } from './config.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { values, positionals } = parseArgs({
@@ -23,11 +24,15 @@ const { values, positionals } = parseArgs({
     concurrency: { type: 'string', default: '1' },
     exe: { type: 'string' },
     'skill-root': { type: 'string' },
+    config: { type: 'string' },
+    'cases-dir': { type: 'string' },
+    'output-dir': { type: 'string' },
+    'results-dir': { type: 'string' },
   },
 });
 
-const SKILL_ROOTS = (values['skill-root'] ?? process.env.EVAL_SKILL_ROOT ?? '').split(';').filter(Boolean);
-if (!SKILL_ROOTS.length) SKILL_ROOTS.push(join(here, '..', '..', 'skills'), join(here, '..', '..', '..', 'ai-private', 'skills'));
+const config = resolveConfig({ configPath: values.config, engineRoot: resolve(here, '..'), flags: { skillRoot: values['skill-root'], casesDir: values['cases-dir'], outputDir: values['output-dir'], resultsDir: values['results-dir'] } });
+const SKILL_ROOTS = config.skillsRoots;
 const findSkill = (name) => SKILL_ROOTS.map((r) => join(r, name)).find((p) => existsSync(join(p, 'SKILL.md')));
 const command = positionals[0];
 createClaudeRunner(values.exe ? { exe: values.exe } : {});
@@ -45,12 +50,13 @@ if (command !== 'smoke' && command !== 'run' && command !== 'regrade') {
   process.exit(64);
 }
 
-const suiteDir = join(here, 'cases', values.suite);
+const { skill: skillName, casesFolder } = suiteSettings(config, values.suite);
+const suiteDir = join(config.casesDir, casesFolder);
 const cases = loadSuite(suiteDir);
 const fixturesDir = join(suiteDir, 'fixtures');
-const skillDir = findSkill(values.suite);
+const skillDir = findSkill(skillName);
 if (!skillDir) {
-  console.error(`skill "${values.suite}" not found under: ${SKILL_ROOTS.join('; ')}`);
+  console.error(`skill "${skillName}" not found under: ${SKILL_ROOTS.join('; ')}`);
   process.exit(1);
 }
 if (command === 'regrade') {
@@ -82,16 +88,16 @@ if (!(approved >= planned && planned > 0)) {
 }
 
 const ts = `${new Date().toISOString().replace(/[:.]/g, '-')}-${values.suite}`;
-const outDir = resolve(here, '..', '.work', 'local-runs', `${ts}-${command}`);
+const outDir = join(config.outputDir, `${ts}-${command}`);
 mkdirSync(outDir, { recursive: true });
 const { pluginRoot, skillHash, canaryToken } = runner.prepare({
-  outDir, skillName: values.suite, skillSourceDir: skillDir, fixturesDir: existsSync(fixturesDir) ? fixturesDir : null, cases,
+  outDir, skillName, skillSourceDir: skillDir, fixturesDir: existsSync(fixturesDir) ? fixturesDir : null, cases,
 });
 const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId, concurrency: Number(values.concurrency) });
 const normalized = { ...result, skillSha256: skillHash, canaryToken, command, runs, ablation, plannedSessions: planned };
 writeFileSync(join(outDir, 'normalized.json'), JSON.stringify(normalized, null, 2));
 if (!smoke && result.cases?.length) {
-  const { diff } = recordRun(resolve(here, '..', '.work', 'results'), values.suite, normalized);
+  const { diff } = recordRun(config.resultsDir, values.suite, normalized);
   for (const d of diff) if (d.verdictChange || d.deltaChange) console.error(`diff ${d.id}: with ${d.withChange}, delta ${d.deltaChange}${d.verdictChange ? `, verdict ${d.verdictChange}` : ''}`);
 }
 console.log(JSON.stringify(normalized, null, 2));

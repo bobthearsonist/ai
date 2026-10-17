@@ -58,6 +58,7 @@ export function listRunners() {
 export function validateCase(c) {
   const problems = [];
   if (!c || typeof c !== 'object') return ['case must be an object'];
+  if (c.schemaVersion !== undefined && c.schemaVersion !== 1) problems.push(`unsupported schemaVersion ${c.schemaVersion}; this harness reads 1`);
   if (!/^[a-z0-9][a-z0-9-]*$/.test(c.id ?? '')) problems.push('id must be kebab-case');
   if (typeof c.prompt !== 'string' || !c.prompt.trim()) problems.push('prompt required');
   if (typeof c.shouldTrigger !== 'boolean') problems.push('shouldTrigger must be boolean');
