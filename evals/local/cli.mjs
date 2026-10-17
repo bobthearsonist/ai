@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { getRunner } from './contract.mjs';
-import { compileClaudePlugin, loadSuite } from './compile-claude.mjs';
+import { loadSuite } from './compile-claude.mjs';
 import { createClaudeRunner } from './claude-plugin-eval.mjs';
 import { registerStubs } from './stubs.mjs';
 import { recordRun } from './summary.mjs';
+import { regradeRun } from './regrade.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { values, positionals } = parseArgs({
@@ -39,8 +40,8 @@ if (command === 'preflight') {
   process.exit(r.ok ? 0 : 1);
 }
 
-if (command !== 'smoke' && command !== 'run') {
-  console.error('usage: cli.mjs <preflight|smoke|run> [--client claude] [--suite git-commit-style] [--approve-sessions N]');
+if (command !== 'smoke' && command !== 'run' && command !== 'regrade') {
+  console.error('usage: cli.mjs <preflight|smoke|run|regrade <runDir>> [--client claude] [--suite git-commit-style] [--approve-sessions N]');
   process.exit(64);
 }
 
@@ -51,6 +52,13 @@ const skillDir = findSkill(values.suite);
 if (!skillDir) {
   console.error(`skill "${values.suite}" not found under: ${SKILL_ROOTS.join('; ')}`);
   process.exit(1);
+}
+if (command === 'regrade') {
+  const runDir = resolve(positionals[1] ?? '');
+  const meta = existsSync(join(runDir, 'normalized.json')) ? JSON.parse(readFileSync(join(runDir, 'normalized.json'), 'utf8')) : {};
+  const out = regradeRun({ tracesDir: join(runDir, 'traces'), cases, parse: runner.parseTrace, canaryToken: meta.canaryToken });
+  for (const c of out) console.log(`${c.id}: with=${c.withScore?.toFixed(2)} without=${c.withoutScore?.toFixed(2)} [${c.verdict}]${c.invalidRuns ? ' invalid=' + c.invalidRuns : ''}`);
+  process.exit(0);
 }
 const smoke = command === 'smoke';
 const caseId = smoke ? (values.case ?? cases[0].id) : values.case;
@@ -76,7 +84,7 @@ if (!(approved >= planned && planned > 0)) {
 const ts = `${new Date().toISOString().replace(/[:.]/g, '-')}-${values.suite}`;
 const outDir = resolve(here, '..', '.work', 'local-runs', `${ts}-${command}`);
 mkdirSync(outDir, { recursive: true });
-const { pluginRoot, skillHash, canaryToken } = compileClaudePlugin({
+const { pluginRoot, skillHash, canaryToken } = runner.prepare({
   outDir, skillName: values.suite, skillSourceDir: skillDir, fixturesDir: existsSync(fixturesDir) ? fixturesDir : null, cases,
 });
 const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId, concurrency: Number(values.concurrency) });

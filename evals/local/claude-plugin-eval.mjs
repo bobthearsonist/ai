@@ -2,6 +2,10 @@ import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { CLIENT_STATUS, makeRunResult, registerRunner } from './contract.mjs';
+import { parseClaudeTrace, verdict } from './grade.mjs';
+import { compileClaudePlugin } from './compile-claude.mjs';
+
+export { verdict };
 
 const MIN_VERSION = [2, 1, 269];
 
@@ -34,17 +38,6 @@ export function buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, c
 export function isCompleteRun(run, { exists = existsSync, read = (p) => readFileSync(p, 'utf8') } = {}) {
   if (!run?.tracePath || !exists(run.tracePath)) return true;
   return /"type":"result"/.test(read(run.tracePath));
-}
-
-// Separation-based verdict: with 3 runs per arm a mean delta alone is mostly noise, so a lift or
-// regression is only claimed when every run of one arm beats every run of the other.
-export function verdict(withScores, withoutScores) {
-  if (!withScores?.length || !withoutScores?.length) return 'unmeasured';
-  const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
-  if (Math.abs(mean(withScores) - mean(withoutScores)) < 0.05) return 'same';
-  if (Math.min(...withScores) > Math.max(...withoutScores)) return 'lift';
-  if (Math.max(...withScores) < Math.min(...withoutScores)) return 'regression';
-  return 'inconclusive';
 }
 
 // Copies each run's trace next to the results and drops the temp dir it came from.
@@ -115,6 +108,11 @@ export function createClaudeRunner({ exe = 'claude' } = {}) {
       return { ok: problems.length === 0, version: v.stdout.trim(), problems };
     },
     plannedSessions,
+    // Builds the client-specific harness (here a throwaway plugin) from neutral cases.
+    prepare(opts) {
+      return compileClaudePlugin(opts);
+    },
+    parseTrace: parseClaudeTrace,
     async run(suite, { pluginRoot, outputDir, runs, ablation, maxCostUsd = 5, caseId, concurrency = 1 }) {
       const proc = run(buildArgs({ pluginRoot, outputDir, runs, ablation, maxCostUsd, caseId, concurrency }));
       const base = { client: 'claude', outputDir, caveats: ['subscription login used; not hermetic', 'cost is a list-price estimate'] };

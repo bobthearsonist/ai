@@ -9,6 +9,12 @@ function stub(id, requirements) {
       return { ok: false, problems: [`${id} adapter not implemented`, ...requirements] };
     },
     plannedSessions: () => 0,
+    prepare() {
+      throw new Error(`${id} adapter not implemented`);
+    },
+    parseTrace() {
+      throw new Error(`${id} adapter not implemented`);
+    },
     async run() {
       return makeRunResult({ client: id, status: CLIENT_STATUS.NOT_IMPLEMENTED, caveats: requirements });
     },
