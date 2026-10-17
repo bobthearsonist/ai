@@ -25,7 +25,9 @@ if (Number(values['approve-sessions']) !== total) {
 const results = await Promise.all(suites.map((s) => new Promise((resolve) => {
   const p = spawn(process.execPath, [join(here, 'cli.mjs'), 'run', '--suite', s, '--runs', String(runs), '--concurrency', values.concurrency, '--approve-sessions', String(perSuite(s))], { stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '';
+  let err = '';
   p.stdout.on('data', (d) => (out += d));
+  p.stderr.on('data', (d) => (err += d));
   p.on('close', () => {
     try { resolve({ suite: s, diffs: err.split(/\r?\n/).filter((l) => l.startsWith('diff ')), ...JSON.parse(out.slice(out.indexOf('{'))) }); } catch { resolve({ suite: s, status: 'error', out: out.slice(-300) }); }
   });
