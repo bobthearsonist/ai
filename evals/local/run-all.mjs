@@ -1,10 +1,11 @@
 // Runs every suite in parallel (separate processes) with per-suite concurrency.
 // usage: node local/run-all.mjs [--concurrency 4] [--runs 3] [--approve-sessions N]
 import { spawn } from 'node:child_process';
-import { readdirSync, existsSync, readFileSync } from 'node:fs';
+import { readdirSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { loadLatest, renderMarkdown } from './summary.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { values } = parseArgs({
@@ -26,13 +27,17 @@ const results = await Promise.all(suites.map((s) => new Promise((resolve) => {
   let out = '';
   p.stdout.on('data', (d) => (out += d));
   p.on('close', () => {
-    try { resolve({ suite: s, ...JSON.parse(out.slice(out.indexOf('{'))) }); } catch { resolve({ suite: s, status: 'error', out: out.slice(-300) }); }
+    try { resolve({ suite: s, diffs: err.split(/\r?\n/).filter((l) => l.startsWith('diff ')), ...JSON.parse(out.slice(out.indexOf('{'))) }); } catch { resolve({ suite: s, status: 'error', out: out.slice(-300) }); }
   });
 })));
 let cost = 0;
 for (const r of results) {
   cost += r.costUsd ?? 0;
   console.log(`${r.suite}: ${r.status} score=${r.overallScore?.toFixed?.(2)} cost=$${r.costUsd?.toFixed?.(2)}`);
-  for (const c of r.cases ?? []) console.log(`  ${c.id}: with=${c.withScore?.toFixed(2)} without=${c.withoutScore?.toFixed(2)} delta=${c.delta?.toFixed(2)}${c.invalidRuns ? ` (${c.invalidRuns} invalid run(s) excluded)` : ''}`);
+  for (const c of r.cases ?? []) console.log(`  ${c.id}: with=${c.withScore?.toFixed(2)} without=${c.withoutScore?.toFixed(2)} delta=${c.delta?.toFixed(2)} [${c.verdict}]${c.invalidRuns ? ` (${c.invalidRuns} invalid run(s) excluded)` : ''}`);
 }
+for (const r of results) for (const d of r.diffs ?? []) console.log(`vs previous ${r.suite} ${d.slice(5)}`);
+const resultsDir = join(here, '..', '.work', 'results');
+mkdirSync(resultsDir, { recursive: true });
+writeFileSync(join(resultsDir, 'summary.md'), renderMarkdown(suites.map((s) => loadLatest(resultsDir, s)).filter(Boolean)));
 console.log(`total cost ~$${cost.toFixed(2)}`);

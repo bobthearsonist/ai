@@ -7,6 +7,7 @@ import { getRunner } from './contract.mjs';
 import { compileClaudePlugin, loadSuite } from './compile-claude.mjs';
 import { createClaudeRunner } from './claude-plugin-eval.mjs';
 import { registerStubs } from './stubs.mjs';
+import { recordRun } from './summary.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { values, positionals } = parseArgs({
@@ -81,5 +82,9 @@ const { pluginRoot, skillHash, canaryToken } = compileClaudePlugin({
 const result = await runner.run(cases, { pluginRoot, outputDir: join(outDir, 'eval-output'), runs, ablation, maxCostUsd: Number(values['max-cost-usd']), caseId, concurrency: Number(values.concurrency) });
 const normalized = { ...result, skillSha256: skillHash, canaryToken, command, runs, ablation, plannedSessions: planned };
 writeFileSync(join(outDir, 'normalized.json'), JSON.stringify(normalized, null, 2));
+if (!smoke && result.cases?.length) {
+  const { diff } = recordRun(resolve(here, '..', '.work', 'results'), values.suite, normalized);
+  for (const d of diff) if (d.verdictChange || d.deltaChange) console.error(`diff ${d.id}: with ${d.withChange}, delta ${d.deltaChange}${d.verdictChange ? `, verdict ${d.verdictChange}` : ''}`);
+}
 console.log(JSON.stringify(normalized, null, 2));
 process.exit(['passed', 'below_threshold'].includes(result.status) ? 0 : 2);

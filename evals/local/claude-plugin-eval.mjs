@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 import { CLIENT_STATUS, makeRunResult, registerRunner } from './contract.mjs';
 
 const MIN_VERSION = [2, 1, 269];
@@ -36,6 +36,37 @@ export function isCompleteRun(run, { exists = existsSync, read = (p) => readFile
   return /"type":"result"/.test(read(run.tracePath));
 }
 
+// Separation-based verdict: with 3 runs per arm a mean delta alone is mostly noise, so a lift or
+// regression is only claimed when every run of one arm beats every run of the other.
+export function verdict(withScores, withoutScores) {
+  if (!withScores?.length || !withoutScores?.length) return 'unmeasured';
+  const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+  if (Math.abs(mean(withScores) - mean(withoutScores)) < 0.05) return 'same';
+  if (Math.min(...withScores) > Math.max(...withoutScores)) return 'lift';
+  if (Math.max(...withScores) < Math.min(...withoutScores)) return 'regression';
+  return 'inconclusive';
+}
+
+// Copies each run's trace next to the results and drops the temp dir it came from.
+export function archiveTraces(aggregatePath, destDir) {
+  const agg = JSON.parse(readFileSync(aggregatePath, 'utf8'));
+  let n = 0;
+  for (const c of agg.cases ?? []) {
+    for (const arm of ['with', 'without']) {
+      (c.arms?.[arm] ?? []).forEach((r, i) => {
+        if (!r.tracePath || !existsSync(r.tracePath)) return;
+        const dir = join(destDir, c.name ?? c.id);
+        mkdirSync(dir, { recursive: true });
+        copyFileSync(r.tracePath, join(dir, `${arm}-${i + 1}.jsonl`));
+        const tmp = dirname(dirname(r.tracePath));
+        if (basename(tmp).startsWith('claude-eval-')) rmSync(tmp, { recursive: true, force: true });
+        n++;
+      });
+    }
+  }
+  return n;
+}
+
 export function normalizeAggregate(agg) {
   const cases = (agg.cases ?? []).map((c) => {
     const a = c.aggregates ?? {};
@@ -48,11 +79,16 @@ export function normalizeAggregate(agg) {
     const invalidRuns = ['with', 'without'].reduce((n, k) => n + (c.arms?.[k]?.length ?? 0) - valid(c.arms?.[k]).length, 0);
     const withScore = mean(valid(c.arms?.with)) ?? a.score ?? null;
     const withoutScore = mean(valid(c.arms?.without)) ?? a.baselineScore ?? a.withoutScore ?? null;
+    const withRuns = valid(c.arms?.with).map((r) => r.score ?? 0);
+    const withoutRuns = valid(c.arms?.without).map((r) => r.score ?? 0);
     return {
       id: c.id ?? c.name ?? c.case ?? 'unknown',
       withScore,
       withoutScore,
       delta: withScore != null && withoutScore != null ? withScore - withoutScore : (a.delta ?? null),
+      verdict: verdict(withRuns, withoutRuns),
+      withRuns,
+      withoutRuns,
       invalidRuns,
       partial: Boolean(c.partial),
       partialReason: c.partialReason ?? null,
@@ -89,6 +125,7 @@ export function createClaudeRunner({ exe = 'claude' } = {}) {
         return makeRunResult({ ...base, status: auth ? CLIENT_STATUS.AUTH_FAILED : CLIENT_STATUS.ERROR, caveats: [...base.caveats, `no aggregate-result.json; exit ${proc.status}; ${String(proc.stderr).slice(0, 500)}`] });
       }
       const n = normalizeAggregate(JSON.parse(readFileSync(aggPath, 'utf8')));
+      archiveTraces(aggPath, join(outputDir, '..', 'traces'));
       const status = proc.status === 0 ? CLIENT_STATUS.PASSED : proc.status === 2 ? CLIENT_STATUS.PARTIAL : CLIENT_STATUS.BELOW_THRESHOLD;
       return makeRunResult({
         ...base, status, clientVersion: n.claudeVersion, overallScore: n.overallScore, costUsd: n.costUsd,

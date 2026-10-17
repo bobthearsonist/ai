@@ -12,3 +12,9 @@ A case with `fixtures: true` gets `cases/<suite>/fixtures` copied into its eval 
 - Cases may carry `samples: { pass: [], fail: [] }`; a unit test requires the graders to classify them as declared. Write samples from the skill's contract, never from live output.
 - Runs with no final result (session ended after the skill loaded) are excluded from scores and counted as `invalidRuns`.
 - `purpose: guard` cases (e.g. god-object) are expected to show no lift; they catch regressions, not value.
+
+## Results, traces and verdicts
+
+- Each case gets a `verdict` from per-run separation, not the mean alone: `lift` (every with-run beats every without-run), `regression` (reverse), `same` (|mean delta| < 0.05), `inconclusive` (overlap, typical at 3 runs), `unmeasured`. Prefer verdicts to `below_threshold`, which is uninformative because the pass threshold is 1.0.
+- Per-run traces are copied to `.work/local-runs/<run>/traces/<case>/<arm>-<n>.jsonl` and the `claude-eval-*` temp dir is removed.
+- Each `run` appends `.work/results/<suite>/<timestamp>.json` and updates `latest.json`; changes versus the previous latest print as `diff ...` lines. `run-all.mjs` also writes `.work/results/summary.md`.
