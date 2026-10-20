@@ -68,6 +68,29 @@ sync_external_symlink() {
     echo "  → $target (external symlink)"
 }
 
+# Moves a collection checkout to <remote>/<branch> before its items are linked,
+# so a dedicated publication worktree serves published content. Never moves a
+# checkout that is on a branch or has local changes, and keeps the current
+# commit on any failure rather than aborting the sync.
+refresh_collection_ref() {
+    local path="$1" ref="$2" remote="${2%%/*}"
+
+    if [[ -n "$(git -C "$path" symbolic-ref -q HEAD)" ]]; then
+        echo "  ⚠️  $path is on a branch, not detached — skipping ref $ref"
+        return
+    fi
+    if [[ -n "$(git -C "$path" status --porcelain)" ]]; then
+        echo "  ⚠️  $path has local changes — skipping ref $ref"
+        return
+    fi
+    if ! git -C "$path" fetch --quiet "$remote" || ! git -C "$path" checkout --quiet --detach "$ref"; then
+        echo "  ⚠️  could not move $path to $ref — keeping $(git -C "$path" rev-parse --short HEAD)"
+        return
+    fi
+
+    echo "  → $path at $ref ($(git -C "$path" rev-parse --short HEAD))"
+}
+
 # === Sync external-skills.yaml (git-based skills) ===
 echo "=== External skills ==="
 count=$(yq e '.skills | length' "$MANIFEST")
@@ -160,6 +183,9 @@ for collection in $collection_names; do
     fi
 
     echo "=== Collection: $collection ==="
+
+    ref=$(yq e ".collections.$collection.ref // \"\"" "$LOCAL_CONFIG")
+    [[ -n "$ref" ]] && refresh_collection_ref "$path" "$ref"
 
     skills_dir=$(yq e ".collections.$collection.skills_dir // \"skills\"" "$LOCAL_CONFIG")
     agents_dir=$(yq e ".collections.$collection.agents_dir // \"agents\"" "$LOCAL_CONFIG")

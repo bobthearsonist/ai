@@ -27,6 +27,7 @@ This links:
 | Field | Default | Purpose |
 | --- | --- | --- |
 | `path` | required | Source repo or directory for the collection |
+| `ref` | none | `<remote>/<branch>` to move a detached checkout to before linking (see below) |
 | `skills_dir` | `skills` | Directory under `path` that contains skills |
 | `agents_dir` | `agents` | Directory under `path` that contains agents |
 | `hooks_dir` | `hooks` | Directory under `path` that contains hooks |
@@ -36,6 +37,25 @@ This links:
 | `links` | empty | Other root-level links to expose from the collection |
 
 Collections whose `path` does not exist are skipped. This lets the same `local.yaml` work on personal and work machines if only some source repos are available.
+
+## Published Skills
+
+A collection that points at your working checkout serves whatever branch is checked out, including unmerged and uncommitted work. To serve merged skills to every client instead, point a collection at a dedicated detached worktree and give it a `ref`:
+
+```bash
+git -C ~/Repositories/company-ai worktree add --detach ~/Repositories/company-ai-published origin/main
+```
+
+```yaml
+collections:
+  work_published:
+    path: ~/Repositories/company-ai-published
+    ref: origin/main
+    skills:
+      - incident-response
+```
+
+Each sync fetches the remote and moves the worktree to `ref` before linking. It leaves the worktree where it is, with a warning, when it is on a branch, has local changes, or the fetch fails.
 
 ## Item Forms
 

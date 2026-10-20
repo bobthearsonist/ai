@@ -85,6 +85,15 @@ collections:
   #   agents:
   #     - company-agent.md
 
+  # Published collection - a detached worktree that each sync moves to `ref`,
+  # so every client sees merged skills rather than your working branch.
+  # See docs/collections.md#published-skills.
+  # work_published:
+  #   path: ~/Repositories/company-ai-published
+  #   ref: origin/main
+  #   skills:
+  #     - incident-response
+
 # Optional machine context used by some skills/prompts. sync.sh does not require
 # any of these. Keys marked CONSUMED are read by tooling - the rest are
 # reference material for agents and humans.
