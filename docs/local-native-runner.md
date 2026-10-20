@@ -26,7 +26,7 @@ A case with `fixtures: true` gets `cases/<suite>/fixtures` copied into its eval 
 
 ## Using the harness from another repo
 
-Install the private `@bobthearsonist/ai-evals` Git dependency in the consuming repo (see the engine README), then put `evals/evals.json` alongside that repo's cases. Paths resolve relative to this file; CLI flags `--cases-dir`, `--skill-root`, `--output-dir`, `--results-dir` override it:
+Install the public `@bobthearsonist/ai-evals` Git dependency over HTTPS in the consuming repo (see the engine README), then put `evals/evals.json` alongside that repo's cases. Paths resolve relative to this file; CLI flags `--cases-dir`, `--skill-root`, `--output-dir`, `--results-dir` override it:
 
 ```json
 {

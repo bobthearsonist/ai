@@ -12,6 +12,6 @@ node local/cli.mjs run --suite security --approve-sessions 18
 node local/run-all.mjs
 ```
 
-Run these commands from `evals`. GitHub SSH access is needed to install the private engine. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite. `run-all` prints the required session approval before any live execution.
+Run these commands from `evals`. The public engine installs over HTTPS without GitHub credentials. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite. `run-all` prints the required session approval before any live execution.
 
 Suites live in `local/cases/<skill>/*.json`; fixtures and `.work` artifacts remain here. Tests validate these suites and the installed engine integration; engine tests live in `ai-evals`. Results are labelled `native-authenticated-non-hermetic`. An earlier Docker-based harness was removed; it is preserved in git history at commit `42120c3`.
