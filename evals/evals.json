@@ -1,0 +1,6 @@
+{
+  "casesDir": "local/cases",
+  "skillsRoots": ["../skills", "../../ai-private/skills"],
+  "outputDir": ".work/local-runs",
+  "resultsDir": ".work/results"
+}

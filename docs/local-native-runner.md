@@ -1,3 +1,8 @@
+# Repository-owned skill evaluations
+
+The shared engine lives in [ai-evals](https://github.com/bobthearsonist/ai-evals);
+`evals/package.json` pins its immutable Git revision. Run `npm ci` in `evals`
+before using the local wrappers. Cases, fixtures and `.work` outputs stay here.
 
 ## Fixtures
 
@@ -5,7 +10,7 @@ A case with `fixtures: true` gets `cases/<suite>/fixtures` copied into its eval 
 
 ## Speed
 
-`cli.mjs run --concurrency N` (1-8, default 1) sets agent runs in flight. `node evals/local/run-all.mjs --concurrency 4 --approve-sessions 96` runs every suite in parallel processes. One 18-session suite takes ~42s at `--concurrency 6`.
+`cli.mjs run --concurrency N` (1-8, default 1) sets agent runs in flight. `node evals/local/run-all.mjs --concurrency 4` prints the approval count needed to run every suite in parallel processes. One 18-session suite takes ~42s at `--concurrency 6`.
 
 ## Case quality
 
@@ -21,7 +26,7 @@ A case with `fixtures: true` gets `cases/<suite>/fixtures` copied into its eval 
 
 ## Using the harness from another repo
 
-The engine lives in `ai/evals`; each repo owns its cases. Put `evals/evals.json` in the consuming repo (paths resolve relative to this file; CLI flags `--cases-dir`, `--skill-root`, `--output-dir`, `--results-dir` override it):
+Install the private `@bobthearsonist/ai-evals` Git dependency in the consuming repo (see the engine README), then put `evals/evals.json` alongside that repo's cases. Paths resolve relative to this file; CLI flags `--cases-dir`, `--skill-root`, `--output-dir`, `--results-dir` override it:
 
 ```json
 {
@@ -33,4 +38,4 @@ The engine lives in `ai/evals`; each repo owns its cases. Put `evals/evals.json`
 }
 ```
 
-Run: `node <path-to-ai>/evals/local/cli.mjs run --config evals/evals.json --suite my-suite --approve-sessions N` (or `run-all.mjs --config ...`). `suites` is optional; without it a suite id equals both its cases folder and its skill name, and `run-all` discovers folders under `casesDir`. Case files may carry `"schemaVersion": 1`; other versions are rejected. Add `.work/` to the consuming repo's `.gitignore`.
+Run: `npx --no-install ai-evals run --config evals/evals.json --suite my-suite --approve-sessions N` (or `ai-evals run-all --config ...`). `suites` is optional; without it a suite id equals both its cases folder and its skill name, and `run-all` discovers folders under `casesDir`. Case files may carry `"schemaVersion": 1`; other versions are rejected. Add `evals/.work/` and `node_modules/` to the consuming repo's `.gitignore`.
