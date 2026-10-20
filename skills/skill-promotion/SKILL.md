@@ -19,13 +19,13 @@ Promote observations from memory to skills when ALL criteria are met:
 
 ## Where Skills Go
 
-Check `~/ai/local.yaml` for local paths:
+Skills live in a source repo and are registered for sync (full rules in `ai-repo-management`):
 
 | Domain | Location |
 |--------|----------|
-| Work-specific | `work.skills_path` from local.yaml (external, symlinked) |
-| General domain | `~/ai/skills/domain/{skill-name}/` |
-| Core/framework | `~/ai/skills/core/{skill-name}/` |
+| Work-specific | the work skills repo, registered under `collections.work` in `~/ai/local.yaml` |
+| General / personal | `ai-private/skills/{skill-name}/`, registered under `collections.private` |
+| Core/framework | `~/ai/skills/{skill-name}/`, listed in `external-skills.yaml` as `type: internal` |
 
 ## Promotion Workflow
 

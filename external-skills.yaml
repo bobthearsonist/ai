@@ -1,10 +1,10 @@
 # External Skills Manifest
 #
-# Skills fetched from external sources (git repos, etc.).
-# Internal (in-repo) and machine-specific skills belong in local.yaml.
+# Skills fetched from external sources (git repos, etc.), plus in-repo skills
+# listed as `type: internal`. This file is shared and public: machine-specific
+# or private-access skills belong in local.yaml.
 #
 # Run `scripts/sync.sh` to fetch/update.
-# Run `scripts/build-plugin.sh` to package all skills into a plugin ZIP.
 #
 # Types:
 #   - git: Clone from remote repo
