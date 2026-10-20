@@ -82,11 +82,3 @@ skills:
     branch: main
     path: skills/infographic-template-updater
     target: skills/infographic-template-updater
-
-  - name: terminate
-    type: git
-    description: Profisee AutoMate test-machine status and test results via the Terminate CLI
-    source: git@ssh.dev.azure.com:v3/profisee/Products/terminate
-    branch: fix/publish-terminate-skill
-    path: skills/terminate
-    target: skills/terminate
