@@ -1,6 +1,6 @@
 {
   "id": "explicit-registration",
-  "prompt": "Using the ai-repo-management skill: read scenario.md and the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). Answer in your reply: propose how to register the git-commit-style skill in the private collection registry, and the exact sync command to run afterwards.",
+  "prompt": "Using the ai-repo-management skill: read {{fixtures}}\\scenario.md first, then the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). Answer in your reply: propose how to register the git-commit-style skill in the private collection registry, and the exact sync command to run afterwards.",
   "shouldTrigger": true,
   "fixtures": true,
   "checks": [

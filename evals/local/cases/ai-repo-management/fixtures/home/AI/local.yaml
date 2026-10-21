@@ -1,0 +1,10 @@
+collections:
+  private:
+    path: ~/Repositories/ai-private
+    skills:
+      - example
+  work_published:
+    path: ~/Repositories/company-ai-published
+    ref: origin/main
+    skills:
+      - incident-response

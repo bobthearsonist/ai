@@ -1,6 +1,6 @@
 {
   "id": "implicit-missing-discovery",
-  "prompt": "Read scenario.md and the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). My git-commit-style skill never shows up in my AI client. Diagnose why and say what to change and run. Answer in your reply.",
+  "prompt": "Read {{fixtures}}\\scenario.md first, then the files under {{fixtures}} (home\\AI, home\\Repositories\\ai-private there stand in for ~/AI and ~/Repositories/ai-private). My git-commit-style skill never shows up in my AI client. Diagnose why and say what to change and run. Answer in your reply.",
   "shouldTrigger": true,
   "fixtures": true,
   "checks": [

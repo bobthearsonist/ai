@@ -1,6 +1,6 @@
 {
   "id": "edit-through-link",
-  "prompt": "Read scenario.md and the files under {{fixtures}} (home\\AI and home\\Repositories there stand in for ~/AI and ~/Repositories). In my real setup, ~/AI/skills/incident-response is a symlink into ~/Repositories/company-ai-published/skills/incident-response, a detached worktree that my local.yaml lists with `ref: origin/main`. My working clone of the same repo is ~/Repositories/company-ai. I found a typo in ~/AI/skills/incident-response/SKILL.md. Answer in your reply: which file should I edit, and how does the fix reach my clients?",
+  "prompt": "Read {{fixtures}}\\scenario.md first, then the files under {{fixtures}} (home\\AI and home\\Repositories there stand in for ~/AI and ~/Repositories). I found a typo in ~/AI/skills/incident-response/SKILL.md. Answer in your reply: which file should I edit, and how does the fix reach my clients?",
   "shouldTrigger": true,
   "fixtures": true,
   "checks": [
