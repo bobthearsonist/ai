@@ -1,3 +1,6 @@
+# Git-fetched skills plus in-repo skills listed as `type: internal`. This file
+# is shared and public: machine-specific or private-access skills belong in
+# local.yaml.
 skills:
   - name: ai-repo-management
     type: internal

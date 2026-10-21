@@ -1,0 +1,21 @@
+{
+  "id": "edit-through-link",
+  "prompt": "Read scenario.md and the files under {{fixtures}} (home\\AI and home\\Repositories there stand in for ~/AI and ~/Repositories). In my real setup, ~/AI/skills/incident-response is a symlink into ~/Repositories/company-ai-published/skills/incident-response, a detached worktree that my local.yaml lists with `ref: origin/main`. My working clone of the same repo is ~/Repositories/company-ai. I found a typo in ~/AI/skills/incident-response/SKILL.md. Answer in your reply: which file should I edit, and how does the fix reach my clients?",
+  "shouldTrigger": true,
+  "fixtures": true,
+  "checks": [
+    { "type": "regex", "name": "working-clone", "pattern": "Repositories[/\\\\]company-ai[/\\\\]skills[/\\\\]incident-response", "flags": "i" },
+    { "type": "regex", "name": "reaches-main", "pattern": "\\b(merge[sd]?|push(ed)?|pull request)\\b", "flags": "i" },
+    { "type": "regex", "name": "next-sync", "pattern": "sync\\.sh|re-?sync|next sync", "flags": "i" }
+  ],
+  "samples": {
+    "pass": [
+      "Edit ~/Repositories/company-ai/skills/incident-response/SKILL.md, commit and push it to main. The next ./scripts/sync.sh moves the published worktree to origin/main. Editing through ~/AI/skills would change company-ai-published instead, and sync skips a worktree with local changes.",
+      "Fix it in Repositories\\company-ai\\skills\\incident-response\\SKILL.md, merge it to main, then re-sync."
+    ],
+    "fail": [
+      "Edit ~/AI/skills/incident-response/SKILL.md directly; it's a symlink, so the change lands in the source and every client sees it.",
+      "Edit ~/Repositories/company-ai-published/skills/incident-response/SKILL.md, then run ./scripts/sync.sh."
+    ]
+  }
+}
