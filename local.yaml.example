@@ -16,6 +16,9 @@
 #
 # Collections whose path does not exist are skipped, so you can keep personal
 # and work collections in the same local.yaml across machines.
+#
+# Private-access or machine-specific skills belong here, never in the shared,
+# public external-skills.yaml.
 
 collections:
   # Keep legacy client paths on the manifest-managed skill-creator.

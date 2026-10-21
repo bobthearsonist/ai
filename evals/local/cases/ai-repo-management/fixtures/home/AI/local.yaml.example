@@ -1,3 +1,5 @@
+# Private-access or machine-specific skills belong here, never in the shared,
+# public external-skills.yaml.
 collections:
   private:
     path: ~/Repositories/ai-private

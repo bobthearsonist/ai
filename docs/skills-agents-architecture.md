@@ -75,15 +75,24 @@ flowchart LR
 
 ## Sync Flow
 
-```text
-external-skills.yaml git entries -> .external-cache -> skills/<name>
-external-skills.yaml internal entries -> tracked skills/<name>
-local.yaml collections -> symlinks in skills/, agents/, hooks/, or root links
-```
+Every client reads `skills/`, so what lands there decides where a change must be made:
+
+| Source | Registered in | Lands in `skills/<name>` as | Edit it in | Editing `skills/<name>` instead |
+| --- | --- | --- | --- | --- |
+| Internal toolkit skill | `external-skills.yaml`, `type: internal` | the tracked source | `skills/<name>` itself | is the right place |
+| Public git skill | `external-skills.yaml`, `type: git` | a copy from `.external-cache` | the upstream repo | is overwritten by the next sync |
+| Collection skill | a `local.yaml` collection | a symlink into that checkout | the checkout | edits the checkout through the link |
+| Published collection skill | a `local.yaml` collection with `ref` | a symlink into a detached worktree | your working clone, then merge to `ref` | leaves local changes that stop sync refreshing the worktree |
+
+`external-skills.yaml` is shared and public, so private-access or machine-specific sources must be `local.yaml` collections. A git skill that fails to fetch keeps its previous copy, and `sync.sh` exits non-zero after finishing the rest.
 
 `scripts/sync.sh` does not configure AI clients. It only prepares this repo's shared paths. See [Client support](client-support.md) for client wiring.
 
 For skill design and quality guidance, use the `skill-creator`, `skill-design`, and `ai-repo-management` skills as the source of truth.
+
+## Hooks
+
+Hooks run only in Claude Code and ship through the `ai-private` plugin cache, not `sync.sh`. A hook change needs that repo's release loop in `docs/PLUGIN.md`, including the version bump. The `hooks:` key in `local.yaml` still links files into `~/AI/hooks/`, but no client reads that folder.
 
 ## Agent Format
 

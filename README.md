@@ -72,7 +72,7 @@ See the [migration guide](docs/migration-guide.md) for the full path from existi
 This repo separates source-of-truth content from generated/synced output:
 
 - **Internal skills** live in this repo and are listed in `external-skills.yaml` with `type: internal`.
-- **Git-fetched skills** are listed in `external-skills.yaml` with `type: git`; `sync.sh` copies them into `skills/`.
+- **Git-fetched skills** from public sources are listed in `external-skills.yaml` with `type: git`; `sync.sh` copies them into `skills/`.
 - **Personal or work skills** live in your own repos and are listed in `local.yaml`; `sync.sh` symlinks them into `skills/`.
 - **Project-shared skills** should live in the project repo that needs them, usually under `.github/skills/` or `.claude/skills/`, when they are only useful to that project.
 

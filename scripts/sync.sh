@@ -26,13 +26,17 @@ sync_git() {
         key=$(echo "$source" | md5sum | cut -d' ' -f1)
     fi
 
+    # Callers run this under `if`, which suspends `set -e`, so each step must
+    # return explicitly: a failed fetch must never reach the rm -rf below and
+    # delete the last good copy.
     if [ ! -d "$CACHE/$key" ]; then
-        git clone --depth=1 --filter=blob:none --sparse --no-checkout "$source" "$CACHE/$key"
+        git clone --depth=1 --filter=blob:none --sparse --no-checkout "$source" "$CACHE/$key" || return 1
     fi
 
-    git -C "$CACHE/$key" fetch --depth=1 origin "$branch"
-    git -C "$CACHE/$key" sparse-checkout set "$path"
-    git -C "$CACHE/$key" checkout --detach FETCH_HEAD
+    git -C "$CACHE/$key" fetch --depth=1 origin "$branch" || return 1
+    git -C "$CACHE/$key" sparse-checkout set "$path" || return 1
+    git -C "$CACHE/$key" checkout --detach FETCH_HEAD || return 1
+    [ -d "$CACHE/$key/$path" ] || return 1
 
     rm -rf "$target"
     mkdir -p "$(dirname "$target")"
@@ -91,6 +95,18 @@ refresh_collection_ref() {
     echo "  → $path at $ref ($(git -C "$path" rev-parse --short HEAD))"
 }
 
+# Reports git skills that failed to fetch and exits non-zero after everything
+# else has synced, so one bad entry cannot hide the rest or pass silently.
+failed_skills=()
+finish() {
+    if (( ${#failed_skills[@]} )); then
+        echo "Done with errors — could not sync: ${failed_skills[*]}"
+        exit 1
+    fi
+    echo "Done!"
+    exit 0
+}
+
 # === Sync external-skills.yaml (git-based skills) ===
 echo "=== External skills ==="
 count=$(yq e '.skills | length' "$MANIFEST")
@@ -108,7 +124,10 @@ for ((i=0; i<count; i++)); do
             branch=$(yq e ".skills[$i].branch // \"main\"" "$MANIFEST")
             path=$(yq e ".skills[$i].path // \"\"" "$MANIFEST")
             target=$(yq e ".skills[$i].target" "$MANIFEST")
-            sync_git "$source" "$branch" "$path" "$target"
+            if ! sync_git "$source" "$branch" "$path" "$target"; then
+                echo "  ⚠️  could not sync $name — keeping its previous copy"
+                failed_skills+=("$name")
+            fi
             ;;
     esac
 done
@@ -116,8 +135,7 @@ done
 # === Sync collections from local.yaml ===
 if [ ! -f "$LOCAL_CONFIG" ]; then
     echo "No local.yaml found, skipping collections."
-    echo "Done!"
-    exit 0
+    finish
 fi
 
 sync_collection_items() {
@@ -170,8 +188,7 @@ sync_collection_items() {
 collection_names=$(yq e '.collections | keys | .[]' "$LOCAL_CONFIG" 2>/dev/null || true)
 if [[ -z "$collection_names" ]]; then
     echo "No collections found in local.yaml."
-    echo "Done!"
-    exit 0
+    finish
 fi
 
 for collection in $collection_names; do
@@ -198,4 +215,4 @@ for collection in $collection_names; do
     sync_collection_items "$collection" "links" "" "."
 done
 
-echo "Done!"
+finish
