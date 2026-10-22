@@ -5,6 +5,10 @@ set -e
 # Enable native symlinks on Windows (Git Bash/MSYS2). Ignored on macOS/Linux.
 export MSYS=winsymlinks:nativestrict
 
+# Git hooks export GIT_DIR and friends. Left set, every `git -C <cache>` below
+# would act on the repository that ran the hook instead of the cache.
+unset $(git rev-parse --local-env-vars)
+
 cd "$(dirname "$0")/.."
 CACHE=".external-cache"
 MANIFEST="external-skills.yaml"
