@@ -1,0 +1,5 @@
+{
+  "caseId": "negative-control",
+  "pass": ["Cyclomatic complexity counts independent paths through a program."],
+  "fail": ["Cyclomatic complexity measures the number of lines of code."]
+}

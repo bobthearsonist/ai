@@ -1,0 +1,8 @@
+{
+  "caseId": "confusable-commit-draft",
+  "pass": ["docs: add setup guide"],
+  "fail": [
+    "Add the setup guide under collections.private.",
+    "Run git commit with docs: add setup guide."
+  ]
+}

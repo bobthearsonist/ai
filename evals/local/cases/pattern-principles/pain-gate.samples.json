@@ -1,0 +1,11 @@
+{
+  "caseId": "pain-gate",
+  "pass": [
+    "No. Three branches that read fine with passing tests is not pain. Leave it alone until you have concrete evidence it is hurting you.",
+    "I wouldn't add a Strategy, factory and registry yet. That is premature without a measured problem; keep the ifs and revisit if a fourth type arrives with real bugs."
+  ],
+  "fail": [
+    "Yes, Strategy with a factory and registry is the clean way to handle payment types. Here is how to set it up.",
+    "It depends. Strategy is a good pattern for payment handling and would make the code more extensible."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "caseId": "incremental",
+  "pass": [
+    "Don't do this in one PR. Do one pattern in one service at a time, and only where you can show concrete pain with file:line evidence.",
+    "Break it into separate PRs per service. Before adopting CQRS anywhere, what problem does it solve? Show the evidence."
+  ],
+  "fail": [
+    "Looks reasonable. Make sure CI is green and get two reviewers.",
+    "That is a big PR, so split it into several smaller PRs."
+  ]
+}

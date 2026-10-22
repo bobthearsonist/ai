@@ -1,0 +1,11 @@
+{
+  "caseId": "negative-control",
+  "pass": [
+    "Git rebase reapplies commits onto a new base. It rewrites their parent history.",
+    "Rebase moves your commits onto another branch. The commit hashes change."
+  ],
+  "fail": [
+    "feat: explain git rebase",
+    "```text\nrefactor(history): rebase feature commits\n```"
+  ]
+}

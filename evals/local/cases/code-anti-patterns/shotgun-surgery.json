@@ -1,8 +1,0 @@
-{
-  "id": "shotgun-surgery",
-  "prompt": "Every time we add a new currency we have to edit 14 files across 6 packages. What is wrong with our design?",
-  "shouldTrigger": true,
-  "checks": [
-    { "type": "regex", "name": "names-shotgun-surgery", "pattern": "shotgun surgery", "flags": "i" }
-  ]
-}

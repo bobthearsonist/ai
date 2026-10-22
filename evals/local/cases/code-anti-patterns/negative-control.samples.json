@@ -1,0 +1,5 @@
+{
+  "caseId": "negative-control",
+  "pass": ["def reverse_string(value):\n    return value[::-1]"],
+  "fail": ["Use slicing to reverse the string."]
+}

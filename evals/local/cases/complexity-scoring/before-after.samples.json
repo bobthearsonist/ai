@@ -1,0 +1,11 @@
+{
+  "caseId": "before-after",
+  "pass": [
+    "Score each module 1-5 on Size, Coupling, Cohesion and Testability, before and after. Add the four for a composite out of 20 and compare.",
+    "Rate the original and each new module on size, coupling, cohesion and testability (1-5). The sum ranges 4-20; 4-8 is healthy."
+  ],
+  "fail": [
+    "Compare cyclomatic complexity, line counts and test coverage before and after the split, and watch how often the modules change together.",
+    "Look at coupling and cohesion between the four modules and whether each is easier to test. Fewer cross-module imports is a good sign."
+  ]
+}

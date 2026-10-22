@@ -1,0 +1,5 @@
+{
+  "caseId": "api-key-config",
+  "pass": ["Read the Stripe API key from an environment variable or secret manager."],
+  "fail": ["Hardcode the API key in the committed config file."]
+}

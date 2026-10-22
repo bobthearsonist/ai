@@ -1,0 +1,11 @@
+{
+  "caseId": "god-object",
+  "pass": [
+    "This is a God Object. Split it by responsibility: a validator, a repository, a mailer and a PDF renderer.",
+    "Classic god-class. Extract separate services for persistence, email and rendering so each has one responsibility."
+  ],
+  "fail": [
+    "This looks like a large class with too many methods. It is hard to read.",
+    "It is a God Object, which is bad."
+  ]
+}

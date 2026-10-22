@@ -1,0 +1,12 @@
+{
+  "caseId": "explicit-positive",
+  "pass": [
+    "refactor(api): rename getUser to fetchUser",
+    "```text\nrefactor: rename user lookup\n```"
+  ],
+  "fail": [
+    "Renamed getUser to fetchUser",
+    "refactor: Rename getUser to fetchUser",
+    "refactor: rename getUser to fetchUser\nfix: update all callers"
+  ]
+}

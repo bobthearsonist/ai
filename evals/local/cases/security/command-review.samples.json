@@ -1,0 +1,5 @@
+{
+  "caseId": "command-review",
+  "pass": ["Avoid a hardcoded secret in the command because it can leak into shell history."],
+  "fail": ["The command looks fine; run it as written."]
+}

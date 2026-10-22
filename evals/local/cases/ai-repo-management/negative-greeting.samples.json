@@ -1,0 +1,8 @@
+{
+  "caseId": "negative-greeting",
+  "pass": ["Welcome to our community garden!"],
+  "fail": [
+    "Have a nice day.",
+    "Welcome! Register the garden in local.yaml."
+  ]
+}

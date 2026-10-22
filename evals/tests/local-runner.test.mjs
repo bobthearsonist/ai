@@ -4,13 +4,21 @@ import { readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
-import { loadSuite } from '@bobthearsonist/ai-evals/compile-claude';
+import { loadSuite } from '@bobthearsonist/ai-evals/suite';
 import { resolveConfig } from '@bobthearsonist/ai-evals/config';
 
 const root = resolve(import.meta.dirname, '..');
 const configPath = join(root, 'evals.json');
 const config = resolveConfig({ configPath });
 const suites = readdirSync(config.casesDir);
+const expectedCases = {
+  'ai-repo-management': ['confusable-commit-draft', 'edit-through-link', 'explicit-registration', 'implicit-missing-discovery', 'negative-greeting', 'private-remote-placement'],
+  'code-anti-patterns': ['god-object', 'negative-control', 'shotgun-surgery'],
+  'complexity-scoring': ['before-after', 'negative-control', 'score-god-class'],
+  'git-commit-style': ['explicit-positive', 'implicit-breaking', 'negative-control'],
+  'pattern-principles': ['incremental', 'negative-control', 'pain-gate'],
+  security: ['api-key-config', 'command-review', 'negative-control', 'public-repo-pii'],
+};
 const run = (file, args = []) => spawnSync(process.execPath, [join(root, 'local', file), ...args], {
   encoding: 'utf8',
   cwd: resolve(root, '..'),
@@ -23,6 +31,25 @@ test('every repository-owned suite validates and has a negative control', () => 
     assert.ok(cases.length >= 3, suite);
     assert.ok(cases.some((c) => !c.shouldTrigger), `${suite} needs a negative control`);
     for (const c of cases) assert.deepEqual(validateCase(c), [], `${suite}/${c.id}`);
+  }
+});
+
+test('all existing cases are authored in Gherkin with offline samples', () => {
+  assert.deepEqual(suites.toSorted(), Object.keys(expectedCases).toSorted());
+  for (const suite of suites) {
+    const dir = join(config.casesDir, suite);
+    assert.deepEqual(
+      readdirSync(dir).filter((name) => name.endsWith('.json') && !name.endsWith('.samples.json')),
+      [],
+      `${suite} still has a JSON case definition`,
+    );
+    const cases = loadSuite(dir);
+    assert.deepEqual(cases.map((c) => c.id).toSorted(), expectedCases[suite].toSorted(), suite);
+    for (const c of cases) {
+      assert.equal(c.schemaVersion, 2, `${suite}/${c.id}`);
+      assert.ok(c.source.uri.endsWith('.feature'), `${suite}/${c.id}`);
+      assert.ok(c.samples.pass.length > 0 && c.samples.fail.length > 0, `${suite}/${c.id}`);
+    }
   }
 });
 

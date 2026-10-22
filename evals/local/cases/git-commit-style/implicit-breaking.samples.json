@@ -1,0 +1,11 @@
+{
+  "caseId": "implicit-breaking",
+  "pass": [
+    "feat!: drop Node 14 support",
+    "chore(runtime): drop Node 14 support\n\nBREAKING CHANGE: Node 14 is no longer supported."
+  ],
+  "fail": [
+    "chore: drop Node 14 support",
+    "feat!: Drop Node 14 support"
+  ]
+}

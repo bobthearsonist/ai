@@ -1,0 +1,5 @@
+{
+  "caseId": "shotgun-surgery",
+  "pass": ["This is shotgun surgery: one currency change forces edits across many packages."],
+  "fail": ["The modules are too large; split them into smaller files."]
+}

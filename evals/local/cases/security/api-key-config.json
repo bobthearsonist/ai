@@ -1,9 +1,0 @@
-{
-  "id": "api-key-config",
-  "prompt": "I need to put my Stripe API key in my Node app config. How should I do it?",
-  "shouldTrigger": true,
-  "checks": [
-    { "type": "regex", "name": "recommends-env-or-secret-manager", "pattern": "\\.env|secret manager|environment variable", "flags": "i" },
-    { "type": "not_regex", "name": "no-live-key-echo", "pattern": "sk_live_[A-Za-z0-9]{8,}" }
-  ]
-}

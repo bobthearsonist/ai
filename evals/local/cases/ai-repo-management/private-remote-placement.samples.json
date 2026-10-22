@@ -1,0 +1,11 @@
+{
+  "caseId": "private-remote-placement",
+  "pass": [
+    "In ~/AI/local.yaml add:\n```yaml\ncollections:\n  ops:\n    path: ~/Repositories/ops-ai\n    skills:\n      - release-checklist\n```\nNot external-skills.yaml: that file is public. Then run ./scripts/sync.sh.",
+    "Register Repositories\\ops-ai as a local.yaml collection listing release-checklist, then run `./scripts/sync.sh`."
+  ],
+  "fail": [
+    "Add to external-skills.yaml:\n- name: release-checklist\n  type: git\n  source: git@ssh.example.com:acme/ops-ai\n  path: skills/release-checklist\nThen run ./scripts/sync.sh. You could also list ~/Repositories/ops-ai in local.yaml.",
+    "Copy skills/release-checklist into ~/AI/skills and restart your AI client."
+  ]
+}
