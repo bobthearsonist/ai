@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Guild | Skill evaluation field guide</title>
+  <style>
+    :root { color-scheme: light; font: 17px/1.6 system-ui, sans-serif; color: #182c3a; background: #eef3f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1080px; margin: auto; padding: 32px 24px 64px; }
+    header { padding: 32px; background: #102e43; color: #fff; border-radius: 16px; }
+    h1 { line-height: 1.15; font-size: clamp(2rem, 5vw, 3.4rem); margin: 12px 0; }
+    h2 { line-height: 1.25; margin-top: 0; }
+    h3 { margin-bottom: 8px; }
+    .eyebrow { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
+    .lead { font-size: 1.2rem; max-width: 800px; }
+    nav { padding: 20px 0; display: flex; gap: 18px; flex-wrap: wrap; }
+    a { color: #07558b; text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid #925600; outline-offset: 4px; }
+    section { background: #fff; border-radius: 12px; padding: 28px; margin: 18px 0; }
+    .notice { border-left: 6px solid #ab6400; background: #fff7e7; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; }
+    pre { background: #102331; color: #edf6fc; padding: 18px; overflow-x: auto; border-radius: 8px; font-size: .84rem; }
+    code { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+    pre code { overflow-wrap: normal; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #cbd7df; vertical-align: top; }
+    caption { text-align: left; margin-bottom: 12px; }
+    .small { font-size: .9rem; }
+    footer { padding-top: 16px; }
+    @media print { :root { background: #fff; } main { padding: 0; } section, header { break-inside: avoid; } pre { white-space: pre-wrap; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">AI Guild / Local skill evaluations / 22 October 2026</div>
+    <h1>Does this skill actually help?</h1>
+    <p class="lead">Run realistic prompts with and without a skill, check observable outcomes,
+      and keep the traces. Optional AI judging is advisory and never changes
+      deterministic scores.</p>
+    <p>TL;DR: start with offline Gherkin validation and dry-run planning. Native ACP
+      candidate runs are blocked until required isolation is verified.
+      Treat invalid runs and small samples honestly.</p>
+  </header>
+  <nav aria-label="Page sections">
+    <a href="#status">Current status</a><a href="#start">Quick start</a>
+    <a href="#read">Reading results</a><a href="#cases">Adding cases</a>
+    <a href="#repos">Repositories</a>
+  </nav>
+
+  <section class="notice" id="status">
+    <h2>Gherkin migrated. ACP defaults implemented. Native ACP acceptance pending.</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>Historical native/SDK smoke evidence is not acceptance evidence for the new ACP paths.</caption>
+        <thead><tr><th scope="col">Surface</th><th scope="col">Evidence / limitation</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Historical Claude</th><td>Real <code>git-commit-style / explicit-positive</code>
+            smoke passed on Claude Code <strong>2.1.306</strong>: one session, score
+            <strong>1.00</strong>, estimated list-price cost <strong>$0.0557</strong>.
+            Offline regrading reproduced the score. No without-skill arm: lift is unmeasured.</td></tr>
+          <tr><th scope="row">Historical Copilot</th><td>One experimental SDK-driven smoke on
+            <strong>1.0.102</strong> completed with valid receipt and captured usage.
+            The staged skill was invoked; runtime reported <code>github-mcp-server</code>
+            disabled, no MCP tools loaded, and empty pre/post inventories. Offline
+            regrading matched <strong>0.75</strong>. This is valid isolation/pipeline
+            evidence, not a passing case: the header-length check failed, so the score
+            is below threshold. It does not measure skill lift or guarantee other builds.
+            An earlier CLI-path attempt did show active MCP tools and remains invalid
+            and unscored.</td></tr>
+          <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
+          <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot default to
+            common ACP transport, without native/SDK fallback. Native candidate
+            profiles refuse execution while ambient skill/MCP isolation is unverified.
+            Fake-server integration is not live native acceptance.</td></tr>
+          <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
+            six suites are now Gherkin scenarios, with separate offline sample data.
+            The current published dependency pin cannot parse them.</td></tr>
+          <tr><th scope="row">Multiple runners</th><td>The development engine accepts
+            <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
+            Approval counts include every runner. Concurrency is a global ceiling,
+            not a multiplier per runner.</td></tr>
+          <tr><th scope="row">Availability</th><td>Multi-runner changes are local and
+            unpublished. The <code>ai</code> repository's pinned dependency still has
+            the older Claude-only implementation. Cloning the remote today does not
+            obtain unpublished changes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What we evaluate</h2>
+    <div class="grid">
+      <div><h3>Triggering</h3><p>Does the skill activate when appropriate, including implicit
+        requests? Does it stay out of unrelated negative-control tasks?</p></div>
+      <div><h3>Behavior</h3><p>Explicit checks inspect answer text, tool order or supported
+        file outcomes. A passing sample satisfies those checks, not every aspect of quality.</p></div>
+      <div><h3>Added value</h3><p>Repeated with/without arms compare outcomes on the same
+        case definitions. A smoke verifies the path, not the benefit of the skill.</p></div>
+    </div>
+    <p>The model output is variable; grading is deterministic. The same captured
+      transcript receives the same supported check results under the same policy.
+      A separately approved AI judge can archive advisory assessments, but never
+      changes these deterministic scores. Nine positive cases now have per-case
+      semantic rubrics that accept equivalent reasoning instead of relying on
+      keywords or short proximity windows. These rubrics have not been calibrated
+      with live judge runs; syntax, activation and disclosure checks stay
+      deterministic. See the <a href="../README.md#semantic-judge-adoption-unreleased-advisory">semantic
+      judge adoption notes</a>.</p>
+  </section>
+
+  <section id="start">
+    <h2>Quick start: offline validation and planning</h2>
+    <p>Use Node.js 22.12+ and the unreleased development checkout.
+      The existing consumer dependency pin cannot parse these Gherkin suites.
+      These example Windows paths do not change that pin or launch a model.</p>
+    <pre><code>node C:\Repositories\ai-evals\local\cli.mjs validate --config C:\Repositories\ai\evals\evals.json --suite git-commit-style
+node C:\Repositories\ai-evals\local\cli.mjs run --config C:\Repositories\ai\evals\evals.json --suite git-commit-style --dry-run
+node C:\Repositories\ai-evals\local\cli.mjs run-all --config C:\Repositories\ai\evals\evals.json --dry-run</code></pre>
+    <p>Native ACP execution is not enabled merely by passing a session approval.
+      First establish the required skill/MCP isolation for the selected runtime.
+      Do not provide API-key overrides, copy credentials or treat a custom ACP
+      profile as proof of native isolation.</p>
+    <p>This suite has three cases: 3 cases x 3 repeats x 2 arms = 18 live sessions
+      for one runner. Each additional runner increases that count. Use
+      the development engine's <code>run-all --dry-run</code> to inspect the planned
+      count before running all suites. Do not copy an approval count blindly.</p>
+  </section>
+
+  <section id="read">
+    <h2>Read the result, not just the green number</h2>
+    <p>Consumer artifacts stay under <code>evals\.work\local-runs</code>.
+      Open the run's <code>normalized.json</code> for client/version, status,
+      case scores, cost and caveats. Archived traces live under
+      <code>traces\&lt;case&gt;\&lt;arm&gt;-&lt;n&gt;.jsonl</code>.
+      The development orchestrator writes <code>smoke-summary.md</code> separately
+      from full-run <code>summary.md</code>. Full runs also maintain result history.</p>
+    <p>With/without scores summarize passed checks. <strong>Lift</strong> means all
+      observed with-skill scores exceeded all without-skill scores; regression is
+      the reverse. Overlap is inconclusive; an absolute mean delta below 0.05 is
+      reported as same. A missing arm is unmeasured. These are descriptive labels,
+      not statistical significance tests.</p>
+    <p>Regrade an archived run without another model call:</p>
+    <pre><code>node C:\Repositories\ai-evals\local\cli.mjs regrade C:\Repositories\ai\evals\.work\local-runs\RUN_DIRECTORY --config C:\Repositories\ai\evals\evals.json --suite git-commit-style</code></pre>
+    <p>Recorded-policy replay preserves the run's original checks; applying the
+      current suite requires explicit policy selection and a separate assessment.
+      V2 file-existence checks are refused without filesystem snapshots; legacy
+      v1 replay retains its historical skip behavior. Never compare
+      scores across different case definitions, client versions or models as if
+      those were controlled experiments.</p>
+  </section>
+
+  <section id="cases">
+    <h2>Add a case where the cases belong</h2>
+    <ol>
+      <li>In the consuming repo, add a Gherkin scenario in a <code>.feature</code> file under
+        <code>evals\local\cases\SKILL</code>, not inside the distributed skill.
+        Keep skill source unchanged during a comparison.</li>
+      <li>Use a unique <code>@case:id</code> tag, a trigger-expectation tag,
+        a prompt Doc String and the engine's controlled assertion vocabulary.
+        Keep passing and failing samples in a companion
+        <code>id.samples.json</code>; they are never sent to the model.</li>
+      <li>Include explicit-positive, implicit-positive and negative-control coverage.
+        Put required synthetic inputs in the suite's <code>fixtures</code> directory.</li>
+      <li>Check <code>evals.json</code> for suite mapping and skill roots.
+        Validate and dry-run with the development checkout. Run consumer tests
+        against a compatible development engine before considering a live run.</li>
+    </ol>
+    <p>Do not encode the answer key in the skill or fixture the model receives.
+      See the engine README for the full schema and runner-specific restrictions;
+      v2 file checks are unavailable without captured filesystem snapshots.</p>
+  </section>
+
+  <section class="notice">
+    <h2>Boundaries before sharing or scaling</h2>
+    <p>Historical native runs are labelled <code>native-authenticated-non-hermetic</code>. Fresh
+      configuration and tool restrictions are not an OS sandbox or independent
+      credential boundary. Subscription usage still consumes account allowance.
+      Copilot's AI-credit limit is soft and per session, not a hard aggregate cap;
+      unknown USD cost remains unknown.</p>
+    <p>Review transcripts before sharing: prompts, answers, paths and tool output
+      may contain source code or sensitive information. Keep raw artifacts local
+      and out of Teams and Git by default. CI rollout, publication and dependency-pin
+      updates are separate, explicitly approved steps.</p>
+  </section>
+
+  <section id="repos">
+    <h2>Where things live</h2>
+    <p><a href="https://github.com/bobthearsonist/ai-evals">ai-evals: shared evaluation engine</a>
+      owns adapters, orchestration, deterministic grading and engine tests.</p>
+    <p><a href="https://github.com/bobthearsonist/ai/tree/main/evals">ai: repository-owned eval suites</a>
+      owns prompts, fixtures, configuration, wrappers and local artifacts.</p>
+    <p><a href="https://github.com/bobthearsonist/ai-evals/blob/main/README.md">Engine README</a>
+      and <a href="../README.md">consumer README</a> are the implementation references.
+      Remote pages reflect published commits, not the unpublished changes described here.</p>
+    <p><a href="ai-guild-teams-blurb.md">Teams message draft</a> accompanies this
+      self-contained HTML file. Attach the reviewed HTML rather than linking to
+      a machine-local path. No hosted onboarding URL exists yet.</p>
+  </section>
+  <footer class="small">Local onboarding draft, 2026-10-22. No external assets, scripts,
+    model calls or automatic posting. Share only after review.</footer>
+</main>
+</body>
+</html>

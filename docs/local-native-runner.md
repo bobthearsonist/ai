@@ -4,19 +4,36 @@ The shared engine lives in [ai-evals](https://github.com/bobthearsonist/ai-evals
 `evals/package.json` pins its immutable Git revision. Run `npm ci` in `evals`
 before using the local wrappers. Cases, fixtures and `.work` outputs stay here.
 
+All 22 repository-owned cases now use Gherkin. The current dependency pin
+cannot parse them: use the unreleased engine checkout as described in the
+[evals README](../evals/README.md#unreleased-engine-checkout). The development
+engine routes Claude and Copilot through ACP; native candidate profiles refuse
+execution until required skill/MCP isolation can be verified. Historical native
+smoke results are not acceptance evidence for ACP.
+
 ## Fixtures
 
-A case with `fixtures: true` gets `cases/<suite>/fixtures` copied into its eval `resources` dir and exposed read-only via `add_dirs`. Answers are graded on the reply text; no Write/Bash is granted. Skills are searched in `--skill-root` / `EVAL_SKILL_ROOT` (semicolon list).
+A scenario with `Given the suite fixtures are available` uses the suite's
+`fixtures` directory; `{{fixtures}}` in the prompt resolves to its staged path.
+The runner must enforce its advertised filesystem/tool capabilities before
+execution. Skills are searched in `--skill-root` / `EVAL_SKILL_ROOT`
+(semicolon list).
 
 ## Speed
 
-`cli.mjs run --concurrency N` (1-8, default 1) sets agent runs in flight. `node evals/local/run-all.mjs --concurrency 4` prints the approval count needed to run every suite in parallel processes. One 18-session suite takes ~42s at `--concurrency 6`.
+`cli.mjs run --concurrency N` (1-8, default 1) sets sessions in flight.
+The limit is global: suite/runner pairs are serial, not parallel processes.
+Use `--dry-run` to inspect all planned sessions without launching a client.
 
 ## Case quality
 
-- Cases may carry `samples: { pass: [], fail: [] }`; a unit test requires the graders to classify them as declared. Write samples from the skill's contract, never from live output.
+- Every Gherkin case has a `*.samples.json` sidecar with `caseId`, `pass` and
+  `fail`; a unit test requires the graders to classify them as declared.
+  Samples are never sent to the model. Write them from the skill's contract,
+  never from live output.
 - Runs with no final result (session ended after the skill loaded) are excluded from scores and counted as `invalidRuns`.
-- `purpose: guard` cases (e.g. god-object) are expected to show no lift; they catch regressions, not value.
+- Guard cases (e.g. the comment above the god-object scenario) are expected to
+  show no lift; they catch regressions, not value.
 
 ## Results, traces and verdicts
 
@@ -38,4 +55,11 @@ Install the public `@bobthearsonist/ai-evals` Git dependency over HTTPS in the c
 }
 ```
 
-Run: `npx --no-install ai-evals run --config evals/evals.json --suite my-suite --approve-sessions N` (or `ai-evals run-all --config ...`). `suites` is optional; without it a suite id equals both its cases folder and its skill name, and `run-all` discovers folders under `casesDir`. Case files may carry `"schemaVersion": 1`; other versions are rejected. Add `evals/.work/` and `node_modules/` to the consuming repo's `.gitignore`.
+Run: `npx --no-install ai-evals run --config evals/evals.json --suite my-suite --approve-sessions N`
+(or `ai-evals run-all --config ...`) with an engine version that supports these
+suites. `suites` is optional; without it a suite id equals both its cases
+folder and its skill name, and `run-all` discovers folders under `casesDir`.
+Author `.feature` scenarios using the engine's controlled vocabulary; they
+compile to v2 checks. JSON v1/v2 loading remains for compatibility, not as the
+repository's authoring format. Add `evals/.work/` and `node_modules/` to the
+consuming repo's `.gitignore`.
