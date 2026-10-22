@@ -4,13 +4,15 @@ The engine has moved to [ai-evals](https://github.com/bobthearsonist/ai-evals).
 See its README for the case schema, adapter contract, installation and result
 semantics. The installed dependency pin has unimplemented Copilot and OpenCode
 adapters. The unreleased engine checkout routes both Claude and Copilot through
-ACP by default, without a native/SDK fallback. Native candidate profiles refuse
+ACP exclusively, without a native/SDK fallback. Native candidate profiles refuse
 execution until required skill/MCP isolation can be verified.
 A historical SDK-driven Copilot smoke completed with a valid
 receipt, captured usage and clean runtime MCP/skill audits; offline regrading
 matched its 0.75 score. The score is below threshold because one header-length
 check failed, so this is pipeline/isolation evidence rather than a passing case
 or skill-lift result; it does not validate the ACP path. OpenCode remains unimplemented.
+The development engine no longer executes or regrades native/SDK archives;
+historical artifacts remain unchanged.
 
 The development checkout now includes an unreleased Gherkin/JSON shared
 assertion layer, capability-gated ACP transport and a separately approved AI

@@ -52,7 +52,7 @@
   </nav>
 
   <section class="notice" id="status">
-    <h2>Gherkin migrated. ACP defaults implemented. Native ACP acceptance pending.</h2>
+    <h2>Gherkin migrated. ACP-only execution. Native ACP acceptance pending.</h2>
     <div class="table-wrap">
       <table>
         <caption>Historical native/SDK smoke evidence is not acceptance evidence for the new ACP paths.</caption>
@@ -72,8 +72,8 @@
             An earlier CLI-path attempt did show active MCP tools and remains invalid
             and unscored.</td></tr>
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
-          <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot default to
-            common ACP transport, without native/SDK fallback. Native candidate
+          <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot support only
+            common ACP transport. Legacy execution and replay code is deleted, without native/SDK fallback. Native candidate
             profiles refuse execution while ambient skill/MCP isolation is unverified.
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
@@ -177,11 +177,12 @@ node C:\Repositories\ai-evals\local\cli.mjs run-all --config C:\Repositories\ai\
 
   <section class="notice">
     <h2>Boundaries before sharing or scaling</h2>
-    <p>Historical native runs are labelled <code>native-authenticated-non-hermetic</code>. Fresh
-      configuration and tool restrictions are not an OS sandbox or independent
-      credential boundary. Subscription usage still consumes account allowance.
-      Copilot's AI-credit limit is soft and per session, not a hard aggregate cap;
-      unknown USD cost remains unknown.</p>
+    <p>Current ACP runs are labelled <code>acp-non-hermetic</code>; historical native
+      runs retain <code>native-authenticated-non-hermetic</code> and are no longer
+      supported for replay. Fresh configuration and tool restrictions are not an
+      OS sandbox or independent credential boundary. Subscription usage still
+      consumes account allowance. The ACP runner does not enforce a hard spend
+      cap; unknown USD cost remains unknown.</p>
     <p>Review transcripts before sharing: prompts, answers, paths and tool output
       may contain source code or sensitive information. Keep raw artifacts local
       and out of Teams and Git by default. CI rollout, publication and dependency-pin

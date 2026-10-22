@@ -7,9 +7,11 @@ before using the local wrappers. Cases, fixtures and `.work` outputs stay here.
 All 22 repository-owned cases now use Gherkin. The current dependency pin
 cannot parse them: use the unreleased engine checkout as described in the
 [evals README](../evals/README.md#unreleased-engine-checkout). The development
-engine routes Claude and Copilot through ACP; native candidate profiles refuse
+engine routes Claude and Copilot exclusively through ACP; native candidate profiles refuse
 execution until required skill/MCP isolation can be verified. Historical native
-smoke results are not acceptance evidence for ACP.
+smoke results are not acceptance evidence for ACP. Native execution and replay
+code is deleted; old archives remain unchanged but cannot be regraded by the
+development engine.
 
 ## Fixtures
 
@@ -38,8 +40,8 @@ Use `--dry-run` to inspect all planned sessions without launching a client.
 ## Results, traces and verdicts
 
 - Each case gets a `verdict` from per-run separation, not the mean alone: `lift` (every with-run beats every without-run), `regression` (reverse), `same` (|mean delta| < 0.05), `inconclusive` (overlap, typical at 3 runs), `unmeasured`. Prefer verdicts to `below_threshold`, which is uninformative because the pass threshold is 1.0.
-- Per-run traces are copied to `.work/local-runs/<run>/traces/<case>/<arm>-<n>.jsonl` and the `claude-eval-*` temp dir is removed.
-- Each `run` appends `.work/results/<suite>/<timestamp>.json` and updates `latest.json`; changes versus the previous latest print as `diff ...` lines. `run-all.mjs` also writes `.work/results/summary.md`.
+- ACP evidence is archived under `.work/local-runs/<run>` for deterministic replay.
+- Each `run` appends `.work/results/acp/<suite>/<timestamp>.json` and updates `latest.json` in that suite directory; changes versus the previous latest print as `diff ...` lines. `run-all.mjs` also writes `.work/results/summary.md`. Native history is not overwritten or compared with ACP results.
 
 ## Using the harness from another repo
 

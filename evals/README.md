@@ -10,14 +10,15 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 The local `ai-evals` development checkout adds multi-runner selection, Gherkin
 authoring, shared v2 assertions, ACP transport and separately opt-in AI judging,
-and uses ACP as the default transport for both Claude and Copilot. These changes
+and supports only ACP for both Claude and Copilot. These changes
 are not included in this repository's dependency pin. Until they are published
 and the pin is updated, invoke that checkout explicitly; do not expect `npm ci`
 here to install the new functionality. Install the checkout's dependencies
 before using its CLI.
 Native candidate ACP profiles currently refuse execution because required
-ambient skill/MCP isolation has not been verified. There is no implicit
-fallback to the historical native or SDK path. Validation and dry-run planning
+ambient skill/MCP isolation has not been verified. Native/plugin-eval/SDK
+execution and replay implementations have been deleted, with no transport
+selector or fallback. Validation and dry-run planning
 remain available without a live runtime.
 For example, with both repositories under `C:\Repositories`:
 
@@ -40,7 +41,9 @@ the live score (0.75). The run is valid but below threshold because the
 skill lift. This is one local acceptance point, not a launch-ready guarantee
 for other builds. A separate earlier CLI-path attempt did show active MCP
 tools and remains invalid/unscored. OpenCode remains unimplemented. See the
-engine README for runner-specific options and limitations.
+engine README for runner-specific options and limitations. Those historical
+archives remain unchanged but are no longer supported for replay or judging
+by the development engine.
 
 ### Gherkin suites (unreleased)
 
@@ -65,11 +68,11 @@ authoring format for this repository.
 
 The extraction/length changes are intentional policy corrections, not a
 behavior-preserving syntax conversion. Old run scores stay unchanged.
-Recorded-policy replay uses the run's snapshot; replaying an older archive
-against this pilot requires explicit `--policy current --suite git-commit-style`
-and writes a separate assessment.
+Recorded-policy replay uses an ACP run's snapshot; applying this pilot to
+an ACP archive requires explicit `--policy current --suite git-commit-style`
+and writes a separate assessment. Native archives are no longer supported.
 
-Read-only comparisons of the existing `explicit-positive` captures reproduce
+Earlier read-only comparisons of the existing `explicit-positive` captures reproduced
 the original full scores, including skill-trigger and canary checks:
 
 | Archived answer | Original policy | Pilot policy |
@@ -93,7 +96,7 @@ describe the published version and do not enable these suites.
 
 AI judging is a separate `judge` command with an explicit runtime, model,
 rubric and exact session approval. It never contributes to deterministic
-scores. Both default adapter paths use ACP and refuse native runtimes whose
+scores. Both clients use only ACP and refuse native runtimes whose
 required isolation cannot be established. Transport success alone is not
 evidence of skill/MCP isolation.
 
@@ -116,7 +119,7 @@ outputs. The Sonar suite itself is outside this change; no third repository
 or frozen baseline was edited. Rubrics are authored criteria, not measured
 judge accuracy, and existing regex samples are not semantic calibration data.
 
-For an archive from one of these suites, plan eligible assessments without
+For an ACP archive from one of these suites, plan eligible assessments without
 inference (replace `<run>` and `MODEL_ID`):
 
 ```powershell
@@ -146,6 +149,7 @@ Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate
 all 22 case IDs, require Gherkin definitions and check every offline sample
 against the selected engine. Engine tests live in `ai-evals`.
-Historical native results are labelled `native-authenticated-non-hermetic`.
+Current results are labelled `acp-non-hermetic`; historical native results are
+unchanged and are not replayed by the development engine.
 An earlier Docker-based harness was removed; it is preserved in git history
 at commit `42120c3`.

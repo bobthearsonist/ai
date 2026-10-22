@@ -15,8 +15,8 @@ meaning-based rubrics for this separate judge path; no live judge calibration
 or accuracy improvement is claimed.
 
 **TL;DR:** start with offline Gherkin validation and dry-run planning. All 22
-existing cases across six suites have been migrated to Gherkin. Both default
-adapters now use ACP, but native candidate runs remain blocked until required
+existing cases across six suites have been migrated to Gherkin. ACP is now the
+only transport; legacy execution and replay code is deleted. Native candidate runs remain blocked until required
 skill/MCP isolation is verified; there is no native/SDK fallback.
 A historical native Claude smoke passed and offline regrading matched;
 that verifies the old path, not ACP or skill lift. Multi-runner selection is implemented in
