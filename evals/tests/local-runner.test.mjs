@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
 import { loadSuite } from '@bobthearsonist/ai-evals/suite';
 import { resolveConfig } from '@bobthearsonist/ai-evals/config';
+import { planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
 
 const root = resolve(import.meta.dirname, '..');
 const configPath = join(root, 'evals.json');
@@ -69,6 +70,34 @@ test('graders classify each case hand-written samples as declared', () => {
     }
   }
   assert.ok(checked >= 20);
+});
+
+test('advisory semantic rubrics cover only selected positive cases', () => {
+  const rubrics = JSON.parse(readFileSync(join(root, 'judge-rubrics.json'), 'utf8'));
+  const selected = [
+    'edit-through-link', 'god-object', 'before-after', 'score-god-class',
+    'incremental', 'pain-gate', 'api-key-config', 'command-review', 'public-repo-pii',
+  ];
+  assert.deepEqual(Object.keys(rubrics).toSorted(), selected.toSorted());
+  const cases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
+  for (const [id, rubric] of Object.entries(rubrics)) {
+    const matches = cases.filter((c) => c.id === id);
+    assert.equal(matches.length, 1, `${id} must identify one authored case`);
+    assert.equal(matches[0].shouldTrigger, true, `${id} must not be a negative control`);
+    assert.equal(typeof rubric, 'string');
+    assert.match(rubric, /Pass only if/);
+    assert.match(rubric, /Fail if/);
+    assert.match(rubric, /abstain/);
+    assert.match(rubric, /exact answer quotes/);
+  }
+  const answers = cases.map((c) => ({
+    caseId: c.id, arm: 'with', repetition: 1, text: c.samples.pass[0],
+    valid: true, complete: true,
+  }));
+  const plan = planJudgeRequests({ answers, rubric: rubrics });
+  assert.equal(plan.plannedSessions, selected.length);
+  assert.equal(plan.skipped.length, cases.length - selected.length);
+  for (const request of plan.requests) assert.equal(request.rubric, rubrics[request.answer.caseId]);
 });
 
 test('wrapper resolves repository config from a foreign working directory', () => {
