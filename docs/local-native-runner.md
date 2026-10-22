@@ -1,14 +1,15 @@
 # Repository-owned skill evaluations
 
 The shared engine lives in [ai-evals](https://github.com/bobthearsonist/ai-evals);
-`evals/package.json` pins its immutable Git revision. Run `npm ci` in `evals`
+`evals/package.json` installs its sibling checkout with `file:../../ai-evals`.
+Run `npm ci --ignore-scripts` in `evals`
 before using the local wrappers. Cases, fixtures and `.work` outputs stay here.
 
-All 22 repository-owned cases now use Gherkin. The current dependency pin
-cannot parse them: use the unreleased engine checkout as described in the
-[evals README](../evals/README.md#unreleased-engine-checkout). The development
-engine routes Claude and Copilot exclusively through ACP; native candidate profiles refuse
-execution until required skill/MCP isolation can be verified. Historical native
+All 22 repository-owned cases now use Gherkin, supported by the local dependency
+described in the [evals README](../evals/README.md#local-engine-dependency).
+The engine routes Claude and Copilot exclusively through ACP; candidate profiles
+isolate configuration and stage paired skill workspaces. Live native ACP
+acceptance remains pending. Historical native
 smoke results are not acceptance evidence for ACP. Native execution and replay
 code is deleted; old archives remain unchanged but cannot be regraded by the
 development engine.

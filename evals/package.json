@@ -3,12 +3,14 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "eval": "node local/cli.mjs"
   },
   "devDependencies": {
-    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#037e7e3571cce9ce9b2696390301bee0a20e1bb2"
+    "@bobthearsonist/ai-evals": "file:../../ai-evals"
   }
 }

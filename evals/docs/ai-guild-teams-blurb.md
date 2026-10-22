@@ -16,12 +16,14 @@ or accuracy improvement is claimed.
 
 **TL;DR:** start with offline Gherkin validation and dry-run planning. All 22
 existing cases across six suites have been migrated to Gherkin. ACP is now the
-only transport; legacy execution and replay code is deleted. Native candidate runs remain blocked until required
-skill/MCP isolation is verified; there is no native/SDK fallback.
+only transport; legacy execution and replay code is deleted. Native profiles
+isolate configuration and restrict tools, but live ACP acceptance is still
+pending; there is no native/SDK fallback.
 A historical native Claude smoke passed and offline regrading matched;
 that verifies the old path, not ACP or skill lift. Multi-runner selection is implemented in
-the local development engine but is not released or in the consumer's pinned
-dependency yet. One experimental Copilot SDK smoke now completed with a valid
+the local development engine, installed from a matching sibling checkout rather
+than an incompatible remote pin. Nothing has been published. One historical
+Copilot SDK smoke completed with a valid
 receipt, captured usage and clean skill/MCP audits; offline regrading matched
 its 0.75 score. The score is below threshold because a header-length check
 failed, so this is not a passing case or evidence of skill lift. This single

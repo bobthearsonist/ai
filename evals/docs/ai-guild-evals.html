@@ -42,7 +42,7 @@
       and keep the traces. Optional AI judging is advisory and never changes
       deterministic scores.</p>
     <p>TL;DR: start with offline Gherkin validation and dry-run planning. Native ACP
-      candidate runs are blocked until required isolation is verified.
+      profiles isolate configuration; live native acceptance is still pending.
       Treat invalid runs and small samples honestly.</p>
   </header>
   <nav aria-label="Page sections">
@@ -74,19 +74,20 @@
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
           <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot support only
             common ACP transport. Legacy execution and replay code is deleted, without native/SDK fallback. Native candidate
-            profiles refuse execution while ambient skill/MCP isolation is unverified.
+            profiles use temporary homes, read-only tools and controlled skill workspaces.
+            Active machine-managed Claude policy is refused.
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
             six suites are now Gherkin scenarios, with separate offline sample data.
-            The current published dependency pin cannot parse them.</td></tr>
+            The local sibling engine dependency supports them.</td></tr>
           <tr><th scope="row">Multiple runners</th><td>The development engine accepts
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
             not a multiplier per runner.</td></tr>
           <tr><th scope="row">Availability</th><td>Multi-runner changes are local and
-            unpublished. The <code>ai</code> repository's pinned dependency still has
-            the older Claude-only implementation. Cloning the remote today does not
-            obtain unpublished changes.</td></tr>
+            unpublished. The <code>ai</code> repository installs its matching sibling
+            <code>ai-evals</code> checkout; a standalone clone cannot obtain
+            unpublished changes.</td></tr>
         </tbody>
       </table>
     </div>
@@ -115,14 +116,16 @@
 
   <section id="start">
     <h2>Quick start: offline validation and planning</h2>
-    <p>Use Node.js 22.12+ and the unreleased development checkout.
-      The existing consumer dependency pin cannot parse these Gherkin suites.
-      These example Windows paths do not change that pin or launch a model.</p>
-    <pre><code>node C:\Repositories\ai-evals\local\cli.mjs validate --config C:\Repositories\ai\evals\evals.json --suite git-commit-style
-node C:\Repositories\ai-evals\local\cli.mjs run --config C:\Repositories\ai\evals\evals.json --suite git-commit-style --dry-run
-node C:\Repositories\ai-evals\local\cli.mjs run-all --config C:\Repositories\ai\evals\evals.json --dry-run</code></pre>
-    <p>Native ACP execution is not enabled merely by passing a session approval.
-      First establish the required skill/MCP isolation for the selected runtime.
+    <p>Use Node.js 22.12+ with matching <code>ai</code> and <code>ai-evals</code>
+      sibling checkouts. These commands do not launch a model.</p>
+    <pre><code>Set-Location C:\Repositories\ai\evals
+npm ci --ignore-scripts
+npm test
+node local\cli.mjs validate --suite git-commit-style
+node local\cli.mjs run --suite git-commit-style --dry-run
+node local\cli.mjs run-all --dry-run</code></pre>
+    <p>Native ACP acceptance still needs a separately approved live run.
+      Preflight verifies local runtime/policy and credential readiness, not provider access.
       Do not provide API-key overrides, copy credentials or treat a custom ACP
       profile as proof of native isolation.</p>
     <p>This suite has three cases: 3 cases x 3 repeats x 2 arms = 18 live sessions
@@ -185,7 +188,7 @@ node C:\Repositories\ai-evals\local\cli.mjs run-all --config C:\Repositories\ai\
       cap; unknown USD cost remains unknown.</p>
     <p>Review transcripts before sharing: prompts, answers, paths and tool output
       may contain source code or sensitive information. Keep raw artifacts local
-      and out of Teams and Git by default. CI rollout, publication and dependency-pin
+      and out of Teams and Git by default. CI rollout, publication and remote dependency-pin
       updates are separate, explicitly approved steps.</p>
   </section>
 
