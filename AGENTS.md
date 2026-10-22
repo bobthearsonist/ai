@@ -244,6 +244,8 @@ Use [Conventional Commits](https://www.conventionalcommits.org/). Constraints:
 - Imperative mood, lowercase description (e.g., "add" not "added")
 - First line under 72 characters
 - `BREAKING CHANGE:` footer or `!` after type for breaking changes
+- Skills, agents, hooks, rules, commands, plugin manifests, permissions and other AI configuration change agent behaviour: commit them as `feat`, `fix` or `refactor` (`chore` for pure housekeeping such as version bumps), never `docs`
+- Reserve `docs` for human-facing documentation that no agent loads, such as a README or guide
 
 Examples:
 
