@@ -2,14 +2,14 @@
 
 Repository-owned cases for the shared [ai-evals engine](https://github.com/bobthearsonist/ai-evals). The development dependency pins the engine by commit; no engine implementation is duplicated here. Claude and Copilot use only ACP. OpenCode remains unsupported.
 
-See [docs/local-native-runner.md](docs/local-native-runner.md).
+See [repository evaluation notes](../docs/skill-evaluations.md).
 The [AI Guild onboarding page](docs/ai-guild-evals.html) explains the workflow,
 current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
-`main` branch, which adds multi-runner selection, Gherkin authoring, shared v2
+`main` branch, which provides multi-runner selection, Gherkin authoring, shared v2
 assertions, ACP transport and separately opt-in AI judging. To pick up a newer
 engine, update the commit in `package.json` and run `npm install`. To test
 unreleased engine changes, temporarily point it at a local checkout
@@ -36,37 +36,17 @@ node local\cli.mjs run-all --dry-run
 node local\cli.mjs preflight --client claude --model MODEL_ID
 ```
 
-Historical evidence from the previous adapter paths (not ACP acceptance):
-on 2026-10-21 the Claude smoke passed with a score of 1.00 on Claude Code
-2.1.306; archived offline regrading matched. A one-arm smoke does not measure
-skill lift. On 2026-10-22 one Copilot SDK smoke using `gpt-6.1-sol` and native
-CLI 1.0.102 completed with a valid receipt and captured usage. The staged skill
-was invoked; runtime MCP status explicitly showed `github-mcp-server` disabled,
-no MCP tools loaded, and empty pre/post inventories. Offline regrading matched
-the live score (0.75). The run is valid but below threshold because the
-`header-under-72` check failed; it is not a case-level pass or a measure of
-skill lift. This is one local acceptance point, not a launch-ready guarantee
-for other builds. A separate earlier CLI-path attempt did show active MCP
-tools and remains invalid/unscored. OpenCode remains unimplemented. See the
-engine README for runner-specific options and limitations. Those historical
-archives remain unchanged but are no longer supported for replay or judging
-by the development engine.
-
 ### Gherkin suites
 
-All 22 cases across the six repository-owned suites are now authored in
-`.feature` files, including the cases committed on `origin/main`.
-Case IDs, prompts, activation expectations, fixture use and existing offline
-samples are preserved. The 19 cases outside `git-commit-style` retain their
-exact regex checks and flags; the latter's intentional policy changes are
-listed below.
+All 22 cases across the six repository-owned suites are authored in `.feature`
+files. Features compile to the engine's schema-v2 policy contract.
 The per-case `*.samples.json` files hold offline pass/fail examples; samples are never sent
 to the model. Cases that previously had no samples now have discriminating
 pass/fail examples. These JSON files are sample data, not test definitions.
-Legacy JSON loading remains an engine compatibility feature, not the
-authoring format for this repository.
+JSON case definitions and schema-v1 case compatibility have been removed.
+JSON config, rubrics, sample sidecars and ACP archive formats remain supported.
 
-| Previous policy | Pilot policy |
+| Former policy | Current policy |
 |---|---|
 | `conventional-header` regex | Explicit allowed commit types and a separate lowercase-description check |
 | `header-under-72` regex, which actually limited the suffix to 50 characters | Extract one unambiguous subject and require the **whole subject** to be shorter than 72 Unicode code points |
@@ -74,28 +54,14 @@ authoring format for this repository.
 | `no-commit-header` negative control | Same regex and prompt |
 
 The extraction/length changes are intentional policy corrections, not a
-behavior-preserving syntax conversion. Old run scores stay unchanged.
-Recorded-policy replay uses an ACP run's snapshot; applying this pilot to
+behavior-preserving syntax conversion.
+Recorded-policy replay uses an ACP run's snapshot; applying current policy to
 an ACP archive requires explicit `--policy current --suite git-commit-style`
 and writes a separate assessment. Native archives are no longer supported.
 
-Earlier read-only comparisons of the existing `explicit-positive` captures reproduced
-the original full scores, including skill-trigger and canary checks:
-
-| Archived answer | Original policy | Pilot policy |
-|---|---:|---:|
-| Claude, 2026-10-21 14:26 UTC | 1.00 | 0.40 |
-| Copilot, 2026-10-22 11:50 UTC | 0.75 | 1.00 |
-
-Claude supplied multiple fenced alternatives, which now fail the three
-subject checks rather than becoming invalid evidence. Copilot's subject
-passes the corrected whole-subject length limit. These are the **same
-captured answers under different policies**, not new model runs, measured
-skill changes or overwritten historical scores. The pilot also separates
-lowercase validation into its own check, changing check weighting.
-
-The installed local dependency parses these Gherkin suites. No remote branch,
-tag, release or published package was changed.
+Multiple fenced alternatives fail the subject checks rather than becoming
+invalid execution evidence. Lowercase validation is a separate check,
+so compare scores only under the same policy and check weighting.
 
 AI judging is a separate `judge` command with an explicit runtime, model,
 rubric and exact session approval. It never contributes to deterministic
@@ -113,13 +79,11 @@ skill activation and disclosure patterns remain deterministic. Existing
 regex proxies are retained for historical comparison, **not treated as a
 semantic verdict**. Advisory judgements do not replace or change those scores.
 
-Selection was informed by the 2026-10-21 `profisee-sonar` investigation,
-recorded in `profisee-ai/evals/TODO.md`: correct answers failed on paraphrases
+Selection was informed by a prior evaluation investigation: correct answers failed on paraphrases
 such as "shouldn't postpone" versus "don't block", "quietly" versus "silent",
 and reasons outside a 150-character window. The rubrics accept equivalent
 reasoning throughout the answer rather than expanding patterns to fit saved
-outputs. The Sonar suite itself is outside this change; no third repository
-or frozen baseline was edited. Rubrics are authored criteria, not measured
+outputs. Rubrics are authored criteria, not measured
 judge accuracy, and existing regex samples are not semantic calibration data.
 
 For an ACP archive from one of these suites, plan eligible assessments without
@@ -140,9 +104,9 @@ defect: the prompt contains a literal example bearer token, but the rubric
 had been authored from a display that redacted it as asterisks and required
 the answer to "recognize the masked value". The rubric now describes the real
 prompt; re-judging the same archived answer with it returned `pass`, and the
-original assessment remains stored beside the new one. All nine assessments
-passed strict schema and exact-quote validation, and were stored separately
-with input and rubric hashes; no retries were used.
+original assessment was preserved beside the revision during validation.
+All nine assessments passed strict schema and exact-quote validation, and
+were stored separately with input and rubric hashes; no retries were used.
 
 Per-check regrading of those nine archived answers showed that most
 `below_threshold` results came from `skill-trigger`: `god-object`,
@@ -179,6 +143,5 @@ Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 all 22 case IDs, require Gherkin definitions and check every offline sample
 against the selected engine. Engine tests live in `ai-evals`.
 Current results are labelled `acp-non-hermetic`; historical native results are
-unchanged and are not replayed by the development engine.
-An earlier Docker-based harness was removed; it is preserved in git history
-at commit `42120c3`.
+unsupported. Historical local run archives and one-off probe scripts have been
+deleted; fresh runs and assessments require separate explicit approval.

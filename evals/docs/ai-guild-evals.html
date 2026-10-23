@@ -36,13 +36,13 @@
 <body>
 <main>
   <header>
-    <div class="eyebrow">AI Guild / Local skill evaluations / 22 October 2026</div>
+    <div class="eyebrow">AI Guild / Local skill evaluations / 23 October 2026</div>
     <h1>Does this skill actually help?</h1>
     <p class="lead">Run realistic prompts with and without a skill, check observable outcomes,
       and keep the traces. Optional AI judging is advisory and never changes
       deterministic scores.</p>
     <p>TL;DR: start with offline Gherkin validation and dry-run planning. Native ACP
-      profiles isolate configuration; live native acceptance is still pending.
+      profiles isolate configuration; cross-client live acceptance is still pending.
       Treat invalid runs and small samples honestly.</p>
   </header>
   <nav aria-label="Page sections">
@@ -52,25 +52,17 @@
   </nav>
 
   <section class="notice" id="status">
-    <h2>Gherkin migrated. ACP-only execution. Native ACP acceptance pending.</h2>
+    <h2>Gherkin-only suites. ACP-only execution. Bounded Claude evidence.</h2>
     <div class="table-wrap">
       <table>
-        <caption>Historical native/SDK smoke evidence is not acceptance evidence for the new ACP paths.</caption>
+        <caption>Current implementation and bounded evidence; not judge calibration or cross-client acceptance.</caption>
         <thead><tr><th scope="col">Surface</th><th scope="col">Evidence / limitation</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Historical Claude</th><td>Real <code>git-commit-style / explicit-positive</code>
-            smoke passed on Claude Code <strong>2.1.306</strong>: one session, score
-            <strong>1.00</strong>, estimated list-price cost <strong>$0.0557</strong>.
-            Offline regrading reproduced the score. No without-skill arm: lift is unmeasured.</td></tr>
-          <tr><th scope="row">Historical Copilot</th><td>One experimental SDK-driven smoke on
-            <strong>1.0.102</strong> completed with valid receipt and captured usage.
-            The staged skill was invoked; runtime reported <code>github-mcp-server</code>
-            disabled, no MCP tools loaded, and empty pre/post inventories. Offline
-            regrading matched <strong>0.75</strong>. This is valid isolation/pipeline
-            evidence, not a passing case: the header-length check failed, so the score
-            is below threshold. It does not measure skill lift or guarantee other builds.
-            An earlier CLI-path attempt did show active MCP tools and remains invalid
-            and unscored.</td></tr>
+          <tr><th scope="row">Claude ACP evidence</th><td>Nine candidate receipts and
+            nine advisory assessments passed execution/schema checks. Four candidate
+            smokes passed deterministic gates; five were below threshold. These are
+            one-arm path checks, not measured skill lift or judge accuracy.
+            See the consumer README for the rubric correction and limitations.</td></tr>
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
           <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot support only
             common ACP transport. Legacy execution and replay code is deleted, without native/SDK fallback. Native candidate
@@ -79,7 +71,9 @@
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
             six suites are now Gherkin scenarios, with separate offline sample data.
-            The commit-pinned engine dependency supports them.</td></tr>
+            The commit-pinned engine dependency supports them. Authored JSON cases
+            and schema-v1 compatibility are removed; JSON samples, config,
+            rubrics and protocol records remain supported.</td></tr>
           <tr><th scope="row">Multiple runners</th><td>The development engine accepts
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
@@ -124,7 +118,7 @@ npm test
 node local\cli.mjs validate --suite git-commit-style
 node local\cli.mjs run --suite git-commit-style --dry-run
 node local\cli.mjs run-all --dry-run</code></pre>
-    <p>Native ACP acceptance still needs a separately approved live run.
+    <p>Any additional live acceptance needs a separately approved run.
       Preflight verifies local runtime/policy and credential readiness, not provider access.
       Do not provide API-key overrides, copy credentials or treat a custom ACP
       profile as proof of native isolation.</p>
@@ -148,11 +142,10 @@ node local\cli.mjs run-all --dry-run</code></pre>
       reported as same. A missing arm is unmeasured. These are descriptive labels,
       not statistical significance tests.</p>
     <p>Regrade an archived run without another model call:</p>
-    <pre><code>node C:\Repositories\ai-evals\local\cli.mjs regrade C:\Repositories\ai\evals\.work\local-runs\RUN_DIRECTORY --config C:\Repositories\ai\evals\evals.json --suite git-commit-style</code></pre>
+    <pre><code>node local\cli.mjs regrade .work\local-runs\RUN_DIRECTORY</code></pre>
     <p>Recorded-policy replay preserves the run's original checks; applying the
       current suite requires explicit policy selection and a separate assessment.
-      V2 file-existence checks are refused without filesystem snapshots; legacy
-      v1 replay retains its historical skip behavior. Never compare
+      File-existence checks are refused without filesystem snapshots. Never compare
       scores across different case definitions, client versions or models as if
       those were controlled experiments.</p>
   </section>
@@ -170,8 +163,8 @@ node local\cli.mjs run-all --dry-run</code></pre>
       <li>Include explicit-positive, implicit-positive and negative-control coverage.
         Put required synthetic inputs in the suite's <code>fixtures</code> directory.</li>
       <li>Check <code>evals.json</code> for suite mapping and skill roots.
-        Validate and dry-run with the development checkout. Run consumer tests
-        against a compatible development engine before considering a live run.</li>
+        Validate, dry-run and run consumer tests against the installed pinned
+        engine before considering a live run.</li>
     </ol>
     <p>Do not encode the answer key in the skill or fixture the model receives.
       See the engine README for the full schema and runner-specific restrictions;
@@ -180,9 +173,9 @@ node local\cli.mjs run-all --dry-run</code></pre>
 
   <section class="notice">
     <h2>Boundaries before sharing or scaling</h2>
-    <p>Current ACP runs are labelled <code>acp-non-hermetic</code>; historical native
-      runs retain <code>native-authenticated-non-hermetic</code> and are no longer
-      supported for replay. Fresh configuration and tool restrictions are not an
+    <p>Current ACP runs are labelled <code>acp-non-hermetic</code>.
+      Historical local archives were deleted during cleanup; new runs require
+      separate explicit approval. Fresh configuration and tool restrictions are not an
       OS sandbox or independent credential boundary. Subscription usage still
       consumes account allowance. The ACP runner does not enforce a hard spend
       cap; unknown USD cost remains unknown.</p>
@@ -205,7 +198,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
       self-contained HTML file. Attach the reviewed HTML rather than linking to
       a machine-local path. No hosted onboarding URL exists yet.</p>
   </section>
-  <footer class="small">Local onboarding draft, 2026-10-22. No external assets, scripts,
+  <footer class="small">Local onboarding draft, 2026-10-23. No external assets, scripts,
     model calls or automatic posting. Share only after review.</footer>
 </main>
 </body>

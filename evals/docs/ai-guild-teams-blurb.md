@@ -16,19 +16,15 @@ or accuracy improvement is claimed.
 
 **TL;DR:** start with offline Gherkin validation and dry-run planning. All 22
 existing cases across six suites have been migrated to Gherkin. ACP is now the
-only transport; legacy execution and replay code is deleted. Native profiles
-isolate configuration and restrict tools, but live ACP acceptance is still
-pending; there is no native/SDK fallback.
-A historical native Claude smoke passed and offline regrading matched;
-that verifies the old path, not ACP or skill lift. Multi-runner selection is implemented in
-the local development engine, installed from a matching sibling checkout rather
-than an incompatible remote pin. Nothing has been published. One historical
-Copilot SDK smoke completed with a valid
-receipt, captured usage and clean skill/MCP audits; offline regrading matched
-its 0.75 score. The score is below threshold because a header-length check
-failed, so this is not a passing case or evidence of skill lift. This single
-local result does not make Copilot generally launch-ready; OpenCode is not
-implemented. This is an early walkthrough, not a ready-for-all-runners launch.
+only transport; legacy execution, replay and JSON case compatibility are removed.
+Native profiles isolate configuration and restrict tools; there is no native/SDK
+fallback. Bounded Claude candidate and advisory-judge smokes have completed,
+but cross-client acceptance and judge accuracy remain unproven. Multi-runner
+selection is implemented in the engine on `main`, installed at a reviewed Git
+commit without a sibling checkout. OpenCode is not implemented.
+Historical local archives were deleted during cleanup; any fresh live run needs
+its own explicit model and exact session approval. This is an early walkthrough,
+not a ready-for-all-runners launch.
 
 [Shared engine: ai-evals](https://github.com/bobthearsonist/ai-evals)
 | [Cases, fixtures and config: ai/evals](https://github.com/bobthearsonist/ai/tree/main/evals)
