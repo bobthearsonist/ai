@@ -106,7 +106,7 @@ scores. Both clients use only ACP and refuse native runtimes whose
 required isolation cannot be established. Transport success alone is not
 evidence of skill/MCP isolation.
 
-### Semantic judge adoption (unreleased, advisory)
+### Semantic judge adoption (advisory)
 
 `judge-rubrics.json` assigns meaning-based criteria to nine positive cases:
 repository-change delivery, responsibility-based decomposition, both
@@ -133,12 +133,21 @@ node C:\Repositories\ai-evals\local\cli.mjs judge C:\Repositories\ai\evals\.work
 ```
 
 The JSON map selects matching case IDs; unmapped answers are explicitly
-skipped. A later, separately authorized run replaces `--dry-run` with
-`--approve-sessions N` using the exact planned count. Assessments stay under
-the archive's separate `assessments` directory with input/rubric hashes.
-No judge was run for this adoption and no score/accuracy improvement is
-claimed. The built-in judge profile is Claude-only; unsupported runtimes and
-active machine-managed policy fail closed.
+skipped. On 2026-10-23, one candidate smoke and one Claude `haiku` judge
+session ran for each of the nine mapped cases. All nine candidate receipts
+were valid; the one-run deterministic smoke status was `passed` for four and
+`below_threshold` for five. The advisory judge returned eight `pass` and one
+`fail` (`command-review`): the candidate discussed shell-history/process-list
+exposure but misread the displayed `******` as a possible `abc123` token
+instead of recognizing it was masked. All nine assessments passed strict
+schema and exact-quote validation, and were stored separately with input and
+rubric hashes; no retries were used. The fail is preserved as a finding, not
+converted into a pass or used to alter deterministic scores.
+
+This bounded run verifies the exercised Claude/Haiku archive-to-judge path,
+not judge accuracy, calibration, general skill quality, or cross-provider
+equivalence. The built-in judge profile is Claude-only; unsupported runtimes
+and active machine-managed policy fail closed.
 
 ### Installed dependency
 
