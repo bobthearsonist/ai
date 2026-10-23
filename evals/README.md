@@ -18,7 +18,8 @@ unreleased engine changes, temporarily point it at a local checkout
 Native profiles use temporary homes, read-only tool lists, empty ambient MCP
 configuration and a controlled workspace containing the selected skill only
 in the with-skill arm. Claude refuses machine-managed settings; version or model
-mismatches fail before prompting. Live native ACP acceptance is still pending.
+mismatches fail before prompting. Bounded Claude ACP candidate and judge
+smokes have completed (see below); cross-client live acceptance remains pending.
 Native/plugin-eval/SDK
 execution and replay implementations have been deleted, with no transport
 selector or fallback. Validation and dry-run planning
@@ -51,7 +52,7 @@ engine README for runner-specific options and limitations. Those historical
 archives remain unchanged but are no longer supported for replay or judging
 by the development engine.
 
-### Gherkin suites (unreleased)
+### Gherkin suites
 
 All 22 cases across the six repository-owned suites are now authored in
 `.feature` files, including the cases committed on `origin/main`.

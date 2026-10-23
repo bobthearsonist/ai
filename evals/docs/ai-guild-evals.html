@@ -79,15 +79,14 @@
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
             six suites are now Gherkin scenarios, with separate offline sample data.
-            The local sibling engine dependency supports them.</td></tr>
+            The commit-pinned engine dependency supports them.</td></tr>
           <tr><th scope="row">Multiple runners</th><td>The development engine accepts
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
             not a multiplier per runner.</td></tr>
-          <tr><th scope="row">Availability</th><td>Multi-runner changes are local and
-            unpublished. The <code>ai</code> repository installs its matching sibling
-            <code>ai-evals</code> checkout; a standalone clone cannot obtain
-            unpublished changes.</td></tr>
+          <tr><th scope="row">Availability</th><td>The engine is on its
+            <code>main</code> branch. The <code>ai</code> repository installs a
+            reviewed Git commit; no sibling engine checkout is required.</td></tr>
         </tbody>
       </table>
     </div>
@@ -108,16 +107,17 @@
       A separately approved AI judge can archive advisory assessments, but never
       changes these deterministic scores. Nine positive cases now have per-case
       semantic rubrics that accept equivalent reasoning instead of relying on
-      keywords or short proximity windows. These rubrics have not been calibrated
-      with live judge runs; syntax, activation and disclosure checks stay
-      deterministic. See the <a href="../README.md#semantic-judge-adoption-unreleased-advisory">semantic
+      keywords or short proximity windows. Bounded Claude smoke and judge runs
+      have exercised these rubrics, but have not established judge accuracy;
+      syntax, activation and disclosure checks stay deterministic.
+      See the <a href="../README.md#semantic-judge-adoption-advisory">semantic
       judge adoption notes</a>.</p>
   </section>
 
   <section id="start">
     <h2>Quick start: offline validation and planning</h2>
-    <p>Use Node.js 22.12+ with matching <code>ai</code> and <code>ai-evals</code>
-      sibling checkouts. These commands do not launch a model.</p>
+    <p>Use Node.js 22.12+ and an <code>ai</code> checkout; npm installs the
+      commit-pinned engine. These commands do not launch a model.</p>
     <pre><code>Set-Location C:\Repositories\ai\evals
 npm ci --ignore-scripts
 npm test
@@ -200,7 +200,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
       owns prompts, fixtures, configuration, wrappers and local artifacts.</p>
     <p><a href="https://github.com/bobthearsonist/ai-evals/blob/main/README.md">Engine README</a>
       and <a href="../README.md">consumer README</a> are the implementation references.
-      Remote pages reflect published commits, not the unpublished changes described here.</p>
+      Remote pages reflect the committed engine and consumer documentation.</p>
     <p><a href="ai-guild-teams-blurb.md">Teams message draft</a> accompanies this
       self-contained HTML file. Attach the reviewed HTML rather than linking to
       a machine-local path. No hosted onboarding URL exists yet.</p>
