@@ -23,7 +23,7 @@ Feature: security skill evaluation
       """
     Then the response matches regex named "flags-hardcoded-secret" with flags "i":
       """
-      hard-?cod|shell history|environment variable|secret
+      hard-?cod|shell history|process list|\bps\b|environment variable|env(ironment)? var|secret (manager|store|vault)|rotate
       """
 
   @case:negative-control @should-not-trigger

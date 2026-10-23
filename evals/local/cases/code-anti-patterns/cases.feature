@@ -13,7 +13,7 @@ Feature: code-anti-patterns skill evaluation
       """
     And the response matches regex named "splits-by-responsibility" with flags "i":
       """
-      (split|extract|separate|break)[\s\S]{0,80}(class|service|component|responsibilit)|single[- ]responsibility
+      (split|extract|separate|break)[\s\S]{0,80}(class|service|component|object|responsibilit|reasons? (to|for) chang)|single[- ]responsibility
       """
 
   @case:negative-control @should-not-trigger

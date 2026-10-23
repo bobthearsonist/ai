@@ -1,5 +1,11 @@
 {
   "caseId": "command-review",
-  "pass": ["Avoid a hardcoded secret in the command because it can leak into shell history."],
-  "fail": ["The command looks fine; run it as written."]
+  "pass": [
+    "Avoid a hardcoded secret in the command because it can leak into shell history.",
+    "The token is in the command line, so it is visible to other local users through the process list. Read it from an environment variable instead."
+  ],
+  "fail": [
+    "The command looks fine; run it as written.",
+    "I see no secret problems here. The URL uses HTTPS, so the command is fine to run."
+  ]
 }

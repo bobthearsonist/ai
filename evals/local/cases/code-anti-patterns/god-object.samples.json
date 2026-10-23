@@ -2,10 +2,12 @@
   "caseId": "god-object",
   "pass": [
     "This is a God Object. Split it by responsibility: a validator, a repository, a mailer and a PDF renderer.",
-    "Classic god-class. Extract separate services for persistence, email and rendering so each has one responsibility."
+    "Classic god-class. Extract separate services for persistence, email and rendering so each has one responsibility.",
+    "The main smell is a God class. A usual direction is to split by reason to change: a validator, a repository, a notifier for email and a renderer for PDFs."
   ],
   "fail": [
     "This looks like a large class with too many methods. It is hard to read.",
-    "It is a God Object, which is bad."
+    "It is a God Object, which is bad.",
+    "It is a God Object. Split the file into smaller files of about 200 lines each."
   ]
 }
