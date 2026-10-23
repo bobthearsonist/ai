@@ -1,23 +1,19 @@
 # Skill evals (local, ACP)
 
-Repository-owned cases for the shared [ai-evals engine](https://github.com/bobthearsonist/ai-evals). The development dependency installs the sibling `ai-evals` checkout; no engine implementation is duplicated here. Claude and Copilot use only ACP. OpenCode remains unsupported.
+Repository-owned cases for the shared [ai-evals engine](https://github.com/bobthearsonist/ai-evals). The development dependency pins the engine by commit; no engine implementation is duplicated here. Claude and Copilot use only ACP. OpenCode remains unsupported.
 
 See [docs/local-native-runner.md](docs/local-native-runner.md).
 The [AI Guild onboarding page](docs/ai-guild-evals.html) explains the workflow,
 current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
-### Local engine dependency
+### Engine dependency
 
-The local `ai-evals` development checkout adds multi-runner selection, Gherkin
-authoring, shared v2 assertions, ACP transport and separately opt-in AI judging,
-and supports only ACP for both Claude and Copilot. The previous Git pin could
-not load these suites. `package.json` now uses `file:../../ai-evals`;
-`.npmrc` installs a copy rather than a symlink, and the lockfile includes its
-dependencies. Keep the two repositories as siblings. Run `npm ci --ignore-scripts`
-in `evals` after changing the engine checkout to refresh the installed copy.
-The engine changes remain local and unpublished; a standalone clone needs the
-matching sibling checkout. An immutable remote pin is a later publication step,
-not an invented reference to an unpushed commit.
+`package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
+`main` branch, which adds multi-runner selection, Gherkin authoring, shared v2
+assertions, ACP transport and separately opt-in AI judging. To pick up a newer
+engine, update the commit in `package.json` and run `npm install`. To test
+unreleased engine changes, temporarily point it at a local checkout
+(`file:../../ai-evals`) and restore the pin before committing.
 
 Native profiles use temporary homes, read-only tool lists, empty ambient MCP
 configuration and a controlled workspace containing the selected skill only
@@ -129,7 +125,8 @@ For an ACP archive from one of these suites, plan eligible assessments without
 inference (replace `<run>` and `MODEL_ID`):
 
 ```powershell
-node C:\Repositories\ai-evals\local\cli.mjs judge C:\Repositories\ai\evals\.work\local-runs\<run> --client claude --model MODEL_ID --rubric C:\Repositories\ai\evals\judge-rubrics.json --dry-run
+npx --no-install ai-evals judge .work\local-runs\<run> --client claude --model MODEL_ID --rubric judge-rubrics.json --dry-run
+npx --no-install ai-evals report .work\local-runs\<run> --answer
 ```
 
 The JSON map selects matching case IDs; unmapped answers are explicitly
@@ -153,6 +150,7 @@ the skill. Those are genuine trigger misses, so the semantic passes for those
 cases reflect the base model, not skill content. The one content false
 negative (`god-object` rejecting "split by reason to change") was fixed in the
 regex, and `command-review` no longer passes on a bare mention of "secret".
+`report RUN_DIR` now prints those per-check results and Skill calls directly.
 
 Tooling that redacts secrets in its display can silently rewrite what you
 think a prompt says. Check the bytes of a case file, not the rendered view,
@@ -173,7 +171,7 @@ node local/cli.mjs run --suite security --model MODEL_ID --dry-run
 node local/run-all.mjs
 ```
 
-Run these commands from `evals` with the sibling engine checkout present. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
+Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate
