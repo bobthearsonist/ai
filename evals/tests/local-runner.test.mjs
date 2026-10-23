@@ -102,7 +102,7 @@ test('advisory semantic rubrics cover only selected positive cases', () => {
 
 test('wrapper resolves repository config from a foreign working directory', () => {
   const result = run('cli.mjs', ['run', '--exe', process.execPath]);
-  assert.equal(result.status, 4, result.stderr);
+  assert.equal(result.status, 2, result.stderr);
   assert.match(result.stderr, /--approve-sessions 18/);
 });
 
@@ -110,15 +110,15 @@ test('both all-suite entrypoints discover repository cases without live calls', 
   const total = suites.reduce((n, suite) => n + loadSuite(join(config.casesDir, suite)).length * 3 * 2, 0);
   for (const [file, args] of [['run-all.mjs', []], ['cli.mjs', ['run-all']]]) {
     const result = run(file, args);
-    assert.equal(result.status, 1, result.stderr);
-    assert.ok(result.stdout.includes(`${total} live session(s) across ${suites.length} suites`), result.stdout);
+    assert.equal(result.status, 2, result.stderr);
+    assert.ok(result.stderr.includes(`${total} live session(s) across ${suites.length} suites`), result.stderr);
   }
 });
 
 test('wrapper preserves custom configs, suite selection and help', () => {
   const result = run('run-all.mjs', [`--config=${configPath}`, '--suites', 'git-commit-style']);
-  assert.equal(result.status, 1, result.stderr);
-  assert.match(result.stdout, /18 live session\(s\) across 1 suites/);
+  assert.equal(result.status, 2, result.stderr);
+  assert.match(result.stderr, /18 live session\(s\) across 1 suites/);
   const help = run('cli.mjs', ['--help']);
   assert.equal(help.status, 0, help.stderr);
   assert.match(help.stdout, /ai-evals/);
