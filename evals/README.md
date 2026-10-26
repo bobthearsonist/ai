@@ -8,12 +8,12 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current `debfa838` update is local-only pending review; publish that engine
+The current `9c403d6` update is local-only pending review; publish that engine
 commit before installing this pin from GitHub. Validation used the identical
 commit installed from the local Git repository, not an uncommitted symlink.
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
-`main` branch, which provides multi-runner selection, Gherkin authoring, shared v2
+repository, which provides multi-runner selection, Gherkin authoring, shared v2
 assertions, ACP transport and separately opt-in AI judging. To pick up a newer
 engine, update the commit in `package.json` and run `npm install`. To test
 unreleased engine changes, temporarily point it at a local checkout
