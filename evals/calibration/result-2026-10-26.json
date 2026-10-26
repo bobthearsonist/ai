@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "kind": "judge-calibration-summary",
+  "createdAt": "2026-10-26T21:25:25.820Z",
+  "engineCommit": "debfa838170c02e2c903b0c22c257e6408cc7009",
+  "client": "claude",
+  "model": "haiku",
+  "timeoutMs": 120000,
+  "promptSha256": "482a6c98dac94977ce1224c82a1d2a7f2739d8db9baf14719af38b9df694425e",
+  "judgeSignature": "d3a9547a96a88d5ecc2d907534b5866f0d0f821ff8789a6ee47d6bd2edca74d5",
+  "labels": "judge-labels.json",
+  "labelsJsonSha256": "aee3d0fc777eaa5eee083a2ee66125cb086bc4871abebc1f77b8743c5ec019d4",
+  "labelsHashEncoding": "UTF-8 JSON.stringify(JSON.parse(file))",
+  "labelProvenance": "Authored synthetic expected answers, not independently human-reviewed production responses or candidate outputs.",
+  "plannedSessions": 40,
+  "attemptedSessions": 40,
+  "retries": 0,
+  "correct": 37,
+  "validJudgements": 38,
+  "invalidJudgements": 2,
+  "abstentions": 0,
+  "agreementIncludingInvalid": 0.925,
+  "agreementAmongValid": 0.9736842105263158,
+  "falseAcceptances": 0,
+  "falseRejections": 1,
+  "eligible": false,
+  "scoringStatus": "advisory-only",
+  "scoringGateRejectionVerified": true,
+  "reportedCost": {
+    "amount": 0.0490452,
+    "currency": "USD",
+    "sessionsWithCost": 40,
+    "meaning": "Sum of runtime-reported list-price usage estimates, not an additional subscription charge.",
+    "inputTokens": null,
+    "outputTokens": null
+  },
+  "policies": [
+    { "caseId": "pain-gate", "samples": 8, "correct": 7, "invalid": 0 },
+    { "caseId": "incremental", "samples": 8, "correct": 6, "invalid": 2 },
+    { "caseId": "god-object", "samples": 8, "correct": 8, "invalid": 0 },
+    { "caseId": "before-after", "samples": 8, "correct": 8, "invalid": 0 },
+    { "caseId": "score-god-class", "samples": 8, "correct": 8, "invalid": 0 }
+  ],
+  "failures": [
+    {
+      "sampleId": "pain-conditional",
+      "expected": "pass",
+      "actual": "fail",
+      "status": "judged",
+      "finding": "False rejection: the answer explicitly links not refactoring now to readable, passing code and no evidence of need, and conditions a future refactor on duplicated risky edits or brittle tests. The judge demands a more literal linkage despite the equivalent-reasoning rule."
+    },
+    {
+      "sampleId": "incremental-only-size",
+      "expected": "fail",
+      "actual": null,
+      "status": "invalid",
+      "reason": "judge output is not valid JSON",
+      "finding": "The model wrapped its otherwise failing verdict in Markdown JSON fences. The strict parser rejects it; this is not counted as correct."
+    },
+    {
+      "sampleId": "incremental-contradiction",
+      "expected": "fail",
+      "actual": null,
+      "status": "invalid",
+      "reason": "judge output is not valid JSON",
+      "finding": "The model wrapped its otherwise failing verdict in Markdown JSON fences. The strict parser rejects it; this is not counted as correct."
+    }
+  ],
+  "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-26T21-22-06-662Z\\assessments\\0b54be81-20b8-43bd-b954-733a5c3eba4a.json",
+  "localArtifactSha256": "582cab959dac9627907a232f7e2d2ec0fd5f30fb734a17763c779ebcdaa413d9",
+  "rawCliOutput": ".work\\judge-calibration-2026-10-26.json",
+  "limitations": [
+    "This summary is not a calibration artifact accepted by the scoring engine.",
+    "The full assessment archive remains local and gitignored.",
+    "Forty authored examples across five policies do not establish general reliability across all semantic policies.",
+    "No labels, criteria or prompt were changed after observing these results; no passing-gate retry was attempted.",
+    "No candidate scoring sessions were launched because the reliability gate failed."
+  ]
+}

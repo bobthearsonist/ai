@@ -144,8 +144,20 @@ plans it; live calibration needs its own exact approval. Only covered policies
 may use `judge --calibration PATH`, which writes a **separate** combined score
 without changing deterministic results/history. Prompt/model/runtime/settings
 changes require recalibration; missing or invalid judgments make scores null.
-See the engine README for the label format and commands. No new live reliability
-claim follows from this migration.
+See the engine README for the label format and commands.
+
+The 2026-10-26 bounded Claude `haiku` calibration agreed with **37/40 labels
+(92.5%)**: one equivalent answer was wrongly rejected, and two verdicts were
+invalid because they used Markdown JSON fences. There were no abstentions or
+false acceptances. The 40 labels cover five exact policies, with four positive
+and four negative examples each; they are authored synthetic examples, **not
+independently human-reviewed production responses**. The gate failed, and the
+saved artifact was verified to reject scoring. Judging remains advisory; no
+candidate scoring sessions or retries were run. Runtime-reported list-price
+usage totaled about **$0.049**, not an additional subscription charge.
+See [labels](calibration/judge-labels.json) and the
+[recorded result](calibration/result-2026-10-26.json) for scope, failures and
+prompt/runtime fingerprints. Full assessments remain in the local ignored archive.
 
 ### Installed dependency
 
