@@ -14,6 +14,15 @@ Feature: complexity-scoring skill evaluation
       """
       (out of|/)\s*20\b|\b4\s*(-|–|to)\s*20\b
       """
+    And the AI judge confirms "semantic-expectations":
+      """
+      Pass only if the answer compares before and after using size, coupling, cohesion and testability,
+      explains that smaller files alone do not prove improvement, and uses or proposes the skill's
+      four-dimension composite out of 20. Equivalent explanations of dependency burden, responsibility
+      focus and ease of testing count; literal rubric vocabulary is not required. Do not require
+      invented measurements absent from the prompt. Fail if it equates reduced file length with
+      demonstrated lower complexity or omits a dimension.
+      """
 
   @case:negative-control @should-not-trigger
   Scenario: negative control
@@ -43,4 +52,12 @@ Feature: complexity-scoring skill evaluation
     And the response matches regex named "mentions-cohesion" with flags "i":
       """
       cohesion
+      """
+    And the AI judge confirms "semantic-expectations":
+      """
+      Pass only if the answer assesses size, coupling, cohesion and testability, relates the rating to
+      the stated responsibilities/dependencies/testing difficulty, and gives a coherent composite out of
+      20. Accept equivalent descriptions and reasonable ratings because the prompt does not determine
+      one exact score. Fail if it invents source measurements, provides only an unexplained number, or
+      treats the design as low complexity without addressing the stated problems.
       """

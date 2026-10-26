@@ -5,7 +5,7 @@ const hasOption = (name) => process.argv.some((arg) => arg === name || arg.start
 if (!hasOption('--config')) {
   process.argv.push('--config', fileURLToPath(new URL('../evals.json', import.meta.url)));
 }
-if (process.argv[2] !== 'run-all' && !hasOption('--suite')) {
+if (!['run-all', 'calibrate'].includes(process.argv[2]) && !hasOption('--suite')) {
   process.argv.push('--suite', 'git-commit-style');
 }
 await import('@bobthearsonist/ai-evals/cli');

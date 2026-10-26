@@ -8,6 +8,10 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
+The current `debfa838` update is local-only pending review; publish that engine
+commit before installing this pin from GitHub. Validation used the identical
+commit installed from the local Git repository, not an uncommitted symlink.
+
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
 `main` branch, which provides multi-runner selection, Gherkin authoring, shared v2
 assertions, ACP transport and separately opt-in AI judging. To pick up a newer
@@ -44,7 +48,7 @@ The per-case `*.samples.json` files hold offline pass/fail examples; samples are
 to the model. Cases that previously had no samples now have discriminating
 pass/fail examples. These JSON files are sample data, not test definitions.
 JSON case definitions and schema-v1 case compatibility have been removed.
-JSON config, rubrics, sample sidecars and ACP archive formats remain supported.
+JSON config, sample sidecars and ACP archive formats remain supported.
 
 | Former policy | Current policy |
 |---|---|
@@ -64,14 +68,15 @@ invalid execution evidence. Lowercase validation is a separate check,
 so compare scores only under the same policy and check weighting.
 
 AI judging is a separate `judge` command with an explicit runtime, model,
-rubric and exact session approval. It never contributes to deterministic
+recorded Gherkin criteria and exact session approval. It never contributes to deterministic
 scores. Both clients use only ACP and refuse native runtimes whose
 required isolation cannot be established. Transport success alone is not
 evidence of skill/MCP isolation.
 
 ### Semantic judge adoption (advisory)
 
-`judge-rubrics.json` assigns meaning-based criteria to nine positive cases:
+`And the AI judge confirms "semantic-expectations":` Doc Strings co-locate
+meaning-based criteria with nine positive Gherkin scenarios:
 repository-change delivery, responsibility-based decomposition, both
 complexity assessments, both pattern-adoption decisions, and the three
 security-advice cases. Exact commit syntax, identifiers, negative controls,
@@ -90,11 +95,11 @@ For an ACP archive from one of these suites, plan eligible assessments without
 inference (replace `<run>` and `MODEL_ID`):
 
 ```powershell
-npx --no-install ai-evals judge .work\local-runs\<run> --client claude --model MODEL_ID --rubric judge-rubrics.json --dry-run
+npx --no-install ai-evals judge .work\local-runs\<run> --client claude --model MODEL_ID --dry-run
 npx --no-install ai-evals report .work\local-runs\<run> --answer
 ```
 
-The JSON map selects matching case IDs; unmapped answers are explicitly
+The archived Gherkin policy selects semantic case IDs; other answers are explicitly
 skipped. On 2026-10-23, one candidate smoke and one Claude `haiku` judge
 session ran for each of the nine mapped cases. All nine candidate receipts
 were valid; the one-run deterministic smoke status was `passed` for four and
@@ -126,6 +131,22 @@ not judge accuracy, calibration, general skill quality, or cross-provider
 equivalence. The built-in judge profile is Claude-only; unsupported runtimes
 and active machine-managed policy fail closed.
 
+The top-level engine [JUDGE_PROMPT.md](https://github.com/bobthearsonist/ai-evals/blob/main/JUDGE_PROMPT.md)
+is the actual packaged runtime prompt. It requires an independent verdict for
+each criterion, accepts equivalent reasoning, and treats partial satisfaction
+as failure. Pass/fail evidence must quote the captured answer exactly.
+
+Scoring remains advisory until an explicit calibration artifact passes the
+engine's gate: 40 unique reviewed answers, five exact case policies, four pass
+and four fail labels per policy, and 100% agreement without invalid/abstaining
+results. `calibrate --labels PATH --client claude --model haiku --dry-run`
+plans it; live calibration needs its own exact approval. Only covered policies
+may use `judge --calibration PATH`, which writes a **separate** combined score
+without changing deterministic results/history. Prompt/model/runtime/settings
+changes require recalibration; missing or invalid judgments make scores null.
+See the engine README for the label format and commands. No new live reliability
+claim follows from this migration.
+
 ### Installed dependency
 
 ```powershell
@@ -136,7 +157,7 @@ node local/cli.mjs run --suite security --model MODEL_ID --dry-run
 node local/run-all.mjs
 ```
 
-Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
+Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all` and `calibrate`, which discover all suites unless explicitly narrowed. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate

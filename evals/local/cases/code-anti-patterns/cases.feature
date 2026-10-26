@@ -15,6 +15,14 @@ Feature: code-anti-patterns skill evaluation
       """
       (split|extract|separate|break)[\s\S]{0,80}(class|service|component|object|responsibilit|reasons? (to|for) chang)|single[- ]responsibility
       """
+    And the AI judge confirms "semantic-expectations":
+      """
+      Pass only if the answer identifies excessive, unrelated responsibilities (God Object, God Class,
+      Blob, or a clear equivalent explanation) and recommends separating cohesive responsibilities
+      rather than merely renaming the class or splitting it by arbitrary line counts. Do not demand a
+      specific smell name or a short word-proximity window. Fail if it endorses the current
+      concentration without addressing the stated responsibility problem.
+      """
 
   @case:negative-control @should-not-trigger
   Scenario: negative control

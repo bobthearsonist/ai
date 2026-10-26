@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
@@ -72,38 +72,50 @@ test('graders classify each case hand-written samples as declared', () => {
   assert.ok(checked >= 20);
 });
 
-test('advisory semantic rubrics cover only selected positive cases', () => {
-  const rubrics = JSON.parse(readFileSync(join(root, 'judge-rubrics.json'), 'utf8'));
+test('Gherkin semantic criteria cover only selected positive cases', () => {
   const selected = [
     'edit-through-link', 'god-object', 'before-after', 'score-god-class',
     'incremental', 'pain-gate', 'api-key-config', 'command-review', 'public-repo-pii',
   ];
-  assert.deepEqual(Object.keys(rubrics).toSorted(), selected.toSorted());
+  assert.equal(existsSync(join(root, 'judge-rubrics.json')), false);
   const cases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
-  for (const [id, rubric] of Object.entries(rubrics)) {
+  const judged = cases.filter((c) => c.judgeCriteria?.length);
+  assert.deepEqual(judged.map((c) => c.id).toSorted(), selected.toSorted());
+  for (const { id, judgeCriteria } of judged) {
     const matches = cases.filter((c) => c.id === id);
     assert.equal(matches.length, 1, `${id} must identify one authored case`);
     assert.equal(matches[0].shouldTrigger, true, `${id} must not be a negative control`);
-    assert.equal(typeof rubric, 'string');
-    assert.match(rubric, /Pass only if/);
-    assert.match(rubric, /Fail if/);
-    assert.match(rubric, /abstain/);
-    assert.match(rubric, /exact answer quotes/);
+    assert.equal(judgeCriteria.length, 1);
+    assert.equal(judgeCriteria[0].id, 'semantic-expectations');
+    assert.match(judgeCriteria[0].text, /Pass only if/);
+    assert.match(judgeCriteria[0].text, /Fail\s+if/);
+    assert.doesNotMatch(judgeCriteria[0].text, /Cite exact answer quotes|^Task:/);
   }
   const answers = cases.map((c) => ({
     caseId: c.id, arm: 'with', repetition: 1, text: c.samples.pass[0],
     valid: true, complete: true,
   }));
-  const plan = planJudgeRequests({ answers, rubric: rubrics });
+  const plan = planJudgeRequests({ answers, cases });
   assert.equal(plan.plannedSessions, selected.length);
   assert.equal(plan.skipped.length, cases.length - selected.length);
-  for (const request of plan.requests) assert.equal(request.rubric, rubrics[request.answer.caseId]);
+  for (const request of plan.requests) {
+    assert.deepEqual(request.policy.criteria, judged.find((c) => c.id === request.answer.caseId).judgeCriteria);
+  }
 });
 
 test('wrapper resolves repository config from a foreign working directory', () => {
   const result = run('cli.mjs', ['run', '--exe', process.execPath]);
   assert.equal(result.status, 2, result.stderr);
   assert.match(result.stderr, /--approve-sessions 18/);
+});
+
+test('calibration wrapper selects all labeled policies without a default suite', () => {
+  const result = run('cli.mjs', [
+    'calibrate', '--client', 'claude', '--model', 'haiku',
+    '--labels', join(root, 'calibration', 'judge-labels.json'), '--dry-run',
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).plannedSessions, 40);
 });
 
 test('both all-suite entrypoints discover repository cases without live calls', () => {
