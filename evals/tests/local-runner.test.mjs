@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
@@ -8,6 +9,7 @@ import { loadSuite } from '@bobthearsonist/ai-evals/suite';
 import { resolveConfig } from '@bobthearsonist/ai-evals/config';
 import { planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
 import { planCalibration } from '@bobthearsonist/ai-evals/judge-calibration';
+import { archivePolicy } from '@bobthearsonist/ai-evals/policy';
 
 const root = resolve(import.meta.dirname, '..');
 const configPath = join(root, 'evals.json');
@@ -117,6 +119,28 @@ test('calibration wrapper selects all labeled policies without a default suite',
   ]);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).plannedSessions, 40);
+});
+
+test('judge wrapper uses the archived policy without injecting a suite', () => {
+  const archive = mkdtempSync(join(tmpdir(), 'ai-judge-wrapper-'));
+  try {
+    const cases = loadSuite(join(config.casesDir, 'pattern-principles'));
+    archivePolicy(archive, cases, {});
+    writeFileSync(join(archive, 'normalized.json'), JSON.stringify({ transport: 'acp', client: 'claude' }));
+    const directory = join(archive, 'traces', 'pain-gate');
+    mkdirSync(directory, { recursive: true });
+    const path = join(directory, 'with-1.jsonl');
+    writeFileSync(path, JSON.stringify({
+      type: 'ai-evals.acp', schemaVersion: 1,
+      transcript: { finalText: 'Keep the simple branches for now.', complete: true, toolCalls: [], raw: '' },
+    }));
+    writeFileSync(`${path}.receipt.json`, JSON.stringify({ valid: true, exitCode: 0 }));
+    const result = run('cli.mjs', ['judge', archive, '--client', 'claude', '--model', 'haiku', '--dry-run']);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).plannedSessions, 1);
+  } finally {
+    rmSync(archive, { recursive: true, force: true, maxRetries: 3 });
+  }
 });
 
 test('fresh calibration labels are balanced and disjoint from regression answers', () => {
