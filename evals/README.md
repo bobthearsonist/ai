@@ -152,12 +152,49 @@ invalid because they used Markdown JSON fences. There were no abstentions or
 false acceptances. The 40 labels cover five exact policies, with four positive
 and four negative examples each; they are authored synthetic examples, **not
 independently human-reviewed production responses**. The gate failed, and the
-saved artifact was verified to reject scoring. Judging remains advisory; no
-candidate scoring sessions or retries were run. Runtime-reported list-price
+saved artifact was verified to reject scoring. For that configuration, judging
+remained advisory; no candidate scoring sessions or retries were run. Runtime-reported list-price
 usage totaled about **$0.049**, not an additional subscription charge.
 See [labels](calibration/judge-labels.json) and the
 [recorded result](calibration/result-2026-10-26.json) for scope, failures and
 prompt/runtime fingerprints. Full assessments remain in the local ignored archive.
+
+The revised prompt removed the fenced output example and clarified paraphrase
+acceptance and whole-answer review. It was frozen before 40 fresh authored
+answers were added to the original 40 regression answers. Each revised
+configuration ran once against all 80, without changing labels, criteria or
+the 100% gate:
+
+| Judge | Agreement | Invalid / abstaining | Gate | Reported usage |
+|---|---|---|---|---|
+| Revised Claude `sonnet` | 79/80 (98.75%) | 0 / 0 | blocked | $1.182 |
+| Revised Claude `opus` | 80/80 (100%) | 0 / 0 | passed for five exact policies | $2.332 |
+
+Sonnet rejected a valid paraphrase of coupling/cohesion; its saved artifact
+was verified to block scoring before inference. Opus was selected after that
+failure on the same labels. These are **authored model-selection examples,
+not an untouched final test set, independent human review, or a population
+accuracy estimate**. The fresh half scored 40/40 for both models. Reliability
+does not transfer to the other four toolkit policies or any Profisee policy.
+Future provider changes behind the `opus` selection ID also need validation.
+See the [Sonnet result](calibration/result-2026-10-26-sonnet-v2.json),
+[Opus result](calibration/result-2026-10-26-opus-v2.json) and
+[frozen fresh labels](calibration/judge-labels-holdout.json).
+
+Using the passing Opus artifact explicitly, two independently generated Haiku
+candidate answers were then judged: both semantic verdicts passed. Combined
+scores were 1.00 for `incremental` and 0.80 for `pain-gate`, averaging **0.90**.
+The original deterministic average remains **0.875**, byte-for-byte unchanged
+along with all 11 original archive files. The remaining regex failure rejects
+"No, don't do it now"; it was retained rather than silently repaired during
+measurement. Exit 1 reports that remaining quality-check failure, not an
+execution error. The two judge sessions reported about $0.070 in list-price
+usage; none of these estimates is an additional subscription charge.
+See the [live scoring evidence](calibration/scoring-2026-10-26-opus-v2.json).
+This one-arm smoke verifies the scoring path, not skill lift. Default judging
+remains advisory; separate combined scoring requires the full local calibration
+artifact, exact matching configuration and covered policy hashes. The summary
+JSON files are not accepted calibration artifacts.
 
 ### Installed dependency
 
@@ -169,7 +206,8 @@ node local/cli.mjs run --suite security --model MODEL_ID --dry-run
 node local/run-all.mjs
 ```
 
-Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all` and `calibrate`, which discover all suites unless explicitly narrowed. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
+Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all` and `calibrate`, which discover all suites unless explicitly narrowed, and
+`judge`, which reads the archived policy without injecting a suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate

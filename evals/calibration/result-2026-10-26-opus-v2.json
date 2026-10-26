@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "judge-calibration-summary",
+  "createdAt": "2026-10-26T21:46:28.793Z",
+  "engineCommit": "9c403d650610c5bad1318791d2f781331a65fd10",
+  "client": "claude",
+  "model": "opus",
+  "timeoutMs": 120000,
+  "promptSha256": "253d9b3c2aa91fd7d77a887d89ff1f81413f38d790a41450cf6c73e50c20e184",
+  "judgeSignature": "7348623162f707a0dd8e58f7045be4f6ceb5764dd4aa9c1e3c2d4efcf6425657",
+  "labels": [
+    { "path": "judge-labels.json", "jsonSha256": "aee3d0fc777eaa5eee083a2ee66125cb086bc4871abebc1f77b8743c5ec019d4", "samples": 40, "correct": 40 },
+    { "path": "judge-labels-holdout.json", "jsonSha256": "2789888796236a124552b7881d59224144abf02c221e29e9534ee0f1efe23c0c", "samples": 40, "correct": 40 }
+  ],
+  "labelsHashEncoding": "UTF-8 JSON.stringify(JSON.parse(file))",
+  "labelProvenance": "Authored synthetic answers, not independently human-reviewed production responses. Both sets were frozen before revised-prompt inference.",
+  "plannedSessions": 80,
+  "attemptedSessions": 80,
+  "retries": 0,
+  "correct": 80,
+  "validJudgements": 80,
+  "invalidJudgements": 0,
+  "abstentions": 0,
+  "agreementIncludingInvalid": 1,
+  "falseAcceptances": 0,
+  "falseRejections": 0,
+  "eligible": true,
+  "scoringStatus": "explicit-opt-in-for-five-exact-policies-only",
+  "reportedCost": {
+    "amount": 2.3315185,
+    "currency": "USD",
+    "sessionsWithCost": 80,
+    "meaning": "Sum of runtime-reported list-price usage estimates, not an additional subscription charge."
+  },
+  "policies": [
+    { "caseId": "pain-gate", "samples": 16, "correct": 16, "invalid": 0, "sha256": "e63e2d9efe582b4147877f0adfbf15f9cba8e047cb7bb52b9055340ccd96ba12" },
+    { "caseId": "incremental", "samples": 16, "correct": 16, "invalid": 0, "sha256": "86562bf2e240db4ac535b86209688977d2cdc722f848cda552e4d0336b39c2c9" },
+    { "caseId": "god-object", "samples": 16, "correct": 16, "invalid": 0, "sha256": "8c5a36987e8688e04c7663a441b82eeeda22fcbadec982cbe7ad08a2767169d4" },
+    { "caseId": "before-after", "samples": 16, "correct": 16, "invalid": 0, "sha256": "cabf99f6666499946ed3d957810aaa09e5458e62ad00bd845bfdb1a430c9716e" },
+    { "caseId": "score-god-class", "samples": 16, "correct": 16, "invalid": 0, "sha256": "0f4cbacb2fd814f2e8ec324d6c8e1b99d1c3a45140f4caf6c21310a80df069e9" }
+  ],
+  "failures": [],
+  "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-26T21-39-37-243Z\\assessments\\d4f157e7-c5be-4fc6-818c-9df8ef7ccf81.json",
+  "localArtifactSha256": "76f91a526bd784754413d42aeb095da2a6117480555dd54d1d3cedb193fe658f",
+  "rawCliOutput": ".work\\judge-calibration-opus-v2.json",
+  "liveScoringEvidence": "scoring-2026-10-26-opus-v2.json",
+  "limitations": [
+    "This summary is not a calibration artifact accepted by the engine; full assessments remain in the local ignored archive.",
+    "Opus was selected after Sonnet failed on these same labels. This is bounded model-selection evidence, not an untouched final test set or a population accuracy estimate.",
+    "The fresh forty labels were unseen when the prompt was frozen, but had been assessed with Sonnet before the Opus comparison. No labels, criteria or prompt were changed between the two revised-prompt model runs.",
+    "No same-configuration retry, output normalization or gate weakening was used.",
+    "The authored labels are not independently human-reviewed production answers and cover only five of nine toolkit policies; none of the 116 Profisee policies is covered.",
+    "The model identifier is the runtime selection ID opus. Future provider changes behind that identifier require fresh validation; this result is not a permanent guarantee.",
+    "Combined scoring requires explicitly supplying the full passing artifact and matching prompt, runtime, model, settings and covered policy hashes. Default judging stays advisory."
+  ]
+}

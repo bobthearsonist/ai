@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "judge-calibration-summary",
+  "createdAt": "2026-10-26T21:37:38.423Z",
+  "engineCommit": "9c403d650610c5bad1318791d2f781331a65fd10",
+  "client": "claude",
+  "model": "sonnet",
+  "timeoutMs": 120000,
+  "promptSha256": "253d9b3c2aa91fd7d77a887d89ff1f81413f38d790a41450cf6c73e50c20e184",
+  "judgeSignature": "ef8bc88569227e2fae27277dec2d0f325ee8e9d77ad59b09e0b88402d95ed104",
+  "labels": [
+    { "path": "judge-labels.json", "jsonSha256": "aee3d0fc777eaa5eee083a2ee66125cb086bc4871abebc1f77b8743c5ec019d4", "samples": 40, "correct": 39 },
+    { "path": "judge-labels-holdout.json", "jsonSha256": "2789888796236a124552b7881d59224144abf02c221e29e9534ee0f1efe23c0c", "samples": 40, "correct": 40 }
+  ],
+  "labelsHashEncoding": "UTF-8 JSON.stringify(JSON.parse(file))",
+  "labelProvenance": "Authored synthetic answers, not independently human-reviewed production responses. The fresh forty were frozen before revised-prompt inference; the original forty are regression data.",
+  "plannedSessions": 80,
+  "attemptedSessions": 80,
+  "retries": 0,
+  "correct": 79,
+  "validJudgements": 80,
+  "invalidJudgements": 0,
+  "abstentions": 0,
+  "agreementIncludingInvalid": 0.9875,
+  "falseAcceptances": 0,
+  "falseRejections": 1,
+  "eligible": false,
+  "scoringStatus": "advisory-only",
+  "scoringGateRejectionVerified": true,
+  "reportedCost": {
+    "amount": 1.1815935,
+    "currency": "USD",
+    "sessionsWithCost": 80,
+    "meaning": "Sum of runtime-reported list-price usage estimates, not an additional subscription charge."
+  },
+  "policies": [
+    { "caseId": "pain-gate", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "incremental", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "god-object", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "before-after", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "score-god-class", "samples": 16, "correct": 15, "invalid": 0 }
+  ],
+  "failures": [
+    {
+      "sampleId": "score-paraphrase",
+      "expected": "pass",
+      "actual": "fail",
+      "status": "judged",
+      "finding": "False rejection: the judge acknowledges the coherent 17/20 composite and all four assessed dimensions, but rejects external dependency burden and responsibility fragmentation as only loose equivalents of coupling and cohesion. The policy explicitly accepts equivalent descriptions and does not specify explanation length."
+    }
+  ],
+  "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-26T21-31-36-492Z\\assessments\\dcb50809-444b-42f5-a17b-bc3c37f6e661.json",
+  "localArtifactSha256": "37c9d56d2602a6e12cb1a7100868bc37261aac324a64805963e601c6b91d5c5f",
+  "rawCliOutput": ".work\\judge-calibration-sonnet-v2.json",
+  "limitations": [
+    "This summary is not a calibration artifact accepted by the scoring engine; full assessments remain in the local ignored archive.",
+    "The revised prompt and model both changed relative to the earlier Haiku run; this comparison does not isolate the effect of the prompt.",
+    "Eighty authored answers across five policies do not establish reliability across all semantic policies or production responses.",
+    "The prompt and labels were frozen before this run; no output normalization, label edits, gate weakening or same-configuration retries were used.",
+    "The saved artifact was rejected by the candidate-scoring CLI before inference. No Sonnet candidate scoring sessions ran."
+  ]
+}

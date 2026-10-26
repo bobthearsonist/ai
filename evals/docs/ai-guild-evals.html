@@ -36,7 +36,7 @@
 <body>
 <main>
   <header>
-    <div class="eyebrow">AI Guild / Local skill evaluations / 23 October 2026</div>
+    <div class="eyebrow">AI Guild / Local skill evaluations / 26 October 2026</div>
     <h1>Does this skill actually help?</h1>
     <p class="lead">Run realistic prompts with and without a skill, check observable outcomes,
       and keep the traces. Optional AI judging is advisory and never changes
@@ -55,7 +55,7 @@
     <h2>Gherkin-only suites. ACP-only execution. Bounded Claude evidence.</h2>
     <div class="table-wrap">
       <table>
-        <caption>Current implementation and bounded evidence; not judge calibration or cross-client acceptance.</caption>
+        <caption>Current implementation and bounded evidence; not general judge reliability or cross-client acceptance.</caption>
         <thead><tr><th scope="col">Surface</th><th scope="col">Evidence / limitation</th></tr></thead>
         <tbody>
           <tr><th scope="row">Claude ACP evidence</th><td>Nine candidate receipts and
@@ -63,6 +63,16 @@
             smokes passed deterministic gates; five were below threshold. These are
             one-arm path checks, not measured skill lift or judge accuracy.
             See the consumer README for the rubric correction and limitations.</td></tr>
+          <tr><th scope="row">Bounded judge calibration</th><td>The original Haiku
+            configuration agreed on 37/40 authored labels. With the revised frozen
+            prompt, Sonnet scored 79/80 and Opus 80/80. Only Opus passed the unchanged
+            gate, for five exact toolkit policies. Two fresh candidate answers
+            exercised separate combined scoring (0.90); original deterministic
+            scores (0.875) stayed unchanged. These are synthetic model-selection
+            examples, not independently reviewed production answers or general
+            accuracy evidence. No Profisee policy is covered.
+            See <a href="../calibration/result-2026-10-26-opus-v2.json">calibration
+            scope</a> and <a href="../calibration/scoring-2026-10-26-opus-v2.json">scoring evidence</a>.</td></tr>
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
           <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot support only
             common ACP transport. Legacy execution and replay code is deleted, without native/SDK fallback. Native candidate
@@ -71,6 +81,7 @@
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
             six suites are now Gherkin scenarios, with separate offline sample data.
+            Nine positive scenarios also contain semantic judge criteria in Doc Strings.
             The commit-pinned engine dependency supports them. Authored JSON cases
             and schema-v1 compatibility are removed; JSON samples, config,
             rubrics and protocol records remain supported.</td></tr>
@@ -78,9 +89,10 @@
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
             not a multiplier per runner.</td></tr>
-          <tr><th scope="row">Availability</th><td>The engine is on its
-            <code>main</code> branch. The <code>ai</code> repository installs a
-            reviewed Git commit; no sibling engine checkout is required.</td></tr>
+          <tr><th scope="row">Availability</th><td>The current engine update and
+            consumer pins are saved locally pending review, not pushed. Publish
+            the pinned engine commit before installing it from GitHub; current
+            validation used that identical commit from the local Git repository.</td></tr>
         </tbody>
       </table>
     </div>
@@ -100,9 +112,16 @@
       transcript receives the same supported check results under the same policy.
       A separately approved AI judge can archive advisory assessments, but never
       changes these deterministic scores. Nine positive cases now have per-case
-      semantic rubrics that accept equivalent reasoning instead of relying on
-      keywords or short proximity windows. Bounded Claude smoke and judge runs
-      have exercised these rubrics, but have not established judge accuracy;
+      semantic criteria in Gherkin that accept equivalent reasoning instead of
+      relying on keywords or short proximity windows. The shared top-level
+      <a href="https://github.com/bobthearsonist/ai-evals/blob/main/JUDGE_PROMPT.md">JUDGE_PROMPT.md</a>
+      is the actual packaged runtime prompt, not a separate example.
+      Explicit <code>judge --calibration PATH</code> can write a separate combined
+      score only after exact prompt/model/runtime/settings and covered-policy
+      calibration passes. The gate requires 40 unique labeled answers across
+      five policies, four pass/fail labels each, and 100% agreement without
+      invalid or abstaining verdicts. Bounded evidence does not transfer to
+      other policies or prove general judge accuracy;
       syntax, activation and disclosure checks stay deterministic.
       See the <a href="../README.md#semantic-judge-adoption-advisory">semantic
       judge adoption notes</a>.</p>
