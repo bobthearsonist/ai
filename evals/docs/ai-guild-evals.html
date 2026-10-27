@@ -65,12 +65,17 @@
             See the consumer README for the rubric correction and limitations.</td></tr>
           <tr><th scope="row">Bounded judge calibration</th><td>The original Haiku
             configuration agreed on 37/40 authored labels. With the revised frozen
-            prompt, Sonnet scored 79/80 and Opus 80/80. Only Opus passed the unchanged
+            prompt, Haiku scored 72/80, Sonnet 79/80 and Opus 80/80. Revised Haiku
+            produced valid JSON throughout but falsely rejected eight valid answers;
+            its reported list usage was $0.093 versus Opus $2.332, not additional
+            subscription charges. Only Opus passed the unchanged
             gate, for five exact toolkit policies. Two fresh candidate answers
             exercised separate combined scoring (0.90); original deterministic
             scores (0.875) stayed unchanged. These are synthetic model-selection
             examples, not independently reviewed production answers or general
-            accuracy evidence. No Profisee policy is covered.
+            accuracy evidence. No Profisee policy is covered. No model defaults changed.
+            See the <a href="../calibration/result-2026-10-26-haiku-v2.json">same-prompt
+            Haiku comparison</a>.
             See <a href="../calibration/result-2026-10-26-opus-v2.json">calibration
             scope</a> and <a href="../calibration/scoring-2026-10-26-opus-v2.json">scoring evidence</a>.</td></tr>
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>

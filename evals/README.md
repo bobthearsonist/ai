@@ -167,8 +167,19 @@ the 100% gate:
 
 | Judge | Agreement | Invalid / abstaining | Gate | Reported usage |
 |---|---|---|---|---|
+| Revised Claude `haiku` | 72/80 (90%) | 0 / 0 | blocked | $0.093 |
 | Revised Claude `sonnet` | 79/80 (98.75%) | 0 / 0 | blocked | $1.182 |
 | Revised Claude `opus` | 80/80 (100%) | 0 / 0 | passed for five exact policies | $2.332 |
+
+Haiku was subsequently tested once with the same frozen revised prompt, 80
+answers, timeout and gate. All eight errors were false rejections: three
+on `pain-gate` and five on `before-after`. Some rejected equivalent reasoning;
+others claimed explicitly present requirements were missing. JSON formatting
+was valid throughout. This gives a same-prompt comparison, not evidence that
+all output judging needs Opus. Haiku remains advisory; no defaults changed.
+See the [revised Haiku result](calibration/result-2026-10-26-haiku-v2.json).
+Usage figures are runtime-reported list estimates, not additional subscription
+charges; Opus used about 25 times Haiku's reported cost on these 80 answers.
 
 Sonnet rejected a valid paraphrase of coupling/cohesion; its saved artifact
 was verified to block scoring before inference. Opus was selected after that

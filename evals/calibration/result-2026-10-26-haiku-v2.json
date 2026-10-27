@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "judge-calibration-summary",
+  "createdAt": "2026-10-27T02:58:19.920Z",
+  "engineCommit": "9c403d650610c5bad1318791d2f781331a65fd10",
+  "client": "claude",
+  "model": "haiku",
+  "timeoutMs": 120000,
+  "promptSha256": "253d9b3c2aa91fd7d77a887d89ff1f81413f38d790a41450cf6c73e50c20e184",
+  "judgeSignature": "76598e7160a1b9f2d2f8cb432969618f3d27f5ae16f12440663288c5418259a3",
+  "labels": [
+    { "path": "judge-labels.json", "jsonSha256": "aee3d0fc777eaa5eee083a2ee66125cb086bc4871abebc1f77b8743c5ec019d4", "samples": 40, "correct": 37 },
+    { "path": "judge-labels-holdout.json", "jsonSha256": "2789888796236a124552b7881d59224144abf02c221e29e9534ee0f1efe23c0c", "samples": 40, "correct": 35 }
+  ],
+  "labelsHashEncoding": "UTF-8 JSON.stringify(JSON.parse(file))",
+  "labelProvenance": "Authored synthetic answers, not independently human-reviewed production responses. Both sets were frozen before revised-prompt inference and previously assessed with Sonnet and Opus.",
+  "plannedSessions": 80,
+  "attemptedSessions": 80,
+  "retries": 0,
+  "correct": 72,
+  "validJudgements": 80,
+  "invalidJudgements": 0,
+  "abstentions": 0,
+  "agreementIncludingInvalid": 0.9,
+  "falseAcceptances": 0,
+  "falseRejections": 8,
+  "eligible": false,
+  "scoringStatus": "advisory-only",
+  "reportedCost": {
+    "amount": 0.0928637,
+    "currency": "USD",
+    "sessionsWithCost": 80,
+    "meaning": "Sum of runtime-reported list-price usage estimates, not an additional subscription charge."
+  },
+  "policies": [
+    { "caseId": "pain-gate", "samples": 16, "correct": 13, "invalid": 0 },
+    { "caseId": "incremental", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "god-object", "samples": 16, "correct": 16, "invalid": 0 },
+    { "caseId": "before-after", "samples": 16, "correct": 11, "invalid": 0 },
+    { "caseId": "score-god-class", "samples": 16, "correct": 16, "invalid": 0 }
+  ],
+  "failures": [
+    { "sampleId": "pain-conditional", "expected": "pass", "actual": "fail", "finding": "Rejects an explicit evidence-based conditional as only implied and demands narrower literal wording." },
+    { "sampleId": "before-after-comparison", "expected": "pass", "actual": "fail", "finding": "Claims the answer omits out of 20 although that exact scale appears in its opening sentence." },
+    { "sampleId": "before-after-no-invented-numbers", "expected": "pass", "actual": "fail", "finding": "Rejects equivalent reasoning that smaller files can remain entangled and harder to test." },
+    { "sampleId": "holdout-pain-cost", "expected": "pass", "actual": "fail", "finding": "Rejects concrete risky-edit and brittle-test triggers as insufficiently general evidence of need." },
+    { "sampleId": "holdout-pain-distance", "expected": "pass", "actual": "fail", "finding": "Calls the explicit if actual edits or test setup become troublesome condition only implicit." },
+    { "sampleId": "holdout-before-table", "expected": "pass", "actual": "fail", "finding": "Claims size is not clearly scored despite the explicit four-dimension list and scoring each instruction." },
+    { "sampleId": "holdout-before-wording", "expected": "pass", "actual": "fail", "finding": "Demands a literal insufficiency statement despite the equivalent comparison of the composite rather than file size." },
+    { "sampleId": "holdout-before-unknown", "expected": "pass", "actual": "fail", "finding": "Demands completed ratings and further interpretation not required by the policy or supported by the supplied size-only information." }
+  ],
+  "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-27T02-52-09-453Z\\assessments\\0cbd38c6-7044-49e9-af79-2c608f16edf8.json",
+  "localArtifactSha256": "32046251ffec5a6f4848aaae3dce492c28293fa45f44067ab6bae00c72105e9c",
+  "rawCliOutput": ".work\\judge-calibration-haiku-v2.json",
+  "limitations": [
+    "This summary is not a calibration artifact accepted by the engine; full assessments remain in the local ignored archive.",
+    "This is a single run on the same frozen prompt, labels, criteria, timeout and gate as the Sonnet and Opus measurements; no output normalization, retries or label edits were used.",
+    "The labels have already been used for model selection and are not an untouched final test or population accuracy estimate.",
+    "All eight disagreements were false rejections on two policies. No false acceptance was observed in this bounded set; that does not establish a general false-acceptance rate.",
+    "The recomputed raw-artifact gate failed. No Haiku candidate scoring calls ran and no model defaults changed.",
+    "Only five toolkit policies were measured; no reliability claim transfers to other toolkit policies or the 116 Profisee policies."
+  ]
+}
