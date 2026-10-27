@@ -14,14 +14,13 @@ Feature: complexity-scoring skill evaluation
       """
       (out of|/)\s*20\b|\b4\s*(-|–|to)\s*20\b
       """
-    And the AI judge confirms "semantic-expectations":
+    And the AI judge verifies:
+      | id                    | action   | expectation |
+      | semantic-expectations | explains | Compare before and after using size, coupling, cohesion, and testability; equivalent descriptions of dependency burden, responsibility focus, and ease of testing count. |
+      | file-size-alone       | explains | Smaller files alone do not prove improved complexity; do not equate reduced file length with demonstrated lower complexity. |
+    And the AI judge confirms "four-dimension-composite":
       """
-      Pass only if the answer compares before and after using size, coupling, cohesion and testability,
-      explains that smaller files alone do not prove improvement, and uses or proposes the skill's
-      four-dimension composite out of 20. Equivalent explanations of dependency burden, responsibility
-      focus and ease of testing count; literal rubric vocabulary is not required. Do not require
-      invented measurements absent from the prompt. Fail if it equates reduced file length with
-      demonstrated lower complexity or omits a dimension.
+      The answer uses or proposes the skill's four-dimension composite out of 20 to quantify before and after. Do not require invented measurements absent from the prompt.
       """
 
   @case:negative-control @should-not-trigger
@@ -53,11 +52,9 @@ Feature: complexity-scoring skill evaluation
       """
       cohesion
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer assesses size, coupling, cohesion and testability, relates the rating to
-      the stated responsibilities/dependencies/testing difficulty, and gives a coherent composite out of
-      20. Accept equivalent descriptions and reasonable ratings because the prompt does not determine
-      one exact score. Fail if it invents source measurements, provides only an unexplained number, or
-      treats the design as low complexity without addressing the stated problems.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | explains         | Assess size, coupling, cohesion, and testability and relate the rating to the stated responsibilities, dependencies, and testing difficulty. |
+      | composite-score       | explains         | Give a coherent composite rating out of 20; accept equivalent descriptions and reasonable ratings because the prompt does not determine one exact score. |
+      | stated-evidence       | explains         | Ground the rating in facts provided by the prompt; do not invent source measurements or provide only an unexplained number. |
+      | not-low-complexity    | does not endorse | Treating the design as low complexity without addressing the stated problems. |

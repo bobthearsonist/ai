@@ -38,16 +38,12 @@ Feature: ai-repo-management skill evaluation
       """
       sync\.sh|re-?sync|next sync
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer identifies the company-ai working clone's
-      skills/incident-response/SKILL.md as the source to edit, explains that the change must reach the
-      shared branch through the repository's normal review/merge workflow, and explains that a
-      subsequent sync distributes it to clients. Equivalent paths and phrasings are acceptable; do not
-      require the literal words 'push', 'merge' or 'next sync' when the workflow is clear. Fail if it
-      recommends editing a generated client copy or presents a local edit as already distributed. Judge
-      the explanation, not evidence that any command actually ran.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | identifies       | The company-ai working clone's skills/incident-response/SKILL.md is the source to edit; equivalent paths are acceptable. |
+      | shared-branch         | explains         | The change reaches the shared branch through the repository's normal review and merge workflow; equivalent phrasings count. |
+      | client-sync           | explains         | A subsequent sync distributes the change to clients; judge the explanation, not evidence that commands actually ran. |
+      | no-generated-copy     | does not endorse | Editing a generated client copy or presenting a local edit as already distributed. |
 
   @case:explicit-registration @should-trigger
   Scenario: explicit registration

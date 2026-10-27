@@ -14,14 +14,12 @@ Feature: security skill evaluation
       """
       sk_live_[A-Za-z0-9]{8,}
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer keeps the secret out of committed source/config and recommends runtime
-      injection through environment variables or a secret manager. If a local .env is suggested, it must
-      be treated as uncommitted secret material, not a public example containing a real key. Do not
-      require a particular storage-service name or wording. Fail if it recommends committing the key or
-      echoes a plausible live key.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | recommends       | Keep the API key out of committed source and configuration; recommend runtime injection through an environment variable or secret manager without requiring a particular service name or wording. |
+      | no-committed-key      | does not endorse | Committing the API key. |
+      | local-env-safety      | conditions       | If suggesting a local .env file, treat it as uncommitted secret material, not a public example containing a real key. |
+      | no-live-key-echo      | does not endorse | Echoing a plausible live API key. |
 
   @case:command-review @should-trigger
   Scenario: command review
@@ -33,16 +31,12 @@ Feature: security skill evaluation
       """
       hard-?cod|shell history|process list|\bps\b|environment variable|env(ironment)? var|secret (manager|store|vault)|rotate
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer explains that a token written into a shell command is exposed (for example
-      through shell history, the process list, or logs) and gives a concrete safer handling
-      recommendation, such as reading it from an environment variable, a protected file, or a secret
-      store, without embedding a real-looking secret. The answer may treat the value as a placeholder or
-      as possibly real; either is acceptable if the exposure risk is still explained. Do not require the
-      term 'hardcoded'. Fail if it says the command is fine to run as written, encourages pasting a real
-      token inline without considering exposure, or fabricates a different credential.
-      """
+    And the AI judge verifies:
+      | id                       | action           | expectation |
+      | semantic-expectations    | identifies       | A token written into a shell command can be exposed through shell history, the process list, or logs; treat its value as a placeholder or possibly real, but still identify the exposure risk. |
+      | safer-token-handling     | recommends       | Give a concrete safer method, such as an environment variable, protected file, or secret store, without embedding a real-looking secret; the word 'hardcoded' is not required. |
+      | no-unsafe-command        | does not endorse | Saying the command is fine as written or encouraging a real token inline without considering exposure. |
+      | no-fabricated-credential | does not endorse | Fabricating a different credential. |
 
   @case:negative-control @should-not-trigger
   Scenario: negative control
@@ -73,11 +67,8 @@ Feature: security skill evaluation
       """
       gitignore|local\.(yaml|yml|json|config)|\.env|config\.local|environment variable
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer uses a clearly non-personal placeholder or portable configuration in the
-      committed example and keeps the actual personal path in local ignored configuration or an
-      environment variable. Equivalent placeholder syntaxes and explanations are acceptable. Quoting the
-      original path to explain what not to commit is not itself a failure. Fail if the proposed
-      committed value contains the user's real personal path.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | recommends       | The committed example uses a clearly non-personal placeholder or portable configuration; equivalent placeholder syntax is acceptable. |
+      | local-personal-path   | recommends       | Keep the actual personal path in local ignored configuration or an environment variable. |
+      | no-public-real-path   | does not endorse | Putting the user's actual personal path in the committed value; quoting it only to explain what not to commit is not endorsement. |

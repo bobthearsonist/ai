@@ -14,14 +14,11 @@ Feature: pattern-principles skill evaluation
       """
       \bpain\b|evidence|file:line|concrete (problem|need|pain)|what (problem|pain)|justif|which services? (actually|really)
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer challenges the broad rewrite, recommends smaller independently justified
-      changes or a bounded pilot, and asks for concrete evidence of the design problems each pattern
-      would solve. A particular keyword such as 'pain' or 'incremental' is not required; accept clear
-      equivalent reasoning anywhere in the answer. Fail if it endorses the blanket introduction without
-      problem evidence or presents all three patterns as mandatory.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | recommends       | Challenge the blanket rewrite in favor of smaller independently justified changes or a bounded pilot; equivalent reasoning anywhere in the answer counts. |
+      | pattern-problem-proof | conditions       | Introducing each pattern depends on concrete evidence of the design problem it would solve; no particular keyword is required. |
+      | no-blanket-rollout    | does not endorse | Introducing all three patterns without problem evidence or presenting all three as mandatory. |
 
   @case:negative-control @should-not-trigger
   Scenario: negative control
@@ -48,11 +45,10 @@ Feature: pattern-principles skill evaluation
       """
       leave (it|this|the code)( alone| as[- ]is)|(don'?t|do not|no need to|not worth|wouldn'?t|i'?d (not|skip))[\s\S]{0,40}(introduc|add|adopt|refactor|use strategy)|keep (it|them|the (if|code))[\s\S]{0,20}(as is|simple|for now)|not (yet|now)|hold off|premature
       """
-    And the AI judge confirms "semantic-expectations":
-      """
-      Pass only if the answer advises against adding that machinery now, ties the advice to the absence
-      of demonstrated maintenance/testing/change problems, and makes later refactoring conditional on
-      concrete evidence of need. Equivalent phrasing counts even when the recommendation and rationale
-      are far apart. Fail if it recommends adding the abstractions just in case, or says never to
-      refactor regardless of future evidence.
-      """
+    And the AI judge verifies:
+      | id                    | action           | expectation |
+      | semantic-expectations | recommends       | Advise against adding the proposed Strategy, factory, and registry now; equivalent phrasing counts even if the recommendation and rationale are far apart. |
+      | no-demonstrated-pain  | explains         | Tie the advice to the absence of demonstrated maintenance, testing, or change problems. |
+      | future-refactor       | conditions       | Make later refactoring conditional on concrete evidence of need. |
+      | no-speculative-add    | does not endorse | Adding the abstractions just in case. |
+      | not-never-refactor    | does not endorse | Refusing to refactor regardless of future evidence. |

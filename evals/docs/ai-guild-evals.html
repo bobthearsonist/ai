@@ -63,11 +63,15 @@
             smokes passed deterministic gates; five were below threshold. These are
             one-arm path checks, not measured skill lift or judge accuracy.
             See the consumer README for the rubric correction and limitations.</td></tr>
-          <tr><th scope="row">Bounded judge calibration</th><td>The current evidence-first
+          <tr><th scope="row">Historical judge calibration</th><td>The evidence-first
             prompt checks quotes and claim coverage before choosing a verdict.
             Haiku passed 80/80 regression answers and 40/40 fresh blind synthetic
             answers, once per set, with no invalid outputs or abstentions.
-            The unchanged 100% gate passes for five exact toolkit policies only.
+            The unchanged 100% gate passed for five exact toolkit policy hashes
+            from the former freeform-Doc-String rubrics. The current action-table
+            sweep changes those hashes; these artifacts do not cover the current
+            policies and cannot authorize their scoring. No new calibration or
+            judge calls were made.
             Reported list usage totaled about $0.150, not an additional subscription
             charge. A separate AI agent authored the blind set without the prompt
             or prior results; this is not independent human review or production
@@ -86,8 +90,9 @@
             Active machine-managed Claude policy is refused.
             Fake-server integration is not live native acceptance.</td></tr>
           <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
-            six suites are now Gherkin scenarios, with separate offline sample data.
-            Nine positive scenarios also contain semantic judge criteria in Doc Strings.
+            six suites are Gherkin scenarios, with separate offline sample data.
+            Nine positive scenarios use shared action-table judge criteria; the
+            before/after complexity case retains one freeform composite-score criterion.
             The commit-pinned engine dependency supports them. Authored JSON cases
             and schema-v1 compatibility are removed; JSON samples, config,
             rubrics and protocol records remain supported.</td></tr>
@@ -95,10 +100,11 @@
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
             not a multiplier per runner.</td></tr>
-          <tr><th scope="row">Availability</th><td>The current engine update and
-            consumer pins are saved locally pending review, not pushed. Publish
-            the pinned engine commit before installing it from GitHub; current
-            validation used that identical commit from the local Git repository.</td></tr>
+          <tr><th scope="row">Availability</th><td>Shared action-table support is
+            engine commit <code>f29ccb98319a5ce00bfa7d869b01f12cb4320ad3</code>.
+            The engine commit and consumer-pin changes are local and not pushed.
+            Publish the engine commit before installing the GitHub pin; validation
+            used that exact committed source.</td></tr>
         </tbody>
       </table>
     </div>

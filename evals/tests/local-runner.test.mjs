@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
 import { loadSuite } from '@bobthearsonist/ai-evals/suite';
 import { resolveConfig } from '@bobthearsonist/ai-evals/config';
-import { planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
+import { judgePolicy, judgePolicySha256, planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
 import { planCalibration } from '@bobthearsonist/ai-evals/judge-calibration';
 import { archivePolicy } from '@bobthearsonist/ai-evals/policy';
 
@@ -22,6 +22,17 @@ const expectedCases = {
   'git-commit-style': ['explicit-positive', 'implicit-breaking', 'negative-control'],
   'pattern-principles': ['incremental', 'negative-control', 'pain-gate'],
   security: ['api-key-config', 'command-review', 'negative-control', 'public-repo-pii'],
+};
+const expectedJudgeCriteria = {
+  'edit-through-link': ['semantic-expectations', 'shared-branch', 'client-sync', 'no-generated-copy'],
+  'god-object': ['semantic-expectations', 'cohesive-responsibilities', 'responsibility-concentration'],
+  'before-after': ['semantic-expectations', 'file-size-alone', 'four-dimension-composite'],
+  'score-god-class': ['semantic-expectations', 'composite-score', 'stated-evidence', 'not-low-complexity'],
+  incremental: ['semantic-expectations', 'pattern-problem-proof', 'no-blanket-rollout'],
+  'pain-gate': ['semantic-expectations', 'no-demonstrated-pain', 'future-refactor', 'no-speculative-add', 'not-never-refactor'],
+  'api-key-config': ['semantic-expectations', 'no-committed-key', 'local-env-safety', 'no-live-key-echo'],
+  'command-review': ['semantic-expectations', 'safer-token-handling', 'no-unsafe-command', 'no-fabricated-credential'],
+  'public-repo-pii': ['semantic-expectations', 'local-personal-path', 'no-public-real-path'],
 };
 const run = (file, args = []) => spawnSync(process.execPath, [join(root, 'local', file), ...args], {
   encoding: 'utf8',
@@ -76,24 +87,34 @@ test('graders classify each case hand-written samples as declared', () => {
 });
 
 test('Gherkin semantic criteria cover only selected positive cases', () => {
-  const selected = [
-    'edit-through-link', 'god-object', 'before-after', 'score-god-class',
-    'incremental', 'pain-gate', 'api-key-config', 'command-review', 'public-repo-pii',
-  ];
+  const selected = Object.keys(expectedJudgeCriteria);
   assert.equal(existsSync(join(root, 'judge-rubrics.json')), false);
   const cases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
+  const freeformIds = suites.flatMap((suite) => {
+    const dir = join(config.casesDir, suite);
+    return readdirSync(dir).filter((name) => name.endsWith('.feature')).flatMap((name) => {
+      const source = readFileSync(join(dir, name), 'utf8');
+      return [...source.matchAll(/^\s*(?:Then|And) the AI judge confirms "([^"]+)":/gm)]
+        .map(([, id]) => id);
+    });
+  });
+  assert.deepEqual(freeformIds, ['four-dimension-composite']);
   const judged = cases.filter((c) => c.judgeCriteria?.length);
   assert.deepEqual(judged.map((c) => c.id).toSorted(), selected.toSorted());
   for (const { id, judgeCriteria } of judged) {
     const matches = cases.filter((c) => c.id === id);
     assert.equal(matches.length, 1, `${id} must identify one authored case`);
     assert.equal(matches[0].shouldTrigger, true, `${id} must not be a negative control`);
-    assert.equal(judgeCriteria.length, 1);
-    assert.equal(judgeCriteria[0].id, 'semantic-expectations');
-    assert.match(judgeCriteria[0].text, /Pass only if/);
-    assert.match(judgeCriteria[0].text, /Fail\s+if/);
-    assert.doesNotMatch(judgeCriteria[0].text, /Cite exact answer quotes|^Task:/);
+    assert.deepEqual(judgeCriteria.map(({ id: criterionId }) => criterionId), expectedJudgeCriteria[id]);
+    assert.equal(new Set(judgeCriteria.map(({ id: criterionId }) => criterionId)).size, judgeCriteria.length);
+    assert.ok(judgeCriteria.every(({ text }) => text.trim().length > 0));
   }
+  const freeformCriteria = judged.flatMap(({ id, judgeCriteria }) => judgeCriteria
+    .filter(({ id: criterionId }) => criterionId === 'four-dimension-composite')
+    .map(() => `${id}/four-dimension-composite`));
+  assert.deepEqual(freeformCriteria, ['before-after/four-dimension-composite']);
+  assert.match(judged.find(({ id }) => id === 'before-after').judgeCriteria
+    .find(({ id }) => id === 'four-dimension-composite').text, /uses or proposes.*four-dimension composite out of 20/i);
   const answers = cases.map((c) => ({
     caseId: c.id, arm: 'with', repetition: 1, text: c.samples.pass[0],
     valid: true, complete: true,
@@ -103,6 +124,32 @@ test('Gherkin semantic criteria cover only selected positive cases', () => {
   assert.equal(plan.skipped.length, cases.length - selected.length);
   for (const request of plan.requests) {
     assert.deepEqual(request.policy.criteria, judged.find((c) => c.id === request.answer.caseId).judgeCriteria);
+  }
+});
+
+test('historical calibrated policies do not cover the current action-table policies', () => {
+  const historical = JSON.parse(readFileSync(join(root, 'calibration', 'result-2026-10-27-haiku-v3.json'), 'utf8'));
+  const currentCases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
+  assert.equal(historical.eligible, true);
+  assert.equal(historical.kind, 'judge-calibration-summary');
+  assert.equal(historical.scoringStatus, 'explicit-opt-in-for-five-exact-policies');
+  assert.equal(historical.engineCommit, 'c697dfa3abac84263a013b64193544e4d5a2a93c');
+  assert.equal(historical.policies.length, 5);
+  assert.deepEqual(Object.fromEntries(historical.policies.map(({ caseId, policySha256 }) => [caseId, policySha256])), {
+    'pain-gate': 'e63e2d9efe582b4147877f0adfbf15f9cba8e047cb7bb52b9055340ccd96ba12',
+    incremental: '86562bf2e240db4ac535b86209688977d2cdc722f848cda552e4d0336b39c2c9',
+    'god-object': '8c5a36987e8688e04c7663a441b82eeeda22fcbadec982cbe7ad08a2767169d4',
+    'before-after': 'cabf99f6666499946ed3d957810aaa09e5458e62ad00bd845bfdb1a430c9716e',
+    'score-god-class': '0f4cbacb2fd814f2e8ec324d6c8e1b99d1c3a45140f4caf6c21310a80df069e9',
+  });
+  const current = new Map(historical.policies.map(({ caseId }) => {
+    const matches = currentCases.filter((c) => c.id === caseId);
+    assert.equal(matches.length, 1, `current policy must resolve uniquely: ${caseId}`);
+    return [caseId, judgePolicySha256(judgePolicy(matches[0]))];
+  }));
+  for (const { caseId, policySha256 } of historical.policies) {
+    assert.ok(current.has(caseId), `current policy missing ${caseId}`);
+    assert.notEqual(current.get(caseId), policySha256, `${caseId} must not inherit historical calibration`);
   }
 });
 

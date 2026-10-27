@@ -8,9 +8,9 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current `c697dfa` update is local-only pending review; publish that engine
-commit before installing this pin from GitHub. Validation used the identical
-commit installed from the local Git repository, not an uncommitted symlink.
+The current engine pin is `f29ccb98319a5ce00bfa7d869b01f12cb4320ad3`.
+It provides shared semantic assertion-table actions; no engine implementation
+is duplicated here.
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
 repository, which provides multi-runner selection, Gherkin authoring, shared v2
@@ -75,14 +75,18 @@ evidence of skill/MCP isolation.
 
 ### Semantic judge adoption and opt-in scoring
 
-`And the AI judge confirms "semantic-expectations":` Doc Strings co-locate
-meaning-based criteria with nine positive Gherkin scenarios:
+`And the AI judge verifies:` tables use the shared `id`, `action`, and
+`expectation` columns to compile each semantic requirement as an independent
+criterion across nine positive Gherkin scenarios:
 repository-change delivery, responsibility-based decomposition, both
 complexity assessments, both pattern-adoption decisions, and the three
 security-advice cases. Exact commit syntax, identifiers, negative controls,
 skill activation and disclosure patterns remain deterministic. Existing
 regex proxies are retained for historical comparison, **not treated as a
 semantic verdict**. Advisory judgements do not replace or change those scores.
+The before/after complexity case retains one freeform criterion for the
+composite score: none of the shared action verbs accurately means “uses or
+proposes a scoring method.” Its other semantic requirements use the table.
 
 Selection was informed by a prior evaluation investigation: correct answers failed on paraphrases
 such as "shouldn't postpone" versus "don't block", "quietly" versus "silent",
@@ -222,7 +226,8 @@ was independently authored by a separate AI agent using only the five
 contracts, without the judge prompt, previous answers or results; the tuning
 agent did not inspect it before the prompt was frozen. These are synthetic
 AI-authored labels, **not independent human review or production accuracy**.
-Both full artifacts pass the unchanged gate for the same five exact policies:
+Both full artifacts passed the unchanged gate for five exact policy hashes at
+the time of measurement:
 `pain-gate`, `incremental`, `god-object`, `before-after` and `score-god-class`.
 The other four toolkit policies and all 116 Profisee policies remain advisory.
 
@@ -243,6 +248,12 @@ advisory; scoring requires the full local artifact and exact matching settings
 and policies. Earlier prompt artifacts, including the passing v2 Opus artifact,
 are historical and cannot authorize scoring with this prompt. Summary JSON is
 not accepted as a calibration artifact. No model defaults changed.
+
+The action-table sweep changes the exact semantic policy hashes for all five
+calibrated cases. The calibration and scoring records above are historical
+evidence for the prior freeform-Doc-String policies only; they do not cover the
+current policies and must not be used to score them. Their original hashes and
+artifacts remain unchanged. No recalibration or live judge calls were made.
 
 ### Installed dependency
 
