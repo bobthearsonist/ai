@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "kind": "calibrated-judge-scoring-summary",
+  "engineCommit": "c697dfa3abac84263a013b64193544e4d5a2a93c",
+  "client": "claude",
+  "judgeModel": "haiku",
+  "calibrationSummary": "result-2026-10-27-haiku-v3.json",
+  "calibrationRole": "fresh-blind",
+  "judgeSignature": "082e382381f6e6c982a59e0e0594d916199435e0825b3c85e5196a1fd520f892",
+  "candidateModel": "haiku",
+  "candidateSuite": "pattern-principles",
+  "candidateSessions": 2,
+  "judgeSessions": 2,
+  "retries": 0,
+  "candidateProvenance": "Two independently generated live with-skill answers archived before tuning, reused without new candidate calls. Neither answer is a calibration label.",
+  "valid": true,
+  "deterministicOverallScore": 0.875,
+  "combinedOverallScore": 0.9,
+  "weighting": "one vote per deterministic check and semantic criterion",
+  "cases": [
+    { "caseId": "incremental", "skillLoaded": true, "candidateValid": true, "deterministicPassed": 4, "deterministicTotal": 4, "deterministicScore": 1, "judgeVerdict": "pass", "combinedPassed": 5, "combinedTotal": 5, "combinedScore": 1 },
+    { "caseId": "pain-gate", "skillLoaded": true, "candidateValid": true, "deterministicPassed": 3, "deterministicTotal": 4, "deterministicScore": 0.75, "judgeVerdict": "pass", "combinedPassed": 4, "combinedTotal": 5, "combinedScore": 0.8 }
+  ],
+  "remainingDeterministicFailure": {
+    "caseId": "pain-gate",
+    "check": "advises-against-now",
+    "finding": "The original regex rejects an answer starting with No, don't do it now, despite the semantic judge accepting the full recommendation, rationale and concrete future-refactor conditions. The regex and archived deterministic result were intentionally not changed."
+  },
+  "reportedJudgeCost": { "amount": 0.00346088, "currency": "USD", "meaning": "Runtime-reported list-price estimate, not an additional subscription charge." },
+  "localArchive": ".work\\local-runs\\2026-10-26T21-36-50-779Z-pattern-principles-claude-smoke",
+  "localScoreArtifact": ".work\\local-runs\\2026-10-26T21-36-50-779Z-pattern-principles-claude-smoke\\assessments\\3bfe9892-7a23-47db-a6cf-9359a178e214.json",
+  "localScoreArtifactSha256": "c480f940f87cd0da5ff00072e0d8f19430ab3cba7cc224926b288c3b1d2c1787",
+  "rawCliOutput": ".work\\judge-scoring-haiku-v3.json",
+  "originalFilesVerifiedUnchanged": 11,
+  "originalDeterministicResultSha256": "c07e22babf276c93eeb46399e587f21f2b66cb62a2383c830fd986eccc21db08",
+  "originalPolicySha256": "2e58096470437e6f41fc10759c43d38254c086873c8d89a4e3c0152a91d7d7e3",
+  "originalTraceSha256": {
+    "incremental": "1672d775824ea6e41caf8106ffccbf089b202533711e08a101b07e452d26768d",
+    "pain-gate": "82f599d56efd6e367dc18cb12863a1c031b4e477b66e04c99362365a81fa6cdc"
+  },
+  "cliExitCode": 1,
+  "cliExitMeaning": "Scoring completed with valid assessments; one trace retains an original quality-check failure. This is not invalid execution.",
+  "limitations": [
+    "One with-skill answer per case, without a without-skill arm, cannot measure skill lift.",
+    "This verifies the installed consumer's live archive-to-calibrated-score path on two covered policies, not general judge reliability.",
+    "Original deterministic scores, receipts, traces, policy and skill snapshots are unchanged; only separate assessment artifacts were added.",
+    "The full candidate and assessment archives remain local and ignored."
+  ]
+}

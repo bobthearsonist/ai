@@ -146,19 +146,21 @@ test('judge wrapper uses the archived policy without injecting a suite', () => {
 test('fresh calibration labels are balanced and disjoint from regression answers', () => {
   const read = (name) => JSON.parse(readFileSync(join(root, 'calibration', name), 'utf8'));
   const regression = read('judge-labels.json');
-  const holdout = read('judge-labels-holdout.json');
-  assert.equal(holdout.samples.length, 40);
+  const holdouts = ['judge-labels-holdout.json', 'judge-labels-holdout-v3.json'].map(read);
   const cases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
-  const combined = { schemaVersion: 1, samples: [...regression.samples, ...holdout.samples] };
-  assert.equal(planCalibration({ cases, labels: combined }).length, 80);
-  const counts = new Map();
-  for (const sample of holdout.samples) {
-    const count = counts.get(sample.caseId) ?? { pass: 0, fail: 0 };
-    count[sample.expected]++;
-    counts.set(sample.caseId, count);
+  const combined = { schemaVersion: 1, samples: [regression, ...holdouts].flatMap((set) => set.samples) };
+  assert.equal(planCalibration({ cases, labels: combined }).length, 120);
+  for (const holdout of holdouts) {
+    assert.equal(holdout.samples.length, 40);
+    const counts = new Map();
+    for (const sample of holdout.samples) {
+      const count = counts.get(sample.caseId) ?? { pass: 0, fail: 0 };
+      count[sample.expected]++;
+      counts.set(sample.caseId, count);
+    }
+    assert.equal(counts.size, 5);
+    for (const count of counts.values()) assert.deepEqual(count, { pass: 4, fail: 4 });
   }
-  assert.equal(counts.size, 5);
-  for (const count of counts.values()) assert.deepEqual(count, { pass: 4, fail: 4 });
 });
 
 test('both all-suite entrypoints discover repository cases without live calls', () => {

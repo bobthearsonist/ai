@@ -8,7 +8,7 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current `9c403d6` update is local-only pending review; publish that engine
+The current `c697dfa` update is local-only pending review; publish that engine
 commit before installing this pin from GitHub. Validation used the identical
 commit installed from the local Git repository, not an uncommitted symlink.
 
@@ -73,7 +73,7 @@ scores. Both clients use only ACP and refuse native runtimes whose
 required isolation cannot be established. Transport success alone is not
 evidence of skill/MCP isolation.
 
-### Semantic judge adoption (advisory)
+### Semantic judge adoption and opt-in scoring
 
 `And the AI judge confirms "semantic-expectations":` Doc Strings co-locate
 meaning-based criteria with nine positive Gherkin scenarios:
@@ -159,7 +159,7 @@ See [labels](calibration/judge-labels.json) and the
 [recorded result](calibration/result-2026-10-26.json) for scope, failures and
 prompt/runtime fingerprints. Full assessments remain in the local ignored archive.
 
-The revised prompt removed the fenced output example and clarified paraphrase
+The historical v2 prompt removed the fenced output example and clarified paraphrase
 acceptance and whole-answer review. It was frozen before 40 fresh authored
 answers were added to the original 40 regression answers. Each revised
 configuration ran once against all 80, without changing labels, criteria or
@@ -176,7 +176,7 @@ answers, timeout and gate. All eight errors were false rejections: three
 on `pain-gate` and five on `before-after`. Some rejected equivalent reasoning;
 others claimed explicitly present requirements were missing. JSON formatting
 was valid throughout. This gives a same-prompt comparison, not evidence that
-all output judging needs Opus. Haiku remains advisory; no defaults changed.
+all output judging needs Opus. V2 Haiku remained advisory; no defaults changed.
 See the [revised Haiku result](calibration/result-2026-10-26-haiku-v2.json).
 Usage figures are runtime-reported list estimates, not additional subscription
 charges; Opus used about 25 times Haiku's reported cost on these 80 answers.
@@ -206,6 +206,43 @@ This one-arm smoke verifies the scoring path, not skill lift. Default judging
 remains advisory; separate combined scoring requires the full local calibration
 artifact, exact matching configuration and covered policy hashes. The summary
 JSON files are not accepted calibration artifacts.
+
+### Evidence-first Haiku judge (current v3)
+
+The packaged prompt now checks acceptance rather than critiquing answers:
+quote relevant evidence first, explain coverage of every required claim, then
+choose the verdict. It distinguishes a requested assessment plan from completed
+measurements, so the judge does not invent requirements. Strict JSON, exact
+quote validation, criteria, weights and the **100% gate are unchanged**.
+
+With that frozen prompt, Claude `haiku` passed **80/80 regression answers and
+40/40 fresh blind answers** on the first attempt for each set: no false
+acceptances, false rejections, invalid outputs or abstentions. The fresh set
+was independently authored by a separate AI agent using only the five
+contracts, without the judge prompt, previous answers or results; the tuning
+agent did not inspect it before the prompt was frozen. These are synthetic
+AI-authored labels, **not independent human review or production accuracy**.
+Both full artifacts pass the unchanged gate for the same five exact policies:
+`pain-gate`, `incremental`, `god-object`, `before-after` and `score-god-class`.
+The other four toolkit policies and all 116 Profisee policies remain advisory.
+
+Reported list-price usage was **$0.100501 for 80** plus **$0.049394 for 40**,
+about **$0.150 total**, not an additional subscription charge. The 80-answer
+run cost about 23 times less than the earlier Opus run, but their prompts
+differed; this is not a controlled same-prompt cost benchmark. See the
+[v3 calibration result](calibration/result-2026-10-27-haiku-v3.json) and
+[frozen blind labels](calibration/judge-labels-holdout-v3.json).
+
+The installed consumer then used the blind passing artifact to judge the same
+two independent archived candidate answers: both semantic verdicts passed;
+the separate combined score is **0.90** and original deterministic score
+**0.875**, with all 11 original files unchanged. See
+[Haiku scoring evidence](calibration/scoring-2026-10-27-haiku-v3.json).
+This checks the live scoring path, not skill lift. Default judging remains
+advisory; scoring requires the full local artifact and exact matching settings
+and policies. Earlier prompt artifacts, including the passing v2 Opus artifact,
+are historical and cannot authorize scoring with this prompt. Summary JSON is
+not accepted as a calibration artifact. No model defaults changed.
 
 ### Installed dependency
 

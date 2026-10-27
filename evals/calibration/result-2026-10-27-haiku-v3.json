@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "kind": "judge-calibration-summary",
+  "createdAt": "2026-10-27T11:52:27.491Z",
+  "engineCommit": "c697dfa3abac84263a013b64193544e4d5a2a93c",
+  "client": "claude",
+  "model": "haiku",
+  "timeoutMs": 120000,
+  "promptSha256": "499c81ed7ea8feed462c4d6629a1bd396cbfc36ecdca8cdd433f515b90aeecdd",
+  "judgeSignature": "082e382381f6e6c982a59e0e0594d916199435e0825b3c85e5196a1fd520f892",
+  "strategy": "Check acceptance, quote relevant evidence, explain coverage of every required claim, then choose the verdict. Distinguish a proposed assessment from completed measurements when the criterion permits a plan.",
+  "unchanged": ["criteria", "policies", "deterministic checks", "weights", "strict JSON validation", "exact evidence matching", "100% calibration gate", "model defaults"],
+  "labels": [
+    { "path": "judge-labels.json", "role": "regression", "jsonSha256": "aee3d0fc777eaa5eee083a2ee66125cb086bc4871abebc1f77b8743c5ec019d4", "samples": 40, "correct": 40 },
+    { "path": "judge-labels-holdout.json", "role": "regression", "jsonSha256": "2789888796236a124552b7881d59224144abf02c221e29e9534ee0f1efe23c0c", "samples": 40, "correct": 40 },
+    { "path": "judge-labels-holdout-v3.json", "role": "fresh-blind", "jsonSha256": "6da071f14c317debc879efa60ae695d62ce37b37cf38776ddef8ba4c1e41e19f", "samples": 40, "correct": 40 }
+  ],
+  "labelsHashEncoding": "UTF-8 JSON.stringify(JSON.parse(file))",
+  "labelProvenance": "Synthetic AI-authored answers, not independently human-reviewed production responses. The fresh blind set was authored by a separate AI agent using only the five policy contracts, without the judge prompt, prior labels or results. The tuning agent did not inspect the fresh answers before freezing the prompt.",
+  "plannedSessions": 120,
+  "attemptedSessions": 120,
+  "retries": 0,
+  "correct": 120,
+  "validJudgements": 120,
+  "invalidJudgements": 0,
+  "abstentions": 0,
+  "agreementIncludingInvalid": 1,
+  "falseAcceptances": 0,
+  "falseRejections": 0,
+  "eligible": true,
+  "scoringStatus": "explicit-opt-in-for-five-exact-policies",
+  "reportedCost": {
+    "amount": 0.1498947,
+    "currency": "USD",
+    "sessionsWithCost": 120,
+    "meaning": "Sum of runtime-reported list-price usage estimates, not an additional subscription charge."
+  },
+  "runs": [
+    {
+      "role": "regression",
+      "samples": 80,
+      "correct": 80,
+      "eligible": true,
+      "reportedCostUsd": 0.1005006,
+      "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-27T11-40-32-092Z\\assessments\\057acdda-2080-49d4-b507-54f44d056a30.json",
+      "localArtifactSha256": "49e61f8a6d56d55c8fb03264059c478f18140233c884c8bb59fcbe6b8d24fb1b",
+      "rawCliOutput": ".work\\judge-calibration-haiku-v3.json"
+    },
+    {
+      "role": "fresh-blind",
+      "samples": 40,
+      "correct": 40,
+      "eligible": true,
+      "reportedCostUsd": 0.0493941,
+      "localArtifact": ".work\\local-runs\\judge-calibration-2026-10-27T11-48-59-424Z\\assessments\\3bb5d3b3-50aa-4ef5-8ac8-986b49b2d038.json",
+      "localArtifactSha256": "f1fffdfa4f4eb17fafa5eb6aa0e473b072621a45e9454573e02fd19278b6ed78",
+      "rawCliOutput": ".work\\judge-calibration-haiku-v3-blind.json"
+    }
+  ],
+  "policies": [
+    { "caseId": "pain-gate", "policySha256": "e63e2d9efe582b4147877f0adfbf15f9cba8e047cb7bb52b9055340ccd96ba12", "samples": 24, "correct": 24, "invalid": 0 },
+    { "caseId": "incremental", "policySha256": "86562bf2e240db4ac535b86209688977d2cdc722f848cda552e4d0336b39c2c9", "samples": 24, "correct": 24, "invalid": 0 },
+    { "caseId": "god-object", "policySha256": "8c5a36987e8688e04c7663a441b82eeeda22fcbadec982cbe7ad08a2767169d4", "samples": 24, "correct": 24, "invalid": 0 },
+    { "caseId": "before-after", "policySha256": "cabf99f6666499946ed3d957810aaa09e5458e62ad00bd845bfdb1a430c9716e", "samples": 24, "correct": 24, "invalid": 0 },
+    { "caseId": "score-god-class", "policySha256": "0f4cbacb2fd814f2e8ec324d6c8e1b99d1c3a45140f4caf6c21310a80df069e9", "samples": 24, "correct": 24, "invalid": 0 }
+  ],
+  "failures": [],
+  "limitations": [
+    "This summary is not a calibration artifact accepted by the engine; full assessments remain in the local ignored archive.",
+    "Each set ran once with the same frozen prompt and configuration, without normalization, retries or label edits.",
+    "The 80 regression examples had already informed tuning and model selection; only the additional 40 were fresh blind answers.",
+    "All labels are synthetic and AI-authored; perfect agreement here is not independently human-reviewed production accuracy or a population error-rate guarantee.",
+    "The 80-answer Haiku run cost about 23 times less than the earlier Opus run, but their prompts differed; this is not a controlled same-prompt cost benchmark.",
+    "Scoring requires the full passing artifact and exact matching runtime, model, settings, prompt and policy hashes; earlier prompt artifacts are incompatible.",
+    "Only five toolkit policies were measured. The other four toolkit policies and all 116 Profisee policies remain advisory. No model defaults changed."
+  ]
+}
