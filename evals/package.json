@@ -11,6 +11,6 @@
     "eval": "node local/cli.mjs"
   },
   "devDependencies": {
-    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#f29ccb98319a5ce00bfa7d869b01f12cb4320ad3"
+    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#fabc89ef623a6a7c5adaae1f353d888a3104a35c"
   }
 }

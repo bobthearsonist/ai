@@ -50,6 +50,19 @@ bash -n setup.sh scripts/sync.sh scripts/doctor.sh
 
 If you changed docs only, read the rendered Markdown and verify links point at existing files.
 
+### Skill evaluations
+
+Use isolated real client sessions rather than global synced skills or personal
+configuration. Use the real clients' supported login/provider-authentication
+flows, not hosted evaluation gateways or raw API calls in place of a client.
+Deterministic checks remain the default. Optional AI judging is advisory unless
+explicitly accepted for separate combined scoring under the engine's
+[semantic-judge operating procedure](https://github.com/bobthearsonist/ai-evals#calibration-gated-scoring),
+linked from the [local evaluation guide](evals/README.md). Diagnostic agreement never authorizes
+scoring. Live gates require accepted isolated
+authentication/containment and an approved baseline snapshot; offline checks
+do not establish live client support or require a new provider API key.
+
 ## PR Expectations
 
 Keep PRs small enough to review. Include:

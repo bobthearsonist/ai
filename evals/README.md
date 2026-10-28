@@ -8,9 +8,9 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `f29ccb98319a5ce00bfa7d869b01f12cb4320ad3`.
-It provides shared semantic assertion-table actions; no engine implementation
-is duplicated here.
+The current engine pin is `fabc89ef623a6a7c5adaae1f353d888a3104a35c`.
+It provides shared semantic assertion-table actions, aggregate 50/50 scoring
+and diagnostic agreement runs; no engine implementation is duplicated here.
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
 repository, which provides multi-runner selection, Gherkin authoring, shared v2
@@ -148,7 +148,26 @@ plans it; live calibration needs its own exact approval. Only covered policies
 may use `judge --calibration PATH`, which writes a **separate** combined score
 without changing deterministic results/history. Prompt/model/runtime/settings
 changes require recalibration; missing or invalid judgments make scores null.
-See the engine README for the label format and commands.
+The engine's [semantic-judge operating procedure](https://github.com/bobthearsonist/ai-evals#calibration-gated-scoring)
+is canonical for authoring checks, diagnostic agreement and exact-policy scoring
+acceptance. The revised engine uses one whole-answer semantic vote, weighted
+50/50 with the existing deterministic score; criterion verdicts are diagnostic.
+Assertion-row count no longer sets scoring weight. New combined artifacts use
+schema version 2; historical scores remain unchanged.
+
+The pinned engine includes `calibrate --diagnostic`. From this folder, plan a
+diagnostic agreement run with the installed engine:
+
+```powershell
+node local\cli.mjs calibrate --client claude --model haiku --labels .\diagnostic-labels.json --diagnostic --dry-run
+```
+
+Use reviewed labels; a live diagnostic needs its own exact approval. Small
+diagnostic sets can pass agreement without satisfying scoring coverage, and
+diagnostic artifacts never authorize scoring even at full sample size.
+Changed expanded policies/actions, prompts, models, runtimes, dependencies or
+timeouts need fresh applicable coverage. Passing generic action checks does
+not calibrate arbitrary policies. No new live calibration is claimed here.
 
 The 2026-10-26 bounded Claude `haiku` calibration agreed with **37/40 labels
 (92.5%)**: one equivalent answer was wrongly rejected, and two verdicts were
