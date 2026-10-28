@@ -39,7 +39,7 @@
     <div class="eyebrow">AI Guild / Local skill evaluations / 26 October 2026</div>
     <h1>Does this skill actually help?</h1>
     <p class="lead">Run realistic prompts with and without a skill, check observable outcomes,
-      and keep the traces. Optional AI judging is advisory and never changes
+      and keep the traces. Optional AI judging writes separate combined scores and never changes
       deterministic scores.</p>
     <p>TL;DR: start with offline Gherkin validation and dry-run planning. Native ACP
       profiles isolate configuration; cross-client live acceptance is still pending.
@@ -70,7 +70,7 @@
             The unchanged 100% gate passed for five exact toolkit policy hashes
             from the former freeform-Doc-String rubrics. The current action-table
             sweep changes those hashes; these artifacts do not cover the current
-            policies and cannot authorize their scoring. No new calibration or
+            policies; current scoring no longer requires these artifacts. No new measurements or
             judge calls were made.
             Reported list usage totaled about $0.150, not an additional subscription
             charge. A separate AI agent authored the blind set without the prompt
@@ -121,21 +121,13 @@
     </div>
     <p>The model output is variable; grading is deterministic. The same captured
       transcript receives the same supported check results under the same policy.
-      A separately approved AI judge can archive advisory assessments, but never
+      A separately approved AI judge archives semantic assessments and combined scores, but never
       changes these deterministic scores. Nine positive cases now have per-case
       semantic criteria in Gherkin that accept equivalent reasoning instead of
       relying on keywords or short proximity windows. The shared top-level
       <a href="https://github.com/bobthearsonist/ai-evals/blob/main/JUDGE_PROMPT.md">JUDGE_PROMPT.md</a>
       is the actual packaged runtime prompt, not a separate example.
-      Explicit <code>judge --calibration PATH</code> can write a separate combined
-      score only after exact prompt/model/runtime/settings and covered-policy
-      calibration passes. The gate requires 40 unique labeled answers across
-      five policies, four pass/fail labels each, and 100% agreement without
-      invalid or abstaining verdicts. Bounded evidence does not transfer to
-      other policies or prove general judge accuracy;
-      syntax, activation and disclosure checks stay deterministic.
-      See the <a href="../README.md#semantic-judge-adoption-advisory">semantic
-      judge adoption notes</a>.</p>
+      Explicit <code>judge RUN_DIR --client claude --model MODEL_ID</code> writes a separate combined score: 50% deterministic score and 50% whole-answer semantic verdict. Criterion results are diagnostic. No labeled-answer acceptance artifact is required. Invalid, missing, abstaining or mismatched judgments make scores null; original deterministic history remains unchanged.</p>
   </section>
 
   <section id="start">

@@ -7,8 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { validateCase, gradeSample } from '@bobthearsonist/ai-evals/contract';
 import { loadSuite } from '@bobthearsonist/ai-evals/suite';
 import { resolveConfig } from '@bobthearsonist/ai-evals/config';
-import { judgePolicy, judgePolicySha256, planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
-import { planCalibration } from '@bobthearsonist/ai-evals/judge-calibration';
+import { planJudgeRequests } from '@bobthearsonist/ai-evals/judge';
 import { archivePolicy } from '@bobthearsonist/ai-evals/policy';
 
 const root = resolve(import.meta.dirname, '..');
@@ -127,31 +126,6 @@ test('Gherkin semantic criteria cover only selected positive cases', () => {
   }
 });
 
-test('historical calibrated policies do not cover the current action-table policies', () => {
-  const historical = JSON.parse(readFileSync(join(root, 'calibration', 'result-2026-10-27-haiku-v3.json'), 'utf8'));
-  const currentCases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
-  assert.equal(historical.eligible, true);
-  assert.equal(historical.kind, 'judge-calibration-summary');
-  assert.equal(historical.scoringStatus, 'explicit-opt-in-for-five-exact-policies');
-  assert.equal(historical.engineCommit, 'c697dfa3abac84263a013b64193544e4d5a2a93c');
-  assert.equal(historical.policies.length, 5);
-  assert.deepEqual(Object.fromEntries(historical.policies.map(({ caseId, policySha256 }) => [caseId, policySha256])), {
-    'pain-gate': 'e63e2d9efe582b4147877f0adfbf15f9cba8e047cb7bb52b9055340ccd96ba12',
-    incremental: '86562bf2e240db4ac535b86209688977d2cdc722f848cda552e4d0336b39c2c9',
-    'god-object': '8c5a36987e8688e04c7663a441b82eeeda22fcbadec982cbe7ad08a2767169d4',
-    'before-after': 'cabf99f6666499946ed3d957810aaa09e5458e62ad00bd845bfdb1a430c9716e',
-    'score-god-class': '0f4cbacb2fd814f2e8ec324d6c8e1b99d1c3a45140f4caf6c21310a80df069e9',
-  });
-  const current = new Map(historical.policies.map(({ caseId }) => {
-    const matches = currentCases.filter((c) => c.id === caseId);
-    assert.equal(matches.length, 1, `current policy must resolve uniquely: ${caseId}`);
-    return [caseId, judgePolicySha256(judgePolicy(matches[0]))];
-  }));
-  for (const { caseId, policySha256 } of historical.policies) {
-    assert.ok(current.has(caseId), `current policy missing ${caseId}`);
-    assert.notEqual(current.get(caseId), policySha256, `${caseId} must not inherit historical calibration`);
-  }
-});
 
 test('wrapper resolves repository config from a foreign working directory', () => {
   const result = run('cli.mjs', ['run', '--exe', process.execPath]);
@@ -159,14 +133,6 @@ test('wrapper resolves repository config from a foreign working directory', () =
   assert.match(result.stderr, /--approve-sessions 18/);
 });
 
-test('calibration wrapper selects all labeled policies without a default suite', () => {
-  const result = run('cli.mjs', [
-    'calibrate', '--client', 'claude', '--model', 'haiku',
-    '--labels', join(root, 'calibration', 'judge-labels.json'), '--dry-run',
-  ]);
-  assert.equal(result.status, 0, result.stderr);
-  assert.equal(JSON.parse(result.stdout).plannedSessions, 40);
-});
 
 test('judge wrapper uses the archived policy without injecting a suite', () => {
   const archive = mkdtempSync(join(tmpdir(), 'ai-judge-wrapper-'));
@@ -190,25 +156,6 @@ test('judge wrapper uses the archived policy without injecting a suite', () => {
   }
 });
 
-test('fresh calibration labels are balanced and disjoint from regression answers', () => {
-  const read = (name) => JSON.parse(readFileSync(join(root, 'calibration', name), 'utf8'));
-  const regression = read('judge-labels.json');
-  const holdouts = ['judge-labels-holdout.json', 'judge-labels-holdout-v3.json'].map(read);
-  const cases = suites.flatMap((suite) => loadSuite(join(config.casesDir, suite)));
-  const combined = { schemaVersion: 1, samples: [regression, ...holdouts].flatMap((set) => set.samples) };
-  assert.equal(planCalibration({ cases, labels: combined }).length, 120);
-  for (const holdout of holdouts) {
-    assert.equal(holdout.samples.length, 40);
-    const counts = new Map();
-    for (const sample of holdout.samples) {
-      const count = counts.get(sample.caseId) ?? { pass: 0, fail: 0 };
-      count[sample.expected]++;
-      counts.set(sample.caseId, count);
-    }
-    assert.equal(counts.size, 5);
-    for (const count of counts.values()) assert.deepEqual(count, { pass: 4, fail: 4 });
-  }
-});
 
 test('both all-suite entrypoints discover repository cases without live calls', () => {
   const total = suites.reduce((n, suite) => n + loadSuite(join(config.casesDir, suite)).length * 3 * 2, 0);

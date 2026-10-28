@@ -8,13 +8,13 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `fabc89ef623a6a7c5adaae1f353d888a3104a35c`.
+The current engine pin is `e95e99a24a7f3b7d9d73e8674c9cade995144f84`.
 It provides shared semantic assertion-table actions, aggregate 50/50 scoring
-and diagnostic agreement runs; no engine implementation is duplicated here.
+and direct suite judge scoring; no engine implementation is duplicated here.
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
 repository, which provides multi-runner selection, Gherkin authoring, shared v2
-assertions, ACP transport and separately opt-in AI judging. To pick up a newer
+assertions, ACP transport and separately approved AI judging. To pick up a newer
 engine, update the commit in `package.json` and run `npm install`. To test
 unreleased engine changes, temporarily point it at a local checkout
 (`file:../../ai-evals`) and restore the pin before committing.
@@ -83,7 +83,7 @@ complexity assessments, both pattern-adoption decisions, and the three
 security-advice cases. Exact commit syntax, identifiers, negative controls,
 skill activation and disclosure patterns remain deterministic. Existing
 regex proxies are retained for historical comparison, **not treated as a
-semantic verdict**. Advisory judgements do not replace or change those scores.
+semantic verdict**. Semantic judgments contribute to separate combined scores, not deterministic history.
 The before/after complexity case retains one freeform criterion for the
 composite score: none of the shared action verbs accurately means “uses or
 proposes a scoring method.” Its other semantic requirements use the table.
@@ -93,7 +93,7 @@ such as "shouldn't postpone" versus "don't block", "quietly" versus "silent",
 and reasons outside a 150-character window. The rubrics accept equivalent
 reasoning throughout the answer rather than expanding patterns to fit saved
 outputs. Rubrics are authored criteria, not measured
-judge accuracy, and existing regex samples are not semantic calibration data.
+judge accuracy, and existing regex samples do not establish semantic accuracy.
 
 For an ACP archive from one of these suites, plan eligible assessments without
 inference (replace `<run>` and `MODEL_ID`):
@@ -140,34 +140,30 @@ is the actual packaged runtime prompt. It requires an independent verdict for
 each criterion, accepts equivalent reasoning, and treats partial satisfaction
 as failure. Pass/fail evidence must quote the captured answer exactly.
 
-Scoring remains advisory until an explicit calibration artifact passes the
-engine's gate: 40 unique reviewed answers, five exact case policies, four pass
-and four fail labels per policy, and 100% agreement without invalid/abstaining
-results. `calibrate --labels PATH --client claude --model haiku --dry-run`
-plans it; live calibration needs its own exact approval. Only covered policies
-may use `judge --calibration PATH`, which writes a **separate** combined score
-without changing deterministic results/history. Prompt/model/runtime/settings
-changes require recalibration; missing or invalid judgments make scores null.
-The engine's [semantic-judge operating procedure](https://github.com/bobthearsonist/ai-evals#calibration-gated-scoring)
-is canonical for authoring checks, diagnostic agreement and exact-policy scoring
-acceptance. The revised engine uses one whole-answer semantic vote, weighted
-50/50 with the existing deterministic score; criterion verdicts are diagnostic.
-Assertion-row count no longer sets scoring weight. New combined artifacts use
-schema version 2; historical scores remain unchanged.
+### Semantic scoring
 
-The pinned engine includes `calibrate --diagnostic`. From this folder, plan a
-diagnostic agreement run with the installed engine:
+The engine's [semantic scoring procedure](https://github.com/bobthearsonist/ai-evals#semantic-scoring)
+is canonical. `judge RUN_DIR --client claude --model MODEL_ID` uses recorded
+suite assertions and writes a separate combined score automatically: 50%
+existing deterministic score and 50% whole-answer semantic verdict. All
+semantic criteria must pass; criterion results remain diagnostic, independent
+of row count. No labeled-answer acceptance artifact is required.
 
-```powershell
-node local\cli.mjs calibrate --client claude --model haiku --labels .\diagnostic-labels.json --diagnostic --dry-run
-```
+Use `--dry-run` first and approve the exact live session count separately.
+Missing, invalid, abstaining, duplicate or mismatched assessments make affected
+scores null. Prompt, policy, answer, runtime, model and settings provenance are
+still checked. Original deterministic results and history never change.
+The standalone `--rubric` compatibility path remains assessment-only.
+Scoring does not establish judge accuracy; no new live calls are claimed.
 
-Use reviewed labels; a live diagnostic needs its own exact approval. Small
-diagnostic sets can pass agreement without satisfying scoring coverage, and
-diagnostic artifacts never authorize scoring even at full sample size.
-Changed expanded policies/actions, prompts, models, runtimes, dependencies or
-timeouts need fresh applicable coverage. Passing generic action checks does
-not calibrate arbitrary policies. No new live calibration is claimed here.
+### Historical judge measurements
+
+The following dated records describe the former labeled-answer acceptance
+workflow, not current scoring requirements. `calibration/` is an immutable
+evidence archive, including frozen label inputs needed to interpret those
+records; no active command or test consumes those labels. The labels were
+AI-authored synthetic examples, not independent human-reviewed production data.
+Historical artifacts and measured scores are preserved byte-for-byte.
 
 The 2026-10-26 bounded Claude `haiku` calibration agreed with **37/40 labels
 (92.5%)**: one equivalent answer was wrongly rejected, and two verdicts were
@@ -225,10 +221,9 @@ measurement. Exit 1 reports that remaining quality-check failure, not an
 execution error. The two judge sessions reported about $0.070 in list-price
 usage; none of these estimates is an additional subscription charge.
 See the [live scoring evidence](calibration/scoring-2026-10-26-opus-v2.json).
-This one-arm smoke verifies the scoring path, not skill lift. Default judging
-remains advisory; separate combined scoring requires the full local calibration
-artifact, exact matching configuration and covered policy hashes. The summary
-JSON files are not accepted calibration artifacts.
+This one-arm smoke verified the scoring path, not skill lift. At the time,
+separate combined scoring required the full local calibration artifact,
+exact matching configuration and covered policy hashes.
 
 ### Evidence-first Haiku judge (current v3)
 
@@ -262,17 +257,15 @@ two independent archived candidate answers: both semantic verdicts passed;
 the separate combined score is **0.90** and original deterministic score
 **0.875**, with all 11 original files unchanged. See
 [Haiku scoring evidence](calibration/scoring-2026-10-27-haiku-v3.json).
-This checks the live scoring path, not skill lift. Default judging remains
-advisory; scoring requires the full local artifact and exact matching settings
-and policies. Earlier prompt artifacts, including the passing v2 Opus artifact,
-are historical and cannot authorize scoring with this prompt. Summary JSON is
-not accepted as a calibration artifact. No model defaults changed.
+This checked the live scoring path, not skill lift. At the time, scoring
+required a full passing artifact and exact matching settings and policies.
+Earlier prompt artifacts, including the passing v2 Opus artifact, did not match
+that prompt. No model defaults changed.
 
-The action-table sweep changes the exact semantic policy hashes for all five
-calibrated cases. The calibration and scoring records above are historical
-evidence for the prior freeform-Doc-String policies only; they do not cover the
-current policies and must not be used to score them. Their original hashes and
-artifacts remain unchanged. No recalibration or live judge calls were made.
+The action-table sweep changed the exact semantic policy hashes. The dated
+records above describe prior policies and measurements only; they are not new
+evidence for the current policies. Current suite scoring uses the recorded
+criteria directly and requires no historical acceptance artifact.
 
 ### Installed dependency
 
@@ -284,7 +277,7 @@ node local/cli.mjs run --suite security --model MODEL_ID --dry-run
 node local/run-all.mjs
 ```
 
-Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all` and `calibrate`, which discover all suites unless explicitly narrowed, and
+Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all`, which discovers all suites unless explicitly narrowed, and
 `judge`, which reads the archived policy without injecting a suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
