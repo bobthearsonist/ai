@@ -36,7 +36,7 @@
 <body>
 <main>
   <header>
-    <div class="eyebrow">AI Guild / Local skill evaluations / 26 October 2026</div>
+    <div class="eyebrow">AI Guild / Local skill evaluations</div>
     <h1>Does this skill actually help?</h1>
     <p class="lead">Run realistic prompts with and without a skill, check observable outcomes,
       and keep the traces. Optional AI judging writes separate combined scores and never changes
@@ -52,37 +52,29 @@
   </nav>
 
   <section class="notice" id="status">
-    <h2>Gherkin-only suites. ACP-only execution. Bounded Claude evidence.</h2>
+    <h2>Gherkin suites, ACP execution and recorded-policy judging</h2>
     <div class="table-wrap">
       <table>
-        <caption>Current implementation and bounded evidence; not general judge reliability or cross-client acceptance.</caption>
-        <thead><tr><th scope="col">Surface</th><th scope="col">Evidence / limitation</th></tr></thead>
+        <caption>Current implementation and operating boundaries; not a judge accuracy guarantee.</caption>
+        <thead><tr><th scope="col">Surface</th><th scope="col">Behavior / limitation</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Claude ACP evidence</th><td>Nine candidate receipts and
-            nine advisory assessments passed execution/schema checks. Four candidate
-            smokes passed deterministic gates; five were below threshold. These are
-            one-arm path checks, not measured skill lift or judge accuracy.
-            See the consumer README for the rubric correction and limitations.</td></tr>
-          <tr><th scope="row">Historical judge calibration</th><td>The evidence-first
-            prompt checks quotes and claim coverage before choosing a verdict.
-            Haiku passed 80/80 regression answers and 40/40 fresh blind synthetic
-            answers, once per set, with no invalid outputs or abstentions.
-            The unchanged 100% gate passed for five exact toolkit policy hashes
-            from the former freeform-Doc-String rubrics. The current action-table
-            sweep changes those hashes; these artifacts do not cover the current
-            policies; current scoring no longer requires these artifacts. No new measurements or
-            judge calls were made.
-            Reported list usage totaled about $0.150, not an additional subscription
-            charge. A separate AI agent authored the blind set without the prompt
-            or prior results; this is not independent human review or production
-            accuracy. Two archived candidate answers exercised combined scoring
-            (0.90); original deterministic scores (0.875) and all original files
-            stayed unchanged. No Profisee policy is covered; no model defaults changed.
-            See the <a href="../calibration/result-2026-10-27-haiku-v3.json">historical calibration record</a>
-            and <a href="../calibration/scoring-2026-10-27-haiku-v3.json">historical scoring evidence</a>.
-            The earlier same-prompt comparison (Haiku 72/80, Sonnet 79/80,
-            Opus 80/80) is <a href="../calibration/result-2026-10-26-haiku-v2.json">historical</a>;
-            those calibration artifacts no longer match the current prompt.</td></tr>
+          <tr><th scope="row">Recorded-suite judge</th><td>An explicit
+            <code>judge RUN_DIR --client claude --model MODEL_ID</code> assesses
+            semantic criteria from the run's recorded Gherkin policy.
+            Plan with <code>--dry-run</code>, then approve the exact live count.
+            No labeled-answer acceptance artifact is required.
+            Built-in judging is Claude-only; candidate runners are selected separately.</td></tr>
+          <tr><th scope="row">Combined scoring</th><td>The judge writes a separate
+            <code>judge-score</code> artifact (schema version 2): 50% existing
+            deterministic score and 50% whole-answer semantic vote. All criteria
+            must pass for the semantic vote to be 1; a valid failure makes it 0.
+            Criterion verdicts are diagnostic, not individual scoring votes.</td></tr>
+          <tr><th scope="row">Evidence and validity</th><td>Scoring verifies
+            prompt, policy, answer, runtime, model and settings provenance,
+            strict JSON and exact evidence quotes. Missing, duplicate, invalid,
+            abstaining or mismatched judgments make affected trace, case and overall
+            scores null. Candidate traces, deterministic scores and history remain
+            unchanged. Judge scores are measurements, not guaranteed objective truth.</td></tr>
           <tr><th scope="row">OpenCode</th><td>Not implemented in this local runner.</td></tr>
           <tr><th scope="row">Current ACP paths</th><td>Claude and Copilot support only
             common ACP transport. Legacy execution and replay code is deleted, without native/SDK fallback. Native candidate
@@ -96,14 +88,15 @@
             The commit-pinned engine dependency supports them. Authored JSON cases
             and schema-v1 compatibility are removed; JSON samples, config,
             rubrics and protocol records remain supported.</td></tr>
-          <tr><th scope="row">Multiple runners</th><td>The development engine accepts
+          <tr><th scope="row">Multiple runners</th><td>The installed engine accepts
             <code>--runners claude,copilot</code> or repeated <code>--runners</code>.
             Approval counts include every runner. Concurrency is a global ceiling,
             not a multiplier per runner.</td></tr>
-          <tr><th scope="row">Availability</th><td>Shared action-table support is
-            engine commit <code>f29ccb98319a5ce00bfa7d869b01f12cb4320ad3</code>.
-            It is published on <code>origin/main</code>, and both consumers now
-            install the commit-pinned engine from GitHub.</td></tr>
+          <tr><th scope="row">Installation</th><td>Both consumers install the
+            commit-pinned shared engine from GitHub. Their
+            <code>evals\package.json</code> and lockfiles identify the exact dependency;
+            run <code>npm ci --ignore-scripts</code> from the consumer's
+            <code>evals</code> directory.</td></tr>
         </tbody>
       </table>
     </div>
@@ -119,7 +112,7 @@
       <div><h3>Added value</h3><p>Repeated with/without arms compare outcomes on the same
         case definitions. A smoke verifies the path, not the benefit of the skill.</p></div>
     </div>
-    <p>The model output is variable; grading is deterministic. The same captured
+    <p>The model output is variable; deterministic checks are repeatable. The same captured
       transcript receives the same supported check results under the same policy.
       A separately approved AI judge archives semantic assessments and combined scores, but never
       changes these deterministic scores. Nine positive cases now have per-case
@@ -146,7 +139,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
       profile as proof of native isolation.</p>
     <p>This suite has three cases: 3 cases x 3 repeats x 2 arms = 18 live sessions
       for one runner. Each additional runner increases that count. Use
-      the development engine's <code>run-all --dry-run</code> to inspect the planned
+      the installed engine's <code>run-all --dry-run</code> to inspect the planned
       count before running all suites. Do not copy an approval count blindly.</p>
   </section>
 
@@ -156,7 +149,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
       Open the run's <code>normalized.json</code> for client/version, status,
       case scores, cost and caveats. Archived traces live under
       <code>traces\&lt;case&gt;\&lt;arm&gt;-&lt;n&gt;.jsonl</code>.
-      The development orchestrator writes <code>smoke-summary.md</code> separately
+      The orchestrator writes <code>smoke-summary.md</code> separately
       from full-run <code>summary.md</code>. Full runs also maintain result history.</p>
     <p>With/without scores summarize passed checks. <strong>Lift</strong> means all
       observed with-skill scores exceeded all without-skill scores; regression is
@@ -196,8 +189,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
   <section class="notice">
     <h2>Boundaries before sharing or scaling</h2>
     <p>Current ACP runs are labelled <code>acp-non-hermetic</code>.
-      Historical local archives were deleted during cleanup; new runs require
-      separate explicit approval. Fresh configuration and tool restrictions are not an
+      Live runs require separate explicit approval. Fresh configuration and tool restrictions are not an
       OS sandbox or independent credential boundary. Subscription usage still
       consumes account allowance. The ACP runner does not enforce a hard spend
       cap; unknown USD cost remains unknown.</p>
@@ -220,7 +212,7 @@ node local\cli.mjs run-all --dry-run</code></pre>
       self-contained HTML file. Attach the reviewed HTML rather than linking to
       a machine-local path. No hosted onboarding URL exists yet.</p>
   </section>
-  <footer class="small">Local onboarding draft, 2026-10-23. No external assets, scripts,
+  <footer class="small">Local skill evaluation field guide. No external assets, scripts,
     model calls or automatic posting. Share only after review.</footer>
 </main>
 </body>
