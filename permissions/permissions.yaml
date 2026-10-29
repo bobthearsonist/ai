@@ -217,8 +217,8 @@ commands:
   ask:
     - "gsudo*"
     - "sudo*"
-    - "rm*"
-    - "rmdir*"
+    - "rm*"     # Not synced to Claude Code: an ask rule overrides its built-in rm check, which auto-approves only inside the working dir and additionalDirectories
+    - "rmdir*"  # Not synced to Claude Code: same as rm*
     - "del*"
     - "rd*"
     - "mv*"
