@@ -17,47 +17,15 @@ const {
 
 const scriptPath = path.join(__dirname, "copilot-statusline-summary.js");
 
-test("resolves the sole enterprise candidate for an enterprise entitlement", () => {
-  const plans = new Map([
-    ["Profisee", "free"],
-    ["Epyon-Ltd", "enterprise"],
-  ]);
-
+test("uses the first organization returned by the Copilot entitlement", () => {
   assert.equal(
-    resolveBillingOrganization(
-      "enterprise",
-      ["Profisee", "Epyon-Ltd"],
-      organization => plans.get(organization)
-    ),
-    "Epyon-Ltd"
-  );
-});
-
-test("resolves the sole non-enterprise candidate for a business entitlement", () => {
-  const plans = new Map([
-    ["Profisee", "free"],
-    ["Epyon-Ltd", "enterprise"],
-  ]);
-
-  assert.equal(
-    resolveBillingOrganization(
-      "business",
-      ["Profisee", "Epyon-Ltd"],
-      organization => plans.get(organization)
-    ),
+    resolveBillingOrganization(["Profisee", "Epyon-Ltd"]),
     "Profisee"
   );
 });
 
-test("fails closed when multiple candidates match the active tier", () => {
-  assert.equal(
-    resolveBillingOrganization(
-      "enterprise",
-      ["First-Enterprise", "Second-Enterprise"],
-      () => "enterprise"
-    ),
-    ""
-  );
+test("ignores empty organization values", () => {
+  assert.equal(resolveBillingOrganization(["", "Profisee"]), "Profisee");
 });
 
 test("renders the dynamically resolved billed organization", () => {
@@ -84,11 +52,10 @@ test("renders the dynamically resolved billed organization", () => {
         [
           "@echo off",
           "echo %* | findstr /C:\"copilot_internal/user\" >nul && (",
-          "  echo bobthearsonist	enterprise	Profisee,Epyon-Ltd",
+          "  echo bobthearsonist	Profisee,Epyon-Ltd",
           "  exit /b 0",
           ")",
-          "echo %* | findstr /C:\"orgs/Profisee\" >nul && (echo free& exit /b 0)",
-          "echo enterprise",
+          "exit /b 91",
         ].join("\r\n"),
         "utf8"
       );
@@ -98,9 +65,7 @@ test("renders the dynamically resolved billed organization", () => {
         [
           "#!/bin/sh",
           "case \"$*\" in",
-          "  *copilot_internal/user*) printf '%s\\t%s\\t%s\\n' bobthearsonist enterprise Profisee,Epyon-Ltd ;;",
-          "  *orgs/Profisee*) printf '%s\\n' free ;;",
-          "  *orgs/Epyon-Ltd*) printf '%s\\n' enterprise ;;",
+          "  *copilot_internal/user*) printf '%s\\t%s\\n' bobthearsonist Profisee,Epyon-Ltd ;;",
           "  *) exit 91 ;;",
           "esac",
           "",
@@ -130,7 +95,7 @@ test("renders the dynamically resolved billed organization", () => {
     });
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /bobthearsonist bill:@Epyon-Ltd/);
+    assert.match(result.stdout, /bobthearsonist bill:@Profisee/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

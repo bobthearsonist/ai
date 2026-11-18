@@ -15,8 +15,6 @@ const path = require("node:path");
 
 const ENTITLEMENT_CACHE_TTL_MS = 5 * 60 * 1000;
 const ENTITLEMENT_FAILURE_CACHE_TTL_MS = 60 * 1000;
-const ORG_PLAN_CACHE_TTL_MS = 60 * 60 * 1000;
-const ORG_PLAN_FAILURE_CACHE_TTL_MS = 5 * 60 * 1000;
 
 const COLORS = {
   orange: "\x1b[38;5;208m",
@@ -387,9 +385,7 @@ function formatCopilotIdentity(status) {
   }
 
   const billingOrganization = resolveBillingOrganization(
-    entitlement.plan,
-    entitlement.organizations,
-    queryOrganizationPlan
+    entitlement.organizations
   );
 
   return billingOrganization
@@ -397,26 +393,12 @@ function formatCopilotIdentity(status) {
     : login;
 }
 
-function resolveBillingOrganization(plan, organizations, queryPlan) {
-  if (!plan || !Array.isArray(organizations) || organizations.length === 0) {
+function resolveBillingOrganization(organizations) {
+  if (!Array.isArray(organizations)) {
     return "";
   }
 
-  const candidates = organizations
-    .map(organization => ({
-      organization,
-      accountPlan: queryPlan(organization),
-    }))
-    .filter(candidate => candidate.accountPlan);
-
-  const matches =
-    plan === "enterprise"
-      ? candidates.filter(candidate => candidate.accountPlan === "enterprise")
-      : plan === "business"
-        ? candidates.filter(candidate => candidate.accountPlan !== "enterprise")
-        : [];
-
-  return matches.length === 1 ? matches[0].organization : "";
+  return firstString(...organizations);
 }
 
 function queryCopilotEntitlement() {
@@ -434,7 +416,7 @@ function queryCopilotEntitlement() {
         "5m",
         "/copilot_internal/user",
         "--jq",
-        '[.login, .copilot_plan, (.organization_login_list // [] | join(\",\"))] | @tsv',
+        '[.login, (.organization_login_list // [] | join(\",\"))] | @tsv',
       ],
       {
         encoding: "utf8",
@@ -442,10 +424,9 @@ function queryCopilotEntitlement() {
         timeout: 3000,
       }
     ).trim();
-    const [login = "", plan = "", organizationList = ""] = response.split("\t");
+    const [login = "", organizationList = ""] = response.split("\t");
     const entitlement = {
       login,
-      plan,
       organizations: organizationList
         .split(",")
         .map(organization => organization.trim())
@@ -454,7 +435,7 @@ function queryCopilotEntitlement() {
     writeEntitlementCache(entitlement);
     return entitlement;
   } catch {
-    const entitlement = { login: "", plan: "", organizations: [] };
+    const entitlement = { login: "", organizations: [] };
     writeEntitlementCache(entitlement, ENTITLEMENT_FAILURE_CACHE_TTL_MS);
     return entitlement;
   }
@@ -469,7 +450,6 @@ function readEntitlementCache() {
     const cached = JSON.parse(readFileSync(entitlementCachePath(), "utf8"));
     if (
       typeof cached.login === "string" &&
-      typeof cached.plan === "string" &&
       Array.isArray(cached.organizations) &&
       typeof cached.expiresAt === "number" &&
       cached.expiresAt > Date.now()
@@ -492,86 +472,7 @@ function writeEntitlementCache(
       entitlementCachePath(),
       JSON.stringify({
         login: entitlement.login || "",
-        plan: entitlement.plan || "",
         organizations: entitlement.organizations || [],
-        expiresAt: Date.now() + ttl,
-      }),
-      "utf8"
-    );
-  } catch {
-    // The statusline still works without persistent caching.
-  }
-}
-
-function queryOrganizationPlan(organization) {
-  const cached = readOrganizationPlanCache(organization);
-  if (cached !== null) {
-    return cached;
-  }
-
-  try {
-    const plan = execFileSync(
-      "gh",
-      [
-        "api",
-        "--cache",
-        "1h",
-        `orgs/${organization}`,
-        "--jq",
-        '.plan.name // ""',
-      ],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"],
-        timeout: 3000,
-      }
-    ).trim();
-    writeOrganizationPlanCache(organization, plan);
-    return plan;
-  } catch {
-    writeOrganizationPlanCache(
-      organization,
-      "",
-      ORG_PLAN_FAILURE_CACHE_TTL_MS
-    );
-    return "";
-  }
-}
-
-function organizationPlanCachePath(organization) {
-  const key = organization.toLowerCase().replace(/[^a-z0-9-]/g, "_");
-  return path.join(os.tmpdir(), `copilot-statusline-org-plan-${key}.json`);
-}
-
-function readOrganizationPlanCache(organization) {
-  try {
-    const cached = JSON.parse(
-      readFileSync(organizationPlanCachePath(organization), "utf8")
-    );
-    if (
-      typeof cached.plan === "string" &&
-      typeof cached.expiresAt === "number" &&
-      cached.expiresAt > Date.now()
-    ) {
-      return cached.plan;
-    }
-  } catch {
-    // A missing or invalid cache is refreshed from the API.
-  }
-
-  return null;
-}
-
-function writeOrganizationPlanCache(
-  organization,
-  plan,
-  ttl = ORG_PLAN_CACHE_TTL_MS
-) {
-  try {
-    writeFileSync(
-      organizationPlanCachePath(organization),
-      JSON.stringify({
-        plan: plan || "",
         expiresAt: Date.now() + ttl,
       }),
       "utf8"
