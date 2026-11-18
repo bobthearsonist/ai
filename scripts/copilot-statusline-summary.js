@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 
 const { execFileSync } = require("node:child_process");
-const { readFileSync, writeFileSync } = require("node:fs");
+const {
+  closeSync,
+  existsSync,
+  openSync,
+  readFileSync,
+  readSync,
+  statSync,
+  writeFileSync,
+} = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 
@@ -15,6 +23,7 @@ const COLORS = {
   magenta: "\x1b[35m",
   blue: "\x1b[34m",
   gray: "\x1b[37m",
+  red: "\x1b[31m",
   dim: "\x1b[2m",
   reset: "\x1b[0m",
 };
@@ -67,10 +76,12 @@ process.stdin.on("end", () => {
   const weeklyUsage = formatWeeklyUsage(status, cost);
   const copilotIdentity = formatCopilotIdentity(status);
   const session = firstString(status.session_name, status.session_id);
+  const mcpStatus = formatMcpStatus(status);
 
   const segments = [
     colored(model, "orange"),
     copilotIdentity ? colored(copilotIdentity, "gray") : "",
+    mcpStatus,
     colored(`ctx:${contextUsage}`, "cyan"),
     sessionCost ? colored(sessionCost, "green") : "",
     colored(sessionUsage, "yellow"),
@@ -90,6 +101,208 @@ function formatModel(status) {
   }
 
   return firstString(model?.display_name, model?.name, model?.id) || "?";
+}
+
+function formatMcpStatus(status) {
+  const servers = loadMcpServers(status);
+  const failed = namesWithStatus(servers, "failed");
+  const needsAuth = namesWithStatus(servers, "needs-auth");
+  const pending = namesWithStatus(servers, "pending");
+
+  if (failed.length) {
+    return colored(`mcp! ${formatNameList(failed)}`, "red");
+  }
+
+  if (needsAuth.length) {
+    return colored(`mcp? ${formatNameList(needsAuth)}`, "yellow");
+  }
+
+  if (pending.length) {
+    return colored(`mcp… ${formatNameList(pending)}`, "dim");
+  }
+
+  if (process.env.COPILOT_STATUSLINE_MCP_OK && servers.length) {
+    const connected = namesWithStatus(servers, "connected");
+    return colored(`mcp:${connected.length}/${servers.length}`, "green");
+  }
+
+  return "";
+}
+
+function loadMcpServers(status) {
+  const fromStdin = normalizeMcpServers(
+    status.mcp?.servers || status.mcp_servers
+  );
+  if (fromStdin.length) {
+    return fromStdin;
+  }
+
+  const sessionId = firstString(status.session_id);
+  if (!sessionId) {
+    return [];
+  }
+
+  const fromSnapshot = readMcpSnapshot(sessionId);
+  if (fromSnapshot.length) {
+    return fromSnapshot;
+  }
+
+  return readMcpFailuresFromEvents(sessionId);
+}
+
+function readMcpSnapshot(sessionId) {
+  try {
+    const snapshot = JSON.parse(readFileSync(mcpSnapshotPath(sessionId), "utf8"));
+    return normalizeMcpServers(snapshot.servers);
+  } catch {
+    return [];
+  }
+}
+
+function readMcpFailuresFromEvents(sessionId) {
+  const eventsPath = path.join(
+    os.homedir(),
+    ".copilot",
+    "session-state",
+    sessionId,
+    "events.jsonl"
+  );
+  if (!existsSync(eventsPath)) {
+    return [];
+  }
+
+  const byName = new Map();
+  for (const line of readHeadAndTail(eventsPath).split(/\r?\n/)) {
+    if (!line.includes("mcp")) {
+      continue;
+    }
+
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+
+    if (event.type === "session.warning" && event.data?.warningType === "mcp") {
+      const name = mcpNameFromMessage(event.data.message);
+      if (name) {
+        byName.set(name, {
+          name,
+          status: /auth|oauth|unauthorized/i.test(event.data.message || "")
+            ? "needs-auth"
+            : "failed",
+          error: event.data.message || null,
+        });
+      }
+    }
+
+    if (event.type === "session.mcp_server_status_changed" && event.data?.serverName) {
+      byName.set(event.data.serverName, {
+        name: event.data.serverName,
+        status: event.data.status || "failed",
+        error: event.data.error || null,
+      });
+    }
+
+    if (event.type === "session.mcp_servers_loaded" && Array.isArray(event.data?.servers)) {
+      for (const server of event.data.servers) {
+        if (server?.name) {
+          byName.set(server.name, {
+            name: server.name,
+            status: server.status || "pending",
+            error: server.error || null,
+          });
+        }
+      }
+    }
+  }
+
+  return [...byName.values()];
+}
+
+function normalizeMcpServers(value) {
+  if (Array.isArray(value)) {
+    return value
+      .map(server => {
+        if (typeof server === "string") {
+          return { name: server, status: "failed", error: null };
+        }
+        if (server && typeof server === "object" && server.name) {
+          return {
+            name: String(server.name),
+            status: String(server.status || "failed"),
+            error: server.error || null,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }
+
+  if (!value || typeof value !== "object") {
+    return [];
+  }
+
+  if (Array.isArray(value.servers)) {
+    return normalizeMcpServers(value.servers);
+  }
+
+  return Object.entries(value)
+    .filter(([, status]) => status != null)
+    .map(([name, status]) => ({
+      name,
+      status: typeof status === "string" ? status : status.status || "failed",
+      error: status.error || null,
+    }));
+}
+
+function namesWithStatus(servers, status) {
+  return servers
+    .filter(server => server.status === status)
+    .map(server => server.name);
+}
+
+function formatNameList(names, max = 2) {
+  if (names.length <= max) {
+    return names.join(",");
+  }
+
+  return `${names.slice(0, max).join(",")} +${names.length - max}`;
+}
+
+function mcpNameFromMessage(message) {
+  const match = String(message || "").match(/MCP server "([^"]+)"/i);
+  return match ? match[1] : "";
+}
+
+function mcpSnapshotPath(sessionId) {
+  return path.join(
+    os.homedir(),
+    ".copilot",
+    "session-state",
+    sessionId,
+    "mcp-status.json"
+  );
+}
+
+function readHeadAndTail(filePath, windowBytes = 128 * 1024) {
+  const stats = statSync(filePath);
+  if (stats.size <= windowBytes * 2) {
+    return readFileSync(filePath, "utf8");
+  }
+
+  const head = Buffer.alloc(windowBytes);
+  const tail = Buffer.alloc(windowBytes);
+  const fd = openSync(filePath, "r");
+  try {
+    readSync(fd, head, 0, windowBytes, 0);
+    readSync(fd, tail, 0, windowBytes, stats.size - windowBytes);
+  } finally {
+    closeSync(fd);
+  }
+
+  return `${head.toString("utf8")}\n${tail.toString("utf8")}`;
 }
 
 function formatContextUsage(status, contextWindow) {

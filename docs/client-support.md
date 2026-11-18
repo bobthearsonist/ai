@@ -47,16 +47,27 @@ minutes. The script queries GitHub CLI directly because some Copilot CLI
 versions omit `username` from the status-line payload. This reports the active
 server-side Copilot entitlement, not merely GitHub organization membership.
 
+An MCP segment appears only when a server is unhealthy: red `mcp! <names>` for
+failed servers, yellow `mcp? <names>` for servers needing auth, and dim
+`mcp… <names>` while servers are still starting. Status comes from the
+status-line payload when present, otherwise from the session's
+`mcp-status.json` snapshot or `events.jsonl`. Set `COPILOT_STATUSLINE_MCP_OK=1`
+to also show a green `mcp:<connected>/<total>` segment when all are healthy.
+`refreshInterval` re-runs the script periodically so MCP status updates between
+events.
+
 Windows:
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "node \"%USERPROFILE%\\AI\\scripts\\copilot-statusline-summary.js\""
+    "command": "node \"%USERPROFILE%\\AI\\scripts\\copilot-statusline-summary.js\"",
+    "refreshInterval": 5
   },
   "footer": {
-    "showCustom": true
+    "showCustom": true,
+    "showAgent": true
   }
 }
 ```
@@ -67,10 +78,12 @@ macOS/Linux:
 {
   "statusLine": {
     "type": "command",
-    "command": "~/AI/scripts/copilot-statusline-summary.js"
+    "command": "~/AI/scripts/copilot-statusline-summary.js",
+    "refreshInterval": 5
   },
   "footer": {
-    "showCustom": true
+    "showCustom": true,
+    "showAgent": true
   }
 }
 ```
