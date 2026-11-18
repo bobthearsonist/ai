@@ -22,6 +22,7 @@ This page is for the **terminal Copilot CLI** (`copilot`). VS Code's native Copi
 | Skills | `~/.copilot/skills/*/SKILL.md` | Recommended user-level skill location. |
 | Agents | `~/.copilot/agents/` | Optional user-level custom agent profiles. |
 | Hooks | `~/.copilot/hooks/*.json` or `hooks` in `~/.copilot/settings.json` | Loaded when the CLI starts. |
+| Extensions | `~/.copilot/extensions/<name>/extension.mjs` | User extensions; see [Extensions](#extensions). |
 | Settings | `~/.copilot/settings.json` | User settings; do not symlink this file. |
 | MCP | `~/.copilot/mcp-config.json` | Managed by `/mcp`; separate from VS Code `mcp.json`. |
 | Saved permissions | `~/.copilot/permissions-config.json` | Runtime approvals; not the shared permissions source. |
@@ -156,6 +157,27 @@ Notes:
 - PascalCase hook names such as `PreToolUse` use Claude-compatible payload fields and matcher semantics.
 - Do not copy Claude Code hooks blindly; confirm payload fields and tool names in the Copilot hooks reference first.
 
+## Extensions
+
+Copilot CLI loads user extensions from `~/.copilot/extensions/<name>/extension.mjs`. This repo ships:
+
+| Extension | Source | Purpose |
+| --- | --- | --- |
+| `mcp-status` | `copilot/extensions/mcp-status` | Writes live MCP server status to `~/.copilot/session-state/<session-id>/mcp-status.json` for the [custom status line](client-support.md#github-copilot-cli). |
+
+Link the extension directory rather than copying it. `sync.sh` creates the link from the `toolkit` collection in `local.yaml` (see `local.yaml.example`):
+
+```yaml
+collections:
+  toolkit:
+    path: ~/AI
+    links:
+      - source: copilot/extensions/mcp-status
+        target: ~/.copilot/extensions/mcp-status
+```
+
+`sync.sh` will not replace an existing real directory at the target; move it aside first. After linking, restart Copilot CLI or run `/extensions` to confirm `mcp-status` is loaded.
+
 ## Graphify
 
 The shared `AGENTS.md` contains the authoritative graphify behavior:
@@ -232,6 +254,7 @@ Expected local wiring on this machine:
 ```text
 ~/.copilot/copilot-instructions.md -> ~/AI/AGENTS.md
 ~/.copilot/skills                 -> ~/AI/skills
+~/.copilot/extensions/mcp-status  -> ~/AI/copilot/extensions/mcp-status
 ```
 
 ## Troubleshooting

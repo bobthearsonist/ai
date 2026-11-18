@@ -27,6 +27,9 @@ collections:
     links:
       - source: skills/skill-creator
         target: ~/AI/skills/domain/ai/skill-creator
+      # Copilot CLI extension that feeds live MCP status to the statusline.
+      - source: copilot/extensions/mcp-status
+        target: ~/.copilot/extensions/mcp-status
 
   # Personal collection - your private reusable skills repo.
   personal:

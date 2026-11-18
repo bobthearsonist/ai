@@ -52,7 +52,11 @@ An MCP segment appears only when a server is unhealthy: red `mcp! <names>` for
 failed servers, yellow `mcp? <names>` for servers needing auth, and dim
 `mcp… <names>` while servers are still starting. Status comes from the
 status-line payload when present, otherwise from the session's
-`mcp-status.json` snapshot or `events.jsonl`. Set `COPILOT_STATUSLINE_MCP_OK=1`
+`mcp-status.json` snapshot or `events.jsonl`. The snapshot is written by the
+`mcp-status` extension in `copilot/extensions/`; see
+[Copilot CLI extensions](copilot-cli.md#extensions) to install it. Without it,
+the segment only reflects MCP warnings logged to `events.jsonl`. Set
+`COPILOT_STATUSLINE_MCP_OK=1`
 to also show a green `mcp:<connected>/<total>` segment when all are healthy.
 `refreshInterval` re-runs the script periodically so MCP status updates between
 events.
