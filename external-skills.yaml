@@ -30,6 +30,10 @@ skills:
     type: internal
     description: AI repository structure management and validation
 
+  - name: resource-coordination
+    type: internal
+    description: Shared resource claims, FIFO runtime access, and pinned adapter execution
+
   - name: skill-promotion
     type: internal
     description: Promote validated memory observations into reusable skills
