@@ -88,6 +88,9 @@ Return exactly one JSON object:
 Only that JSON result may appear on standard output. Do not write logs, banners or
 diagnostics to standard output. Return a nonzero process exit code on hard errors;
 the coordinator persists the operation fault and requires explicit recovery.
+On a hard error, make the last standard-error line a one-line, operator-safe
+reason, with no credentials, connection strings or raw native output. The
+coordinator appends that line, truncated, to the persisted fault message.
 
 ## Required behavior
 

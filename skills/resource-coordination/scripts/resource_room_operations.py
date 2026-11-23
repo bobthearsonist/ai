@@ -167,6 +167,17 @@ def _adapter_result(value: Any) -> dict[str, Any]:
     return value
 
 
+ADAPTER_ERROR_LIMIT = 300
+
+
+def _adapter_error_line(stderr: str | None) -> str:
+    """Return the adapter's last standard-error line, which the contract keeps operator-safe."""
+    lines = [line.strip() for line in (stderr or "").splitlines() if line.strip()]
+    if not lines:
+        return ""
+    return "".join(character for character in lines[-1] if character.isprintable())[:ADAPTER_ERROR_LIMIT]
+
+
 def _invoke_pinned_adapter(
     adapter: dict[str, Any], action: str, target: dict[str, Any], *, original: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -195,7 +206,9 @@ def _invoke_pinned_adapter(
     except (OSError, UnicodeError, ValueError) as error:
         fail("Adapter", f"Cannot invoke Python adapter: {error}", 5)
     if completed_process.returncode != 0:
-        fail("Adapter", f"Python adapter failed with exit code {completed_process.returncode}.", 5)
+        detail = _adapter_error_line(completed_process.stderr)
+        suffix = f": {detail}" if detail else "."
+        fail("Adapter", f"Python adapter failed with exit code {completed_process.returncode}{suffix}", 5)
     try:
         result = json.loads(completed_process.stdout)
     except (json.JSONDecodeError, TypeError) as error:

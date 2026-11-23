@@ -16,6 +16,43 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 CLI = ROOT / "scripts" / "resource_room.py"
 
 
+class AdapterInvocationTests(unittest.TestCase):
+    def setUp(self):
+        scripts = str(ROOT / "scripts")
+        sys.path.insert(0, scripts)
+        self.addCleanup(sys.path.remove, scripts)
+        import resource_room
+        import resource_room_operations
+        self.operations = resource_room_operations
+        self.room_error = resource_room.RoomError
+        self.temp = tempfile.TemporaryDirectory(prefix="resource-adapter-test-")
+        self.addCleanup(self.temp.cleanup)
+
+    def failure(self, body):
+        script = pathlib.Path(self.temp.name) / "adapter.py"
+        script.write_text(body, encoding="utf-8")
+        adapter = {"path": str(script), "sha256": hashlib.sha256(script.read_bytes()).hexdigest().upper()}
+        target = {"id": "t", "fingerprint": "f", "adapter": "a", "config": {}, "state": {},
+                  "resources": [{"kind": "key", "identity": "test:one", "mode": "exclusive"}]}
+        with self.assertRaises(self.room_error) as caught:
+            self.operations._invoke_pinned_adapter(adapter, "Inspect", target)
+        self.assertEqual(caught.exception.code, "Adapter")
+        return str(caught.exception)
+
+    def test_failed_adapter_reports_its_last_error_line(self):
+        message = self.failure("import sys\nsys.stderr.write('noise\\nLaunch preflight blocked: drift\\n\\n')\n"
+                               "raise SystemExit(1)\n")
+        self.assertEqual(message, "Python adapter failed with exit code 1: Launch preflight blocked: drift")
+
+    def test_failed_adapter_without_error_output_keeps_the_generic_message(self):
+        self.assertEqual(self.failure("raise SystemExit(3)\n"), "Python adapter failed with exit code 3.")
+
+    def test_failed_adapter_error_line_is_printable_and_bounded(self):
+        message = self.failure("import sys\nsys.stderr.write('\\x07' + 'x' * 500)\nraise SystemExit(1)\n")
+        detail = message.split(": ", 1)[1]
+        self.assertEqual(detail, "x" * self.operations.ADAPTER_ERROR_LIMIT)
+
+
 class CoordinatorCliTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="resource-room-test-")
