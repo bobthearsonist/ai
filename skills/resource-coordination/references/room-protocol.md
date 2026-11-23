@@ -106,8 +106,8 @@ arrays even when empty/singleton.
 | `freeze`, `thaw` | `roomId`, `generation`, `candidate`; current `turnId`, `turnGeneration` when prepared | Barrier owner only; suspend contained participant edit claims during freeze; thaw requires stopped prepared runtime and restores them |
 | `register-adapter` | `name`, absolute `path`, `sha256` | Trusted explicit registration; return immutable registry entry |
 | `register-target` | `target` descriptor | Any member session; return immutable descriptor with `generation`; no lifecycle call |
-| `supersede-target` | `targetId`, `fingerprint`, `descriptorGeneration`, replacement `target`; current turn token when prepared | Exclusive, unreferenced, verified stopped replacement; return `target`, updated `turn`; retain old descriptor in history |
-| `rebind-adapter` | `protocolVersion: 1`, `confirm: "REBIND_STOPPED"`, `oldAdapter`, `newAdapter`, exact `targets` | Read-only stopped proof followed by one atomic migration of every descriptor on an unusable pin |
+| `supersede-target` | `targetId`, `fingerprint`, `descriptorGeneration`, replacement `target`; current turn token when prepared | Exclusive, unreferenced, verified stopped replacement; return `target`, updated `turn`; retain old descriptor in history. Optional `confirm: "EXPAND_STOPPED"` allows additive-only same-ID expansion of a stopped descriptor |
+| `rebind-adapter` | `protocolVersion: 1`, `confirm: "REBIND_STOPPED"`, exactly one of `oldAdapter` or `oldAdapters`, `newAdapter`, exact `targets` | Read-only stopped proof followed by one atomic migration of every descriptor on the selected unusable pins |
 | `request` | `roomId`, `targetId`, `fingerprint`, `descriptorGeneration`, `purpose`; optional `barrierGeneration`, `candidate` | No owned manual/freeze/turn claims or uses; one pending request/session; return `id`, `sequence` |
 | `prepare` | `requestId` | Candidate request owner at FIFO head, zero runtime users; inspect/stop, reserve candidate+target resources without Start; return `turn`, `runtime` |
 | `activate` | Ordinary: `requestId`; prepared: `turnId`, `turnGeneration` | FIFO requester or exact prepared owner with frozen candidate; inventory then activate/reuse; return `runtime`, `use` |
@@ -478,25 +478,60 @@ action that could leave physical resources unrepresented. Failed replacement
 inspection keeps `operation.pendingDescriptor` and its state in recovery inventory;
 it grants no launch ownership, and must prove stopped before recovery can finish.
 
+### Additive scope expansion
+
+A stopped descriptor whose resource set is incomplete (for example, a legacy
+generation that predates a required resource) can be widened with the same
+`supersede-target` action by adding `confirm: "EXPAND_STOPPED"`. Any other `confirm`
+value is rejected as invalid, and an unconfirmed request keeps exact scope equality.
+
+Expansion is accepted only when all of these hold:
+
+- the new `targetId` equals the old one;
+- every existing `(kind, identity, mode)` tuple is retained unchanged, with no
+  omission, identity rebind or mode change;
+- at least one tuple is added;
+- there is no prepared turn (exact supersession still supports prepared turns);
+- the existing begin gates apply: no queued work, runtime users, outstanding request
+  or other operation.
+
+The whole union of old and new resources is claimed exclusively before any adapter
+inspection. Manual claims, frozen-turn conflicts and queued ownership therefore block
+it. Unfrozen readiness is invalidated for the union. Inspection proves every active
+target stopped, including the pending replacement. No Start or Stop is issued.
+
+On success the old generation moves to history as `descriptor-expansion` with its
+`retired` record and `addedResources`, and the new descriptor generation is returned.
+On failure the old active descriptor, `operation.pendingDescriptor` and the whole union
+claim remain for explicit recovery. Recovery must prove the pending inventory stopped
+before completing; the old target is not replaced without that proof.
+
 ### Recover a stopped registry from an unusable adapter pin
 
-Use `rebind-adapter` only when the old pin cannot prove quiescence. Register a
-reviewed replacement under a distinct name without altering the old file or
-registration. Each of `oldAdapter` and `newAdapter` contains the exact registered
-`name` and `sha256`; each entry in `targets` contains the old `targetId`,
-`fingerprint` and `descriptorGeneration`, plus a complete replacement `target`
-with empty `state`, the same ID and exact canonical resource list in the same order.
-The replacement must implement the read-only `InspectRebind` adapter contract.
+Use `rebind-adapter` only when the old pins cannot prove quiescence. Register a
+reviewed replacement under a distinct name without altering the old files or
+registrations. Provide exactly one of `oldAdapter` (one exact registered `name` and
+`sha256`) or `oldAdapters` (a nonempty array of distinct exact registrations, compared
+case-insensitively). `newAdapter` contains the exact registered `name` and `sha256`
+and must differ from every old name. Each entry in `targets` contains the old
+`targetId`, `fingerprint` and `descriptorGeneration`, plus a complete replacement
+`target` with empty `state`, the same ID and exact canonical resource list in the
+same order. Every target owned by a selected old pin must appear exactly once, each
+selected pin must own at least one target, and no target outside the selection may
+appear. Malformed, duplicate, incomplete or unselected mappings fail before any
+adapter call. The replacement must implement the read-only `InspectRebind` adapter
+contract.
 
 Require the same boot, no unfinished operation, no runtime/use/turn, no claims
 overlapping the migrated resources and no queue entries for migrated targets.
 The operation lock serializes lifecycle work. The core asks the replacement pin
 to inspect each migrated target against its original descriptor without loading
-the old pin. All other targets must pass normal `Inspect` on their own pins. All
+any old pin. All other targets must pass normal `Inspect` on their own pins. All
 results must be stopped and unblocked. Any failure or coordinator revision change
-aborts before commit. Success advances each migrated generation in one commit,
-archives the old descriptors and pins, and leaves unrelated requests and claims
-unchanged. This action cannot stop an unmanaged runtime or change its topology.
+aborts before commit. Success advances every migrated generation in one commit,
+archives each old descriptor, and writes one `adapter-rebind` history record per
+target with that target's actual old registration. It leaves unrelated requests and
+claims unchanged. This action cannot stop an unmanaged runtime or change its topology.
 
 ## Run scripts
 

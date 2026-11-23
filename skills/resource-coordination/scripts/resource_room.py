@@ -1520,5 +1520,6 @@ def recover_room(*args: Any, **kwargs: Any) -> Any:
 
 
 if __name__ == "__main__":
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     sys.modules.setdefault("resource_room", sys.modules[__name__])
     raise SystemExit(main())

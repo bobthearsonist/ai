@@ -653,6 +653,21 @@ class CoordinatorCliTests(unittest.TestCase):
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(json.loads(process.stdout)["data"]["text"], "caf\u00e9 \u4e2d\u6587")
 
+    def test_isolated_cli_loads_lifecycle_operations(self):
+        target = self.register_fake_target()
+        queued = self.queue(target)
+        process = subprocess.run(
+            [sys.executable, "-I", str(CLI), "--root", str(self.root), "--action", "activate",
+             "--request-json", json.dumps({
+                 "sessionId": self.first["sessionId"], "requestId": queued["id"],
+             })],
+            capture_output=True, encoding="utf-8", timeout=15,
+        )
+        self.assertEqual(process.returncode, 0, process.stderr)
+        active = json.loads(process.stdout)["data"]
+        self.assertEqual(active["runtime"]["status"], "running")
+        self.assertEqual(active["use"]["targetId"], target["id"])
+
     def test_prepared_candidate_freezes_runs_thaws_and_releases(self):
         target = self.register_fake_target()
         barrier_resources = [self.resource("candidate:checkout")]
@@ -738,6 +753,291 @@ class CoordinatorCliTests(unittest.TestCase):
         self.assertEqual(len(final["targets"]), 1)
         self.assertEqual(final["targets"][0]["fingerprint"], "target-v2")
         self.assertEqual(final["history"][0]["kind"], "descriptor-supersession")
+
+    def expansion_request(self, target, resources, *, replacement_id=None):
+        return {
+            "targetId": target["id"], "fingerprint": target["fingerprint"],
+            "descriptorGeneration": target["generation"],
+            "target": {
+                "id": replacement_id or target["id"], "fingerprint": "target-v2", "adapter": target["adapter"],
+                "resources": resources, "config": target["config"], "state": {},
+            },
+        }
+
+    def scopes(self, resources):
+        return {(item["kind"], item["identity"].casefold(), item["mode"]) for item in resources}
+
+    def assert_expansion_rejected(self, request, code, exit_code=3):
+        state_file = self.root / "state.json"
+        before = state_file.read_bytes()
+        process, error = self.action("supersede-target", request, session=self.first, check=False)
+        self.assertEqual(process.returncode, exit_code)
+        self.assertEqual(error["code"], code)
+        self.assertEqual(state_file.read_bytes(), before)
+
+    def ready_cohort(self, resources, candidate="candidate-v1"):
+        barrier = self.action("cohort", {
+            "roomId": self.first["roomId"], "expectedGeneration": 0, "candidate": candidate,
+            "cohort": [self.first["sessionId"], self.second["sessionId"]], "resources": resources,
+        }, session=self.first)["data"]
+        base = {"roomId": self.first["roomId"], "generation": barrier["generation"], "candidate": candidate}
+        self.action("ready", base, session=self.first)
+        self.action("ready", base, session=self.second)
+        return barrier
+
+    def test_scope_expansion_requires_exact_confirmation(self):
+        target = self.register_fake_target()
+        added = self.resource("added:resource")
+        expanded = self.expansion_request(target, [*target["resources"], added])
+        self.assert_expansion_rejected(expanded, "Descriptor")
+        for confirm in ("expand", True, None):
+            with self.subTest(confirm=confirm):
+                self.assert_expansion_rejected({**expanded, "confirm": confirm}, "Invalid", exit_code=2)
+
+    def test_confirmed_stopped_expansion_adds_resources_and_retains_history(self):
+        target = self.register_fake_target()
+        added = self.resource("added:resource")
+        request = {**self.expansion_request(target, [*target["resources"], added]), "confirm": "EXPAND_STOPPED"}
+        result = self.action("supersede-target", request, session=self.first)["data"]
+        self.assertGreater(result["target"]["generation"], target["generation"])
+        final = self.action("inspect")["data"]["state"]
+        self.assertIsNone(final["operation"])
+        self.assertFalse(final["claims"])
+        self.assertEqual(len(final["targets"]), 1)
+        self.assertEqual(final["targets"][0]["fingerprint"], "target-v2")
+        self.assertEqual(self.scopes(final["targets"][0]["resources"]), self.scopes([*target["resources"], added]))
+        audits = [item for item in final["history"] if item.get("kind") == "descriptor-expansion"]
+        self.assertEqual(len(audits), 1)
+        self.assertEqual(audits[0]["retired"]["fingerprint"], "target-v1")
+        self.assertEqual(audits[0]["replacementGeneration"], result["target"]["generation"])
+        self.assertEqual(self.scopes(audits[0]["addedResources"]), self.scopes([added]))
+
+    def test_scope_expansion_rejects_omissions_rebinds_mode_changes_and_empty_additions(self):
+        target = self.register_fake_target()
+        added = self.resource("added:resource")
+        cases = {
+            "omission": [added],
+            "identity rebind": [self.resource("runtime:other", mode="shared"), added],
+            "mode change": [self.resource("runtime:test", mode="exclusive"), added],
+            "widened mode": [*target["resources"], self.resource("runtime:test", mode="exclusive")],
+            "no addition": [*target["resources"]],
+        }
+        for name, resources in cases.items():
+            with self.subTest(case=name):
+                self.assert_expansion_rejected(
+                    {**self.expansion_request(target, resources), "confirm": "EXPAND_STOPPED"}, "Descriptor")
+        with self.subTest(case="identity change"):
+            renamed = self.expansion_request(target, [*target["resources"], added], replacement_id="other-target")
+            self.assert_expansion_rejected({**renamed, "confirm": "EXPAND_STOPPED"}, "Descriptor")
+
+    def test_scope_expansion_respects_manual_claims(self):
+        target = self.register_fake_target()
+        added = self.resource("added:resource")
+        request = {**self.expansion_request(target, [*target["resources"], added]), "confirm": "EXPAND_STOPPED"}
+        third = self.action("join", {"client": "test", "purpose": "manual claim", "name": "other room"})["data"]
+        self.action("claim", {"roomId": third["roomId"], "resources": [added]}, session=third)
+        self.assert_expansion_rejected(request, "Conflict")
+
+    def test_scope_expansion_waits_behind_queued_runtime_work(self):
+        target = self.register_fake_target()
+        added = self.resource("added:resource")
+        request = {**self.expansion_request(target, [*target["resources"], added]), "confirm": "EXPAND_STOPPED"}
+        self.queue(target, session=self.second)
+        self.assert_expansion_rejected(request, "Queue")
+
+    def test_scope_expansion_cannot_bypass_a_prepared_turn(self):
+        target = self.register_fake_target()
+        barrier = self.ready_cohort([self.resource("candidate:checkout")])
+        queued = self.action("request", {
+            "roomId": self.first["roomId"], "targetId": target["id"],
+            "fingerprint": target["fingerprint"], "descriptorGeneration": target["generation"],
+            "purpose": "prepared candidate", "barrierGeneration": barrier["generation"], "candidate": "candidate-v1",
+        }, session=self.first)["data"]
+        self.action("prepare", {"requestId": queued["id"]}, session=self.first)
+        expanded = {
+            **self.expansion_request(target, [*target["resources"], self.resource("added:resource")]),
+            "confirm": "EXPAND_STOPPED",
+        }
+        self.assert_expansion_rejected(expanded, "Conflict")
+
+    def test_scope_expansion_invalidates_unfrozen_readiness_for_added_resources(self):
+        target = self.register_fake_target()
+        barrier = self.ready_cohort([self.resource("added:resource", mode="shared")])
+        self.assertTrue(self.action("inspect")["data"]["state"]["rooms"][0]["barrier"]["ready"])
+        request = {
+            **self.expansion_request(target, [*target["resources"], self.resource("added:resource")]),
+            "confirm": "EXPAND_STOPPED",
+        }
+        self.action("supersede-target", request, session=self.first)
+        current = self.action("inspect")["data"]["state"]["rooms"][0]["barrier"]
+        self.assertEqual(current["generation"], barrier["generation"])
+        self.assertTrue(current["dirty"])
+        self.assertEqual(current["ready"], [])
+
+    def test_failed_expansion_retains_union_claim_until_pending_inventory_recovers(self):
+        target = self.register_fake_target()
+        pending_state = self.root.parent / "pending-world.json"
+        pending_state.write_text("active", encoding="utf-8")
+        added = self.resource("added:resource")
+        request = {**self.expansion_request(target, [*target["resources"], added]), "confirm": "EXPAND_STOPPED"}
+        request["target"]["config"] = {"stateFile": str(pending_state)}
+        process, error = self.action("supersede-target", request, session=self.first, check=False)
+        self.assertEqual(process.returncode, 5)
+        self.assertEqual(error["code"], "Inventory")
+        failed = self.action("inspect")["data"]["state"]
+        operation = failed["operation"]
+        self.assertEqual(operation["status"], "faulted")
+        self.assertEqual(operation["pendingDescriptor"]["fingerprint"], "target-v2")
+        self.assertEqual(failed["targets"][0]["fingerprint"], "target-v1")
+        claims = [claim for claim in failed["claims"] if claim["id"] in operation["claimIds"]]
+        self.assertEqual(len(claims), 1)
+        self.assertEqual(
+            {(kind, identity) for kind, identity, _ in self.scopes(claims[0]["resources"])},
+            {(kind, identity) for kind, identity, _ in self.scopes([*target["resources"], added])},
+        )
+        self.assertTrue(all(item["mode"] == "exclusive" for item in claims[0]["resources"]))
+
+        recovery = {
+            "confirm": "RECONCILE", "mode": "verify-stopped",
+            "operationId": operation["id"], "operationGeneration": operation["generation"],
+        }
+        process, error = self.action("recover", recovery, session=self.first, check=False)
+        self.assertEqual(process.returncode, 5)
+        self.assertEqual(error["code"], "Inventory")
+        blocked = self.action("inspect")["data"]["state"]["operation"]
+        self.assertEqual(blocked["pendingDescriptor"]["fingerprint"], "target-v2")
+
+        pending_state.unlink()
+        self.action("recover", {
+            **recovery, "operationId": blocked["id"], "operationGeneration": blocked["generation"],
+        }, session=self.first)
+        final = self.action("inspect")["data"]["state"]
+        self.assertIsNone(final["operation"])
+        self.assertFalse(final["claims"])
+        self.assertEqual(final["targets"][0]["fingerprint"], "target-v1")
+        self.assertEqual(final["runtime"]["status"], "stopped")
+
+    def multi_pin_fixture(self):
+        scripts, markers = {}, {}
+        for name in ("legacy-a", "legacy-b", "spare"):
+            markers[name] = self.root.parent / f"{name}-called"
+            scripts[name] = self.root.parent / f"{name}.py"
+            scripts[name].write_text(
+                f"import pathlib\npathlib.Path({str(markers[name])!r}).touch()\nraise RuntimeError('unusable pin')\n",
+                encoding="utf-8",
+            )
+        inspected = self.root.parent / "multi-inspected"
+        blocked = self.root.parent / "multi-blocked"
+        scripts["replacement"] = self.root.parent / "multi_replacement.py"
+        scripts["replacement"].write_text(
+            "import json, pathlib, sys\n"
+            "r = json.load(sys.stdin)\n"
+            "old, new = r['originalTarget'], r['target']\n"
+            "assert r['action'] == 'InspectRebind'\n"
+            "assert old['resources'] == new['resources'] and new['adapter'] == 'replacement'\n"
+            "assert old['adapter'] in ('legacy-a', 'legacy-b')\n"
+            f"with pathlib.Path({str(inspected)!r}).open('a', encoding='utf-8') as f:\n"
+            "    print(old['id'], old['adapter'], file=f)\n"
+            f"active = old['id'] == 'runtime-b' and pathlib.Path({str(blocked)!r}).exists()\n"
+            "print(json.dumps({'status': 'unknown' if active else 'stopped', 'ready': False,\n"
+            "                  'blockers': ['runtime active'] if active else [], 'state': {}}))\n",
+            encoding="utf-8",
+        )
+        pins = {}
+        for name, script in scripts.items():
+            pins[name] = hashlib.sha256(script.read_bytes()).hexdigest().upper()
+            self.action("register-adapter", {"name": name, "path": str(script), "sha256": pins[name]},
+                        session=self.first)
+        owners = {"runtime-a1": "legacy-a", "runtime-a2": "legacy-a", "runtime-b": "legacy-b"}
+        targets = [self.action("register-target", {"target": {
+            "id": ident, "fingerprint": f"{ident}-v1", "adapter": adapter,
+            "resources": [self.resource(ident, mode="shared")], "config": {"identity": ident}, "state": {},
+        }}, session=self.first)["data"] for ident, adapter in owners.items()]
+        peer = self.register_fake_target()
+
+        def entry(target):
+            return {
+                "targetId": target["id"], "fingerprint": target["fingerprint"],
+                "descriptorGeneration": target["generation"],
+                "target": {
+                    "id": target["id"], "fingerprint": f"{target['id']}-v2", "adapter": "replacement",
+                    "resources": target["resources"], "config": target["config"], "state": {},
+                },
+            }
+
+        request = {
+            "protocolVersion": 1,
+            "confirm": "REBIND_STOPPED",
+            "oldAdapters": [{"name": name, "sha256": pins[name]} for name in ("legacy-a", "legacy-b")],
+            "newAdapter": {"name": "replacement", "sha256": pins["replacement"]},
+            "targets": [entry(target) for target in targets],
+        }
+        return {
+            "request": request, "pins": pins, "owners": owners, "peer": peer, "markers": markers,
+            "inspected": inspected, "blocked": blocked, "state_file": self.root / "state.json",
+        }
+
+    def test_multi_pin_rebind_rejects_malformed_or_incomplete_mappings_before_adapter_calls(self):
+        fixture = self.multi_pin_fixture()
+        request, pins = fixture["request"], fixture["pins"]
+        legacy_a = {"name": "legacy-a", "sha256": pins["legacy-a"]}
+        legacy_b = {"name": "legacy-b", "sha256": pins["legacy-b"]}
+        cases = [
+            ("both selectors", {**request, "oldAdapter": legacy_a}, "Invalid"),
+            ("neither selector", {k: v for k, v in request.items() if k != "oldAdapters"}, "Invalid"),
+            ("empty list", {**request, "oldAdapters": []}, "Invalid"),
+            ("duplicate pin", {**request, "oldAdapters": [legacy_a, {**legacy_a, "name": "LEGACY-A"}, legacy_b]},
+             "Conflict"),
+            ("old equals new", {**request, "oldAdapters": [legacy_a, {"name": "REPLACEMENT",
+                                                                     "sha256": pins["replacement"]}]}, "Conflict"),
+            ("wrong digest", {**request, "oldAdapters": [legacy_a, {"name": "legacy-b", "sha256": pins["spare"]}]},
+             "Conflict"),
+            ("incomplete pin", {**request, "targets": request["targets"][1:]}, "Conflict"),
+            ("unselected pin", {**request, "oldAdapters": [legacy_a]}, "Conflict"),
+            ("pin without targets", {**request, "oldAdapters": [legacy_a, legacy_b,
+                                                                {"name": "spare", "sha256": pins["spare"]}]},
+             "Conflict"),
+            ("duplicate target", {**request, "targets": request["targets"] + request["targets"][:1]}, "Conflict"),
+        ]
+        before = fixture["state_file"].read_bytes()
+        for label, variant, code in cases:
+            with self.subTest(label):
+                process, error = self.action("rebind-adapter", variant, session=self.first, check=False)
+                self.assertNotEqual(process.returncode, 0)
+                self.assertEqual(error["code"], code)
+                self.assertEqual(fixture["state_file"].read_bytes(), before)
+                self.assertFalse(fixture["inspected"].exists())
+                self.assertFalse(any(marker.exists() for marker in fixture["markers"].values()))
+
+    def test_multi_pin_rebind_is_atomic_across_all_old_pins(self):
+        fixture = self.multi_pin_fixture()
+        request, pins, owners = fixture["request"], fixture["pins"], fixture["owners"]
+        state_file = fixture["state_file"]
+        before = state_file.read_bytes()
+
+        fixture["blocked"].touch()
+        process, error = self.action("rebind-adapter", request, session=self.first, check=False)
+        self.assertNotEqual(process.returncode, 0)
+        self.assertEqual(error["code"], "Lifecycle")
+        self.assertEqual(state_file.read_bytes(), before)
+        self.assertFalse(any(marker.exists() for marker in fixture["markers"].values()))
+
+        fixture["blocked"].unlink()
+        self.action("rebind-adapter", request, session=self.first)
+        self.assertFalse(any(marker.exists() for marker in fixture["markers"].values()))
+        inspected = {tuple(line.split()) for line in fixture["inspected"].read_text(encoding="utf-8").splitlines()}
+        self.assertEqual(inspected, {(ident, adapter) for ident, adapter in owners.items()})
+
+        final = self.action("inspect")["data"]["state"]
+        by_id = {item["id"]: item for item in final["targets"]}
+        for ident in owners:
+            self.assertEqual(by_id[ident]["adapter"], "replacement")
+        self.assertIn(fixture["peer"], final["targets"])
+        records = [item for item in final["history"] if item["kind"] == "adapter-rebind"]
+        self.assertEqual({item["replacementId"]: item["oldAdapter"]["name"] for item in records}, owners)
+        for item in records:
+            self.assertEqual(item["oldAdapter"]["sha256"], pins[item["oldAdapter"]["name"]])
+            self.assertEqual(item["newAdapter"]["name"], "replacement")
 
     def test_adapter_rebind_is_stopped_only_and_atomic_for_the_whole_pin(self):
         old_called = self.root.parent / "old-called"

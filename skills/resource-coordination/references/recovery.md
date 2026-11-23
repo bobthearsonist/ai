@@ -126,7 +126,9 @@ activation; release/park/thaw/release-turn rather than starting again. A failed
 `prepare` retains its operation claims and pending FIFO request, not a fabricated
 turn; recover first, then retry/cancel the request. A failed supersession preserves
 `operation.pendingDescriptor` across repeated recovery attempts: its inspection
-must independently prove stopped before any recovery mutation or completion.
+must independently prove stopped before any recovery mutation or completion. A failed
+confirmed scope expansion likewise keeps the whole union claim and its pending
+inventory until that proof succeeds.
 
 Successful recovery:
 
@@ -149,10 +151,10 @@ Adoption does not erase the queue. It does not permit jumping a waiting target.
 | Failed/partial Stop | Keep slot occupied/faulted; repair exact owned shutdown, then `stop-owned` or `verify-stopped`; never start B |
 | Partial Start | Inspect persisted attempt identities; reconcile only that attempt; retain data; no automatic rollback to the previous target |
 | Unknown/unexpected running target | Explicit adoption with matching descriptor, or operator-scoped shutdown followed by stopped proof |
-| Adapter changed on disk | Restore the exact trusted pinned script to reconcile its runtime; new code requires a new registered name/path after safe parking |
+| Adapter changed on disk | Restore the exact trusted pinned script to reconcile its runtime; new code requires a new registered name/path after safe parking. Several unusable pins migrate atomically through one `rebind-adapter` with `oldAdapters` |
 | Controller died while run/transition active | Resume owner session and token; inspect exact resources; recover, never remove lock files |
 | Long-held use/manual claim | Ask/resume that owner to release; no timeout, force release, or session GC |
-| Changed descriptor/config/composition | Park/reconcile; `supersede-target` the unreferenced stopped generation with complete equal physical resources; retain old descriptor in history |
+| Changed descriptor/config/composition | Park/reconcile; `supersede-target` the unreferenced stopped generation with complete equal physical resources; retain old descriptor in history. For an incomplete stopped legacy generation, `supersede-target` with `confirm: "EXPAND_STOPPED"` may only add tuples |
 | Known owned runtime not ready/content drift | Reject reuse/Start; authorized park can Stop established identities without readiness; stopped content blockers do not prevent cleanup |
 | Prepared turn holder disappeared | Resume its exact owner; inspect/recover any operation, park if needed, thaw, release-turn; never expire the turn |
 | Reboot | Resume live owners to release/reconcile; if every owner departed and the root is completely idle, use the explicit recovery-only join above, then inventory and reconcile before new work |

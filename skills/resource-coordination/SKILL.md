@@ -67,6 +67,8 @@ to "it" or descriptor-only shorthand.
    Runtime reservations belong to the target; any successful current participant
    can park after users drain. The last participant's departure parks automatically.
    Retire rebuilt descriptors only through verified stopped `supersede-target`.
+   An incomplete stopped legacy descriptor may be widened only with
+   `confirm: "EXPAND_STOPPED"`, which is additive-only and same-ID.
 7. On uncertainty, stop. Read ownership and follow explicit recovery; never steal
    by age, delete locks/state, kill by process name, or start another target after
    an incomplete stop/start.

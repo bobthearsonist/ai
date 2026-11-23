@@ -494,7 +494,26 @@ def _pending_descriptor_stopped(store: RoomStore, token: dict[str, Any]) -> dict
     return inspection
 
 
+def _scope_expansion(
+    old: dict[str, Any], replacement: dict[str, Any],
+    old_scopes: list[tuple[str, str, str]], new_scopes: list[tuple[str, str, str]],
+) -> list[tuple[str, str, str]]:
+    if replacement["id"] != old["id"]:
+        fail("Descriptor", "Scope expansion requires the exact same target ID.", 3)
+    retained = set(old_scopes)
+    if not retained <= set(new_scopes):
+        fail("Descriptor", "Scope expansion must preserve every existing identity and mode; omissions, rebinds and mode changes are rejected.", 3)
+    added = sorted(set(new_scopes) - retained)
+    known = {(kind, identity) for kind, identity, _ in retained}
+    if not added or any((kind, identity) in known for kind, identity, _ in added):
+        fail("Descriptor", "Scope expansion must add only new identities; an empty addition or a changed mode is not an expansion.", 3)
+    return added
+
+
 def supersede_target(store: RoomStore, request: dict[str, Any], owner: str) -> Any:
+    expanding = "confirm" in request
+    if expanding and request["confirm"] != "EXPAND_STOPPED":
+        fail("Invalid", "Scope expansion requires confirm: EXPAND_STOPPED; any other confirmation is rejected.")
     lock = _operation_lock(store, "supersede-target", owner)
     token = None
     try:
@@ -509,6 +528,8 @@ def supersede_target(store: RoomStore, request: dict[str, Any], owner: str) -> A
             assert_target_version(old, request)
             turn = None
             except_ids: list[str] = []
+            if runtime["turn"] is not None and expanding:
+                fail("Conflict", "Scope expansion cannot proceed while a prepared turn exists; use exact supersession for its unactivated candidate.", 3)
             if runtime["turn"] is not None:
                 turn = get_owned_turn(state, request, owner)
                 barrier = get_turn_barrier(state, turn, frozen=True)
@@ -526,16 +547,22 @@ def supersede_target(store: RoomStore, request: dict[str, Any], owner: str) -> A
                 fail("Descriptor", "Replacement target ID is already registered.", 3)
             old_scopes = sorted({(x["kind"], x["identity"], x["mode"]) for x in old["resources"]})
             new_scopes = sorted({(x["kind"], x["identity"], x["mode"]) for x in replacement["resources"]})
-            if old_scopes != new_scopes:
+            added: list[tuple[str, str, str]] = []
+            if expanding:
+                added = _scope_expansion(old, replacement, old_scopes, new_scopes)
+            elif old_scopes != new_scopes:
                 fail("Descriptor", "Supersession must preserve every physical resource identity and mode; no coverage may be omitted or rebound.", 3)
-            resources = convert_resources(old["resources"], exclusive=True)
+            source = [*old["resources"], *replacement["resources"]] if expanding else old["resources"]
+            resources = convert_resources(source, exclusive=True)
             assert_claims_available(state, resources, except_ids)
+            if expanding:
+                invalidate_readiness(state, resources)
             claim = add_claim(state, owner, "", "operation", resources)
             new_token = _new_operation(state, owner, "supersede-target", old["id"], [claim])
             state["operation"]["pendingDescriptor"] = replacement
             if turn is not None:
                 state["operation"]["barrier"] = {"roomId": turn["roomId"], "generation": turn["barrierGeneration"]}
-            return {"token": new_token, "old": old, "replacement": replacement}
+            return {"token": new_token, "old": old, "replacement": replacement, "added": added}
 
         start = _transaction(store, begin)
         token = start["token"]
@@ -554,10 +581,16 @@ def supersede_target(store: RoomStore, request: dict[str, Any], owner: str) -> A
                 "action": "Inspect", "status": inspection["status"], "ready": inspection["ready"],
                 "blockers": inspection["blockers"], "at": now(),
             }
-            state["history"].append({
+            record = {
                 "kind": "descriptor-supersession", "owner": owner, "at": now(), "retired": old,
                 "replacementId": replacement["id"], "replacementGeneration": replacement["generation"],
-            })
+            }
+            if start["added"]:
+                record["kind"] = "descriptor-expansion"
+                record["addedResources"] = [
+                    {"kind": kind, "identity": identity, "mode": mode} for kind, identity, mode in start["added"]
+                ]
+            state["history"].append(record)
             state["targetGeneration"] = replacement["generation"]
             state["targets"] = [item for item in state["targets"] if item["id"] != old["id"]] + [replacement]
             turn = state["runtime"]["turn"]
@@ -585,9 +618,18 @@ def rebind_adapter(store: RoomStore, request: dict[str, Any], owner: str) -> Any
     if (type(request.get("protocolVersion")) is not int or request["protocolVersion"] != 1
             or request.get("confirm") != "REBIND_STOPPED"):
         fail("Invalid", "Rebind requires protocolVersion 1 and confirmation REBIND_STOPPED.")
-    old_pin, new_pin = (require_map(required(request, key), key) for key in ("oldAdapter", "newAdapter"))
-    old_name, new_name = (text(pin, "name") for pin in (old_pin, new_pin))
-    if old_name.casefold() == new_name.casefold():
+    if ("oldAdapter" in request) == ("oldAdapters" in request):
+        fail("Invalid", "Rebind requires exactly one of oldAdapter or oldAdapters.")
+    raw_old = [required(request, "oldAdapter")] if "oldAdapter" in request else required(request, "oldAdapters")
+    if not isinstance(raw_old, list) or not raw_old:
+        fail("Invalid", "Rebind oldAdapters must be a nonempty array.")
+    old_pins = [require_map(item, "Old adapter") for item in raw_old]
+    old_keys = [text(pin, "name").casefold() for pin in old_pins]
+    if len(set(old_keys)) != len(old_keys):
+        fail("Conflict", "Rebind old adapter registrations must be distinct.", 3)
+    new_pin = require_map(required(request, "newAdapter"), "newAdapter")
+    new_name = text(new_pin, "name")
+    if new_name.casefold() in old_keys:
         fail("Conflict", "A rebind requires a distinct registered adapter name.", 3)
     entries = required(request, "targets")
     if not isinstance(entries, list) or not entries:
@@ -601,15 +643,21 @@ def rebind_adapter(store: RoomStore, request: dict[str, Any], owner: str) -> Any
         if runtime["status"] != "stopped" or runtime["targetId"] or runtime["uses"] or runtime["turn"] is not None:
             fail("Busy", "Park the machine and release all uses and prepared turns before rebinding an adapter.", 6)
 
-        # Compare the old registration without touching an unusable or missing pinned file.
-        old_adapter = next((pin for pin in state["adapters"] if pin["name"] == old_name), None)
-        if old_adapter is None or old_adapter["sha256"] != text(old_pin, "sha256").upper():
-            fail("Conflict", "The exact old adapter registration does not match.", 3)
+        # Compare the old registrations without touching an unusable or missing pinned file.
+        registrations = {}
+        for old_pin, key in zip(old_pins, old_keys):
+            registration = next((pin for pin in state["adapters"] if pin["name"].casefold() == key), None)
+            if registration is None or registration["sha256"] != text(old_pin, "sha256").upper():
+                fail("Conflict", "The exact old adapter registration does not match.", 3)
+            registrations[key] = registration
         new_adapter = get_adapter(state, new_name)
         if new_adapter["name"] != new_name or new_adapter["sha256"] != text(new_pin, "sha256").upper():
             fail("Conflict", "The exact replacement adapter registration does not match.", 3)
 
-        originals = {item["id"]: item for item in state["targets"] if item["adapter"].casefold() == old_name.casefold()}
+        originals = {item["id"]: item for item in state["targets"] if item["adapter"].casefold() in registrations}
+        for key in registrations:
+            if not any(item["adapter"].casefold() == key for item in originals.values()):
+                fail("Conflict", "Every selected old adapter pin must own at least one target.", 3)
         changes = {}
         for item in entries:
             entry = require_map(item, "Rebind target")
@@ -624,21 +672,21 @@ def rebind_adapter(store: RoomStore, request: dict[str, Any], owner: str) -> Any
                 fail("Conflict", "Rebind must preserve the target ID and every physical resource identity and mode.", 3)
             changes[ident] = replacement
         if changes.keys() != originals.keys():
-            fail("Conflict", "Rebind must cover every target using the old adapter pin.", 3)
+            fail("Conflict", "Rebind must cover every target using a selected old adapter pin.", 3)
         if any(item["targetId"] in originals for item in state["requests"]):
             fail("Busy", "Cancel outstanding requests for the old descriptor generations first.", 6)
         assert_claims_available(state, [
             resource for original in originals.values()
             for resource in convert_resources(original["resources"], exclusive=True)
         ])
-        return state["revision"], old_adapter, new_adapter, changes, [
+        return state["revision"], registrations, new_adapter, changes, [
             (target, new_adapter if target["id"] in changes else get_adapter(state, target["adapter"]))
             for target in state["targets"]
         ]
 
     lock = _operation_lock(store, store.action, owner)
     try:
-        revision, old_adapter, new_adapter, changes, inventory = _transaction(store, select, read_only=True)
+        revision, registrations, new_adapter, changes, inventory = _transaction(store, select, read_only=True)
         inspections = {}
         for target, adapter in inventory:
             ident = target["id"]
@@ -670,7 +718,7 @@ def rebind_adapter(store: RoomStore, request: dict[str, Any], owner: str) -> Any
                 }
                 state["history"].append({
                     "kind": "adapter-rebind", "owner": owner, "at": now(), "oldTarget": old,
-                    "oldAdapter": old_adapter, "newAdapter": new_adapter,
+                    "oldAdapter": registrations[old["adapter"].casefold()], "newAdapter": new_adapter,
                     "replacementId": ident, "replacementGeneration": replacement["generation"],
                 })
                 state["targets"][index] = replacement

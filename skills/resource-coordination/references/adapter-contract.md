@@ -60,8 +60,11 @@ after verified parking (or within a stopped prepared candidate turn) for changed
 composition, including repeated generations of the **same target ID**. The action
 preserves the old descriptor in history and atomically replaces active inventory.
 A request must match both fingerprint and `generation` returned by registration
-or supersession. Resource identities and modes must remain exactly covered; this
-action cannot silently move/drop physical resources.
+or supersession. Resource identities and modes must remain exactly covered, with one
+explicit exception: a stopped descriptor may be widened by `supersede-target` only
+with `confirm: "EXPAND_STOPPED"`. That request keeps the same target ID, preserves
+every existing identity/mode tuple unchanged, and adds at least one new tuple. Without
+that confirmation the action cannot silently move, drop or add physical resources.
 
 Normal lifecycle actions called by the core are **Inspect**, **Start**, **Stop**. A domain
 adapter may separately expose **Resolve** for its consumer to produce a descriptor;
