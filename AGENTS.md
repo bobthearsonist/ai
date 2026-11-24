@@ -33,6 +33,7 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Wrap commands in `bash -c "..."` or other sub-shells                      | Run commands directly — sub-shells obscure intent and may trigger approval                    |
 | `cd` into a repo to run git commands                                      | Use `git -C <path>` to target repos without changing working directory                        |
 | Suggest taking a break, "wrap for the day?", or warn about long sessions  | User drives session pacing — keep working; they'll say when to stop                           |
+| Send a message as the user - Teams, chat, email, Slack, channel posts - that the user did not ask for | Draft it and show the exact text and recipients; send only after an explicit yes. A direct instruction in the user's own words ("then send it to Michael") is that yes; picking an option or plan you wrote that mentions sending is not |
 | Do bounded research/exploration inline, flooding main context             | Delegate to a subagent (`Explore`/`general-purpose`); keep the conclusion, not the file dumps |
 
 ## Task Management
