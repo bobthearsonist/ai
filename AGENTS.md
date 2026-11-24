@@ -272,6 +272,18 @@ developer with no knowledge of this session.**
 
 ---
 
+## Skills vs Docs
+
+- **Durable knowledge goes in the owning repo's docs** (README or `docs/`): setup procedures,
+  config rationale, how-tos, anything a human would also want to read.
+- **Skills reference those docs instead of copying them.** A skill keeps agent-only routing:
+  which repo, file, variable group or command to touch, and which doc to read first.
+  Copied procedures drift, and the stale copy is the one agents end up following.
+- **Skills describe the current state only.** No history sections. Git history holds the past;
+  cite a commit if an old setup is worth finding again.
+
+---
+
 ## Worktree Directory
 
 Create each worktree as a **flat sibling** to the repo — not nested inside it or inside a container directory. This avoids issues with relative paths, directory structure dependencies, and build tool assumptions.
