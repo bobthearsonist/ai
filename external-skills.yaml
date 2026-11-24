@@ -10,6 +10,11 @@
 #   - git: Clone from remote repo
 #   - internal: Skill source is tracked in this repository
 #
+# Optional `plugin: <name>` marks a skill that its publisher also ships inside a
+# Claude-format plugin. On a machine whose local.yaml lists that plugin under
+# `plugins:`, Claude Code and Copilot CLI get the skill from the plugin, so
+# sync.sh leaves it out of skills-without-plugins/. See docs/plugins.md.
+#
 # Structure: All skills sync to skills/<name>/
 
 skills:
@@ -86,3 +91,41 @@ skills:
     branch: main
     path: skills/infographic-template-updater
     target: skills/infographic-template-updater
+
+  # === Obsidian's official agent skills (external, git-synced) ===
+  # Also published as plugin `obsidian` in the obsidian-skills marketplace.
+  - name: obsidian-markdown
+    type: git
+    description: Obsidian Flavored Markdown - wikilinks, embeds, callouts, properties
+    source: https://github.com/obsidianmd/obsidian-skills.git
+    branch: main
+    path: plugins/obsidian/skills/obsidian-markdown
+    target: skills/obsidian-markdown
+    plugin: obsidian
+
+  - name: obsidian-bases
+    type: git
+    description: Obsidian Bases (.base) views, filters, formulas and summaries
+    source: https://github.com/obsidianmd/obsidian-skills.git
+    branch: main
+    path: plugins/obsidian/skills/obsidian-bases
+    target: skills/obsidian-bases
+    plugin: obsidian
+
+  - name: json-canvas
+    type: git
+    description: JSON Canvas (.canvas) files with nodes, edges and groups
+    source: https://github.com/obsidianmd/obsidian-skills.git
+    branch: main
+    path: plugins/obsidian/skills/json-canvas
+    target: skills/json-canvas
+    plugin: obsidian
+
+  - name: obsidian-cli
+    type: git
+    description: Working with vaults through the Obsidian CLI
+    source: https://github.com/obsidianmd/obsidian-skills.git
+    branch: main
+    path: plugins/obsidian/skills/obsidian-cli
+    target: skills/obsidian-cli
+    plugin: obsidian

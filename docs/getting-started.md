@@ -92,8 +92,8 @@ For Claude Code on macOS:
 ```bash
 mkdir -p ~/.claude
 ln -sfn ~/AI/AGENTS.md ~/.claude/CLAUDE.md
-ln -sfn ~/AI/skills ~/.claude/skills
-ln -sfn ~/AI/agents ~/.claude/agents
+ln -sfn ~/AI/skills-without-plugins ~/.claude/skills
+ln -sfn ~/AI/agents-without-plugins ~/.claude/agents
 ```
 
 For OpenCode, point its config at the shared files or use the Claude-compatible skill paths it already discovers. See [Client support](client-support.md) for more options and Windows examples.
@@ -110,7 +110,7 @@ Then open your AI client and ask it to list available skills. If a skill does no
 
 1. The source skill has `SKILL.md` with valid `name` and `description` frontmatter.
 2. `./scripts/sync.sh` linked it under `~/AI/skills/<name>`.
-3. Your client is configured to read `~/AI/skills`.
+3. Your client is configured to read `~/AI/skills` (Claude Code and Copilot CLI: `~/AI/skills-without-plugins`, which leaves out skills a configured plugin delivers).
 4. You restarted or reloaded the client after changing skill paths.
 
 ## Updating Later

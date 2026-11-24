@@ -100,8 +100,8 @@ macOS/Linux:
 ```bash
 mkdir -p ~/.claude
 ln -sfn ~/AI/AGENTS.md ~/.claude/CLAUDE.md
-ln -sfn ~/AI/skills ~/.claude/skills
-ln -sfn ~/AI/agents ~/.claude/agents
+ln -sfn ~/AI/skills-without-plugins ~/.claude/skills
+ln -sfn ~/AI/agents-without-plugins ~/.claude/agents
 ```
 
 Windows PowerShell:
@@ -109,9 +109,11 @@ Windows PowerShell:
 ```powershell
 New-Item -ItemType Directory -Force -Path "$HOME\.claude"
 cmd /c mklink "$env:USERPROFILE\.claude\CLAUDE.md" "$env:USERPROFILE\AI\AGENTS.md"
-cmd /c mklink /J "$env:USERPROFILE\.claude\skills" "$env:USERPROFILE\AI\skills"
-cmd /c mklink /J "$env:USERPROFILE\.claude\agents" "$env:USERPROFILE\AI\agents"
+cmd /c mklink /J "$env:USERPROFILE\.claude\skills" "$env:USERPROFILE\AI\skills-without-plugins"
+cmd /c mklink /J "$env:USERPROFILE\.claude\agents" "$env:USERPROFILE\AI\agents-without-plugins"
 ```
+
+Claude Code loads plugins, so it reads the `*-without-plugins` views: skills and agents that a configured plugin already delivers would otherwise load twice. See [Plugins](plugins.md).
 
 If `~/.claude/skills` already exists as a real directory, move it aside first and keep it as a backup until migration is verified.
 
@@ -129,7 +131,14 @@ Example `opencode.json`:
 }
 ```
 
-If your OpenCode version discovers Claude-compatible skills, the Claude symlink setup above is enough for global skills.
+OpenCode does not load plugins, so give it the full skills folder:
+
+```bash
+mkdir -p ~/.config/opencode
+ln -sfn ~/AI/skills ~/.config/opencode/skills
+```
+
+OpenCode also reads `~/.claude/skills`, which leaves out plugin-delivered skills. Its own folder is registered later, and a later source replaces an earlier skill with the same ID, so each skill appears once.
 
 ## Cline
 

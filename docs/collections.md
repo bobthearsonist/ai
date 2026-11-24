@@ -35,8 +35,24 @@ This links:
 | `agents` | empty | Agent files/directories to link into `~/AI/agents` |
 | `hooks` | empty | Hook files/directories to link into `~/AI/hooks` |
 | `links` | empty | Other root-level links to expose from the collection |
+| `plugin` | none | Plugin under `plugins:` that also delivers this collection's skills and agents (see below) |
 
 Collections whose `path` does not exist are skipped. This lets the same `local.yaml` work on personal and work machines if only some source repos are available.
+
+## Plugin Collections
+
+When a collection's repo also ships as a Claude-format plugin, name the plugin:
+
+```yaml
+collections:
+  private:
+    path: ~/Repositories/ai-private
+    plugin: ai-private
+    skills:
+      - obsidian-notes
+```
+
+If `ai-private` is listed under `plugins:` on this machine, `sync.sh` still links the collection's skills and agents into `skills/` and `agents/` for clients without plugin support, but leaves them out of `skills-without-plugins/` and `agents-without-plugins/`, which Claude Code and Copilot CLI read. Those clients get them from the plugin instead. See [Plugins](plugins.md).
 
 ## Published Skills
 

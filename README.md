@@ -24,12 +24,17 @@ ${EDITOR:-vi} local.yaml
 # 3. Sync local collections and git-managed skills into ~/AI/skills.
 ./scripts/sync.sh
 
-# 4. Wire common clients to the shared skill output.
-mkdir -p ~/.claude ~/.copilot
+# 4. Wire common clients to the shared skill output. Clients that load plugins
+#    read the *-without-plugins views so plugin skills do not load twice.
+mkdir -p ~/.claude ~/.copilot ~/.config/opencode
 [ -e ~/.claude/CLAUDE.md ] || ln -s ~/AI/AGENTS.md ~/.claude/CLAUDE.md
-[ -e ~/.claude/skills ] || ln -s ~/AI/skills ~/.claude/skills
-[ -e ~/.claude/agents ] || ln -s ~/AI/agents ~/.claude/agents
-[ -e ~/.copilot/skills ] || ln -s ~/AI/skills ~/.copilot/skills
+[ -e ~/.claude/skills ] || ln -s ~/AI/skills-without-plugins ~/.claude/skills
+[ -e ~/.claude/agents ] || ln -s ~/AI/agents-without-plugins ~/.claude/agents
+[ -e ~/.copilot/skills ] || ln -s ~/AI/skills-without-plugins ~/.copilot/skills
+[ -e ~/.config/opencode/skills ] || ln -s ~/AI/skills ~/.config/opencode/skills
+
+# Optional: choose dev or published copies of your plugins (docs/plugins.md).
+./scripts/plugins.sh --dry-run
 
 # 5. Verify dependencies, collections, symlinks, and client wiring.
 ./scripts/doctor.sh
@@ -44,6 +49,7 @@ mkdir -p ~/.claude ~/.copilot
 - **Bring existing local skills under this workflow:** [Migration guide](docs/migration-guide.md)
 - **Configure `local.yaml` collections:** [Collections reference](docs/collections.md)
 - **Point AI clients at synced skills:** [Client support](docs/client-support.md)
+- **Develop plugins and choose dev or published copies:** [Plugins](docs/plugins.md)
 - **Add or improve a shared skill:** [Contributing](CONTRIBUTING.md)
 - **Understand the repo layout:** [Skills and agents architecture](docs/skills-agents-architecture.md)
 
@@ -55,14 +61,14 @@ This repo is a portability layer, not a dumping ground. It keeps the shared cont
 
 **Local machine config:** `local.yaml` is gitignored and points at your personal, work, or team skill repos. This is where paths differ by machine.
 
-**Generated/synced output:** `skills/`, `agents/`, and other collection links are produced by `scripts/sync.sh`. Do not make personal skills there directly; edit the source repo and sync again.
+**Generated/synced output:** `skills/`, `agents/`, their `*-without-plugins` views, and other collection links are produced by `scripts/sync.sh`. Do not make personal skills there directly; edit the source repo and sync again.
 
 ## Core Workflow
 
 1. Keep your real skill source in a repo you own, such as `~/Repositories/my-ai-skills/skills/<name>/SKILL.md`.
 2. Register that repo in `local.yaml` under `collections`.
 3. Run `./scripts/sync.sh`.
-4. Configure your AI clients to read `~/AI/skills` and `~/AI/agents`.
+4. Configure your AI clients: Claude Code and Copilot CLI read `~/AI/skills-without-plugins` and `~/AI/agents-without-plugins`; clients without plugin support read `~/AI/skills` and `~/AI/agents`.
 5. Share broadly useful improvements by PR rather than editing synced output.
 
 See the [migration guide](docs/migration-guide.md) for the full path from existing local skills to shared project or team skills.
@@ -75,6 +81,7 @@ This repo separates source-of-truth content from generated/synced output:
 - **Git-fetched skills** from public sources are listed in `external-skills.yaml` with `type: git`; `sync.sh` copies them into `skills/`.
 - **Personal or work skills** live in your own repos and are listed in `local.yaml`; `sync.sh` symlinks them into `skills/`.
 - **Project-shared skills** should live in the project repo that needs them, usually under `.github/skills/` or `.claude/skills/`, when they are only useful to that project.
+- **Plugins** are repos that also ship as Claude-format plugins (skills, agents, commands and hooks together). `local.yaml` lists them under `plugins:`; `scripts/plugins.sh` makes Claude Code and Copilot CLI load the working copy (`dev`) or the published one on each machine. See [Plugins](docs/plugins.md).
 
 ## Contributing
 

@@ -99,10 +99,80 @@ refresh_collection_ref() {
     echo "  → $path at $ref ($(git -C "$path" rev-parse --short HEAD))"
 }
 
+# skills/ and agents/ entries (e.g. "skills/obsidian-cli") that a plugin listed
+# under `plugins:` in local.yaml also delivers. Clients that load plugins would
+# otherwise see them twice.
+plugin_delivered=()
+
+plugin_configured() {
+    [[ -n "$1" && -f "$LOCAL_CONFIG" ]] || return 1
+    [[ "$(P="$1" yq e '.plugins // {} | has(strenv(P))' "$LOCAL_CONFIG")" == "true" ]]
+}
+
+is_plugin_delivered() {
+    local entry="$1" item
+    for item in "${plugin_delivered[@]}"; do
+        [[ "$item" == "$entry" ]] && return 0
+    done
+    return 1
+}
+
+has_plugin_delivered_inside() {
+    local dir="$1" item
+    for item in "${plugin_delivered[@]}"; do
+        [[ "$item" == "$dir/"* ]] && return 0
+    done
+    return 1
+}
+
+# Links every entry of src into dst except plugin-delivered ones. A real
+# directory holding plugin-delivered entries (nested names such as
+# agents/opencode/x.md) is recreated in dst so only its other entries are linked.
+link_view_entries() {
+    local src="$1" dst="$2" entry name
+    for entry in "$src"/*; do
+        # Skip the empty-glob literal and dangling links; doctor.sh reports those.
+        [[ -e "$entry" ]] || continue
+        name=$(basename "$entry")
+        if is_plugin_delivered "$entry"; then
+            view_skipped=$((view_skipped + 1))
+        elif [[ -d "$entry" && ! -L "$entry" ]] && has_plugin_delivered_inside "$entry"; then
+            mkdir -p "$dst/$name"
+            link_view_entries "$entry" "$dst/$name"
+            # Drop the folder when every entry in it came from a plugin.
+            rmdir "$dst/$name" 2>/dev/null || true
+        else
+            ln -s "$(readlink -f "$entry")" "$dst/$name"
+            view_kept=$((view_kept + 1))
+        fi
+    done
+}
+
+# Rebuilds <source_dir>-without-plugins/ from scratch. Claude Code and Copilot
+# CLI read these views; clients without plugin support read skills/ and agents/.
+build_view() {
+    local source_dir="$1" view_dir="$1-without-plugins" tmp="$1-without-plugins.tmp"
+    view_kept=0
+    view_skipped=0
+
+    [[ -d "$source_dir" ]] || return 0
+    rm -rf "$tmp"
+    mkdir -p "$tmp"
+    link_view_entries "$source_dir" "$tmp"
+    rm -rf "$view_dir"
+    mv "$tmp" "$view_dir"
+
+    echo "  → $view_dir ($view_kept linked, $view_skipped left to plugins)"
+}
+
 # Reports git skills that failed to fetch and exits non-zero after everything
 # else has synced, so one bad entry cannot hide the rest or pass silently.
 failed_skills=()
 finish() {
+    echo "=== Views for clients that load plugins ==="
+    build_view skills
+    build_view agents
+
     if (( ${#failed_skills[@]} )); then
         echo "Done with errors — could not sync: ${failed_skills[*]}"
         exit 1
@@ -134,6 +204,11 @@ for ((i=0; i<count; i++)); do
             fi
             ;;
     esac
+
+    plugin=$(yq e ".skills[$i].plugin // \"\"" "$MANIFEST")
+    if plugin_configured "$plugin"; then
+        plugin_delivered+=("skills/$(basename "$target")")
+    fi
 done
 
 # === Sync collections from local.yaml ===
@@ -185,6 +260,9 @@ sync_collection_items() {
         else
             echo "Syncing: $link_name ($key symlink)"
             sync_symlink "$source_path" "$target_dir/$link_name"
+            if [[ "$collection_plugin" == true && ( "$key" == "skills" || "$key" == "agents" ) ]]; then
+                plugin_delivered+=("$target_dir/$link_name")
+            fi
         fi
     done
 }
@@ -207,6 +285,11 @@ for collection in $collection_names; do
 
     ref=$(yq e ".collections.$collection.ref // \"\"" "$LOCAL_CONFIG")
     [[ -n "$ref" ]] && refresh_collection_ref "$path" "$ref"
+
+    collection_plugin=false
+    if plugin_configured "$(yq e ".collections.$collection.plugin // \"\"" "$LOCAL_CONFIG")"; then
+        collection_plugin=true
+    fi
 
     skills_dir=$(yq e ".collections.$collection.skills_dir // \"skills\"" "$LOCAL_CONFIG")
     agents_dir=$(yq e ".collections.$collection.agents_dir // \"agents\"" "$LOCAL_CONFIG")

@@ -100,6 +100,49 @@ collections:
   #   skills:
   #     - incident-response
 
+  # Plugin collection - a repo whose skills and agents also ship inside a
+  # Claude-format plugin. `plugin` names an entry under `plugins:` below. When
+  # that entry exists on this machine, Claude Code and Copilot CLI get these
+  # items from the plugin, so sync.sh leaves them out of skills-without-plugins/
+  # and agents-without-plugins/. Clients without plugin support (OpenCode) still
+  # get them through skills/ and agents/. See docs/plugins.md.
+  # CONSUMED: scripts/sync.sh reads .collections.<name>.plugin
+  # my_plugin_repo:
+  #   path: ~/Repositories/my-plugin
+  #   plugin: my-plugin
+  #   skills:
+  #     - my-plugin-skill
+  #   agents:
+  #     - my-plugin-agent.md
+
+# Which copy of each Claude-format plugin Claude Code and Copilot CLI load on
+# this machine. `dev` loads your working copy in place from a local marketplace,
+# so edits reach the next session without publishing. `published` installs it
+# from its own marketplace. The copy not chosen is disabled, because both
+# clients let a plugin shadow a same-named one. Apply changes with
+# ./scripts/plugins.sh. See docs/plugins.md.
+
+dev_marketplace:
+  # CONSUMED: scripts/plugins.sh writes <root>/.claude-plugin/marketplace.json
+  # listing every plugin under `plugins:` that has a `path`, and registers it
+  # with both clients. root must contain each plugin's folder: both clients
+  # skip symlinks that point outside a local marketplace.
+  name: local
+  root: /path/to/repositories
+
+plugins:
+  # CONSUMED: scripts/plugins.sh reads mode, path, marketplace and
+  # marketplace_source. scripts/sync.sh reads which plugins are listed.
+  my-plugin:
+    mode: dev                     # dev | published
+    path: my-plugin               # working copy, relative to dev_marketplace.root
+    marketplace: my-marketplace   # where the published copy comes from
+  # A third-party plugin you only install published.
+  # obsidian:
+  #   mode: published
+  #   marketplace: obsidian-skills
+  #   marketplace_source: obsidianmd/obsidian-skills   # added when not registered
+
 # Optional machine context used by some skills/prompts. sync.sh does not require
 # any of these. Keys marked CONSUMED are read by tooling - the rest are
 # reference material for agents and humans.

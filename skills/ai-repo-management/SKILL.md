@@ -29,6 +29,7 @@ or this skill:
 | Collection schema template | `~/AI/local.yaml.example` |
 | Component types, hooks | `~/AI/docs/skills-agents-architecture.md` › Component Types, Hooks |
 | How `ai-private` hooks in, the plugin, hook releases | `~/Repositories/ai-private/README.md`, `~/Repositories/ai-private/docs/PLUGIN.md` |
+| Which copy of a plugin loads (dev or published), and which skill folder each client reads | `~/AI/docs/plugins.md` |
 
 ## Responsibility Boundary
 

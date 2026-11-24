@@ -21,6 +21,11 @@ skills/
 agents/
 hooks/
 
+# Views of skills/ and agents/ without plugin-delivered items, rebuilt by sync.sh
+# for clients that load plugins (see docs/plugins.md).
+skills-without-plugins/
+agents-without-plugins/
+
 # Synced config directory — entire claude/ is a sync.sh-managed symlink to ai-private.
 # No trailing slash so the gitignore rule matches the symlink itself (git treats
 # a symlink-to-directory as a file entry, not a directory entry).

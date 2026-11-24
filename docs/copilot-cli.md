@@ -9,8 +9,8 @@ This page is for the **terminal Copilot CLI** (`copilot`). VS Code's native Copi
 | Content | Source of truth |
 | --- | --- |
 | Instructions | `~/AI/AGENTS.md` |
-| Skills | `~/AI/skills` |
-| Agents | `~/AI/agents` |
+| Skills | `~/AI/skills-without-plugins` (see [Plugins](plugins.md)) |
+| Agents | `~/AI/agents-without-plugins` |
 | Permissions | `~/AI/permissions/permissions.yaml` |
 
 ## Copilot CLI paths
@@ -68,7 +68,7 @@ New-Item -ItemType SymbolicLink `
 If directory symlinks require Developer Mode or elevation on your machine, use a same-volume junction for directories instead:
 
 ```powershell
-cmd /c mklink /J "%USERPROFILE%\.copilot\skills" "%USERPROFILE%\AI\skills"
+cmd /c mklink /J "%USERPROFILE%\.copilot\skills" "%USERPROFILE%\AI\skills-without-plugins"
 ```
 
 Keep `copilot-instructions.md` as a file symlink or a managed copy; junctions are directory-only.
@@ -94,14 +94,14 @@ mkdir -p ~/.copilot
   ln -s ~/AI/AGENTS.md ~/.copilot/copilot-instructions.md
 
 [ -e ~/.copilot/skills ] || \
-  ln -s ~/AI/skills ~/.copilot/skills
+  ln -s ~/AI/skills-without-plugins ~/.copilot/skills
 ```
 
 Optional agents:
 
 ```bash
 [ -e ~/.copilot/agents ] || \
-  ln -s ~/AI/agents ~/.copilot/agents
+  ln -s ~/AI/agents-without-plugins ~/.copilot/agents
 ```
 
 ## Settings
@@ -253,7 +253,7 @@ Expected local wiring on this machine:
 
 ```text
 ~/.copilot/copilot-instructions.md -> ~/AI/AGENTS.md
-~/.copilot/skills                 -> ~/AI/skills
+~/.copilot/skills                 -> ~/AI/skills-without-plugins
 ~/.copilot/extensions/mcp-status  -> ~/AI/copilot/extensions/mcp-status
 ```
 
@@ -262,7 +262,7 @@ Expected local wiring on this machine:
 | Symptom | Check |
 | --- | --- |
 | Instructions not followed | Run `/instructions` and verify `~/.copilot/copilot-instructions.md` or `~/AI/AGENTS.md` is loaded. Restart Copilot after changing symlinks. |
-| Skills not visible | Run `/skills`; verify `~/.copilot/skills` points at `~/AI/skills` and `SKILL.md` files have valid frontmatter. |
+| Skills not visible | Run `/skills`; verify `~/.copilot/skills` points at `~/AI/skills-without-plugins` and `SKILL.md` files have valid frontmatter. |
 | Hooks not firing | Run `/env` to inspect loaded hooks; validate JSON; restart Copilot after changes. |
 | Graphify not prioritized | Confirm `AGENTS.md` graphify section is loaded and that an ancestor `graphify-out/graph.json` exists. |
 | MCP missing | Run `/mcp`; inspect `~/.copilot/mcp-config.json`; remember VS Code `mcp.json` is separate. |

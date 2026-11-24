@@ -141,7 +141,7 @@ Safe migration pattern:
 
 ```bash
 mv ~/.claude/skills ~/.claude/skills.before-ai-repo
-ln -sfn ~/AI/skills ~/.claude/skills
+ln -sfn ~/AI/skills-without-plugins ~/.claude/skills
 ```
 
 Do not delete the backup until the client shows the expected skills. The sync script refuses to overwrite real files or directories for external targets, so messages like this mean you need to move the old path first:

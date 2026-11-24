@@ -63,19 +63,22 @@ flowchart LR
 ├── local.yaml.example
 ├── scripts/
 │   ├── sync.sh
+│   ├── plugins.sh
 │   └── doctor.sh
 ├── skills/
+├── skills-without-plugins/
 ├── agents/
+├── agents-without-plugins/
 ├── rules/
 ├── prompts/
 └── permissions/
 ```
 
-`skills/` and `agents/` are mostly sync output and are gitignored. Add shared repo-owned skills with `git add -f` only when they are intentionally internal toolkit skills.
+`skills/` and `agents/` are mostly sync output and are gitignored. Add shared repo-owned skills with `git add -f` only when they are intentionally internal toolkit skills. The `*-without-plugins` views are rebuilt by every sync for clients that load plugins; see [Plugins](plugins.md).
 
 ## Sync Flow
 
-Every client reads `skills/`, so what lands there decides where a change must be made:
+Every client reads `skills/`, directly or through `skills-without-plugins/`, so what lands there decides where a change must be made:
 
 | Source | Registered in | Lands in `skills/<name>` as | Edit it in | Editing `skills/<name>` instead |
 | --- | --- | --- | --- | --- |
@@ -92,7 +95,7 @@ For skill design and quality guidance, use the `skill-creator`, `skill-design`, 
 
 ## Hooks
 
-Hooks run only in Claude Code and ship through the `ai-private` plugin cache, not `sync.sh`. A hook change needs that repo's release loop in `docs/PLUGIN.md`, including the version bump. The `hooks:` key in `local.yaml` still links files into `~/AI/hooks/`, but no client reads that folder.
+Hooks ship only inside plugins, not through `sync.sh`; Claude Code and Copilot CLI both run them. On a machine where `local.yaml` sets the plugin to `mode: dev`, hooks load from the working copy, so a change needs only a new session. Elsewhere a hook change needs that plugin repo's release loop (for `ai-private`, `docs/PLUGIN.md`), including the version bump. See [Plugins](plugins.md). The `hooks:` key in `local.yaml` still links files into `~/AI/hooks/`, but no client reads that folder.
 
 ## Agent Format
 
