@@ -114,6 +114,50 @@ mcp_servers:
     auto_approve:
       - "*"  # read-only by design (server exposes no write tools) -> mcp__mcpx__monarch-money__*
 
+  amazon-orders:
+    description: >-
+      Amazon order history, tracking, invoices, transactions. Reached via the
+      gateways (mcpx + agentgateway); the backend is a launchd host bridge on
+      :7014, THIS MACHINE ONLY. find_charge resolves a card charge to its order
+      and items. See mcps/amazon-orders/ and the amazon_orders_mcp memory.
+
+      NOT "*": the server exposes 13 tools, two of which must stay gated.
+      mcpx already withholds them at its personal-finance toolGroup, but
+      agentgateway CANNOT filter per-tool, so its bare-server allow
+      (mcp__agentgateway, above) would otherwise auto-approve them.
+    auto_approve:
+      # 11 read tools. Gateways name these differently and MCP rules do NOT glob,
+      # so a sync must emit exact entries in BOTH forms:
+      #   mcpx          -> mcp__mcpx__amazon-orders__<tool>        (double underscore)
+      #   agentgateway  -> mcp__agentgateway__amazon-orders_<tool> (single underscore)
+      - find_charge
+      - get_orders
+      - search_orders
+      - get_order
+      - get_tracking
+      - get_invoices
+      - get_transactions
+      - get_gift_cards
+      - get_prime_payments
+      - check_session
+      - get_config
+    # sign_in opens a real browser auth flow against Amazon; update_config
+    # mutates the server's stored settings. Sign-in belongs to the human, via
+    # `mcps/amazon-orders/manage.sh login`.
+    #
+    # DO NOT sync these to Claude Code (decided 2026-11-23). Claude Code talks to
+    # ONE gateway, mcpx — we deliberately do not run both gateways for it at the
+    # same time, so agentgateway rules have no business in ~/.claude/settings.json
+    # (which is a symlink into ai-private-main/claude/settings.json). mcpx already
+    # withholds both tools at its personal-finance toolGroup, so Claude Code needs
+    # no rule here at all. These entries exist for clients that DO use
+    # agentgateway, which cannot filter per-tool and exposes all 13 tools; such a
+    # client needs the exact form `mcp__agentgateway__amazon-orders_sign_in`
+    # (single underscore before the tool — MCP rules never glob).
+    ask:
+      - sign_in
+      - update_config
+
 # =============================================================================
 # DIRECTORIES
 # =============================================================================
