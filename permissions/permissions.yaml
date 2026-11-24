@@ -64,9 +64,14 @@ mcp_servers:
 
   chrome-devtools:
     command: npx
-    args: ["-y", "@executeautomation/chrome-devtools-mcp"]
-    description: Chrome DevTools for browser automation
-    disabled: true
+    args:
+      - "-y"
+      - "chrome-devtools-mcp@latest"
+      - "--isolated"
+      - "--accept-insecure-certs"
+      - "--no-usage-statistics"
+      - "--no-performance-crux"
+    description: Official Chrome DevTools MCP for browser automation and debugging
     auto_approve:
       - "*"
 
@@ -94,10 +99,10 @@ mcp_servers:
       - qdrant-find
       - qdrant-store
 
-  qdrant-personal:
+  qdrant-notes-personal:
     type: remote
-    url: "http://localhost:7020/servers/qdrant-personal/sse"
-    description: Qdrant RAG search over personal Obsidian vault folders (non-work notes). Routed through mcpx via the knowledge-personal toolGroup.
+    url: "http://localhost:7020/servers/qdrant-notes-personal/sse"
+    description: Qdrant RAG search over personal Obsidian vault folders (non-work notes). Routed through mcpx via the knowledge-notes-personal toolGroup.
     auto_approve:
       - qdrant-find
       - qdrant-store
