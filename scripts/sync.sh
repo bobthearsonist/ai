@@ -229,6 +229,7 @@ sync_collection_items() {
         entry=$(yq e ".collections.$collection.${key}[$i]" "$LOCAL_CONFIG")
         kind=$(yq e ".collections.$collection.${key}[$i] | type" "$LOCAL_CONFIG")
         custom_target=""
+        item_plugin=""
 
         if [[ "$kind" == "!!str" ]]; then
             source_dir="$entry"
@@ -237,6 +238,9 @@ sync_collection_items() {
             source_dir=$(yq e ".collections.$collection.${key}[$i].source" "$LOCAL_CONFIG")
             link_name=$(yq e ".collections.$collection.${key}[$i].name // \"\"" "$LOCAL_CONFIG")
             custom_target=$(yq e ".collections.$collection.${key}[$i].target // \"\"" "$LOCAL_CONFIG")
+            # A single item can name the plugin that also ships it, when the rest
+            # of the collection does not come from that plugin.
+            item_plugin=$(yq e ".collections.$collection.${key}[$i].plugin // \"\"" "$LOCAL_CONFIG")
             [[ -z "$link_name" ]] && link_name="$(basename "$source_dir")"
         fi
 
@@ -260,8 +264,10 @@ sync_collection_items() {
         else
             echo "Syncing: $link_name ($key symlink)"
             sync_symlink "$source_path" "$target_dir/$link_name"
-            if [[ "$collection_plugin" == true && ( "$key" == "skills" || "$key" == "agents" ) ]]; then
-                plugin_delivered+=("$target_dir/$link_name")
+            if [[ "$key" == "skills" || "$key" == "agents" ]]; then
+                if [[ "$collection_plugin" == true ]] || plugin_configured "$item_plugin"; then
+                    plugin_delivered+=("$target_dir/$link_name")
+                fi
             fi
         fi
     done

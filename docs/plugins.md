@@ -81,6 +81,7 @@ An item counts as plugin-delivered when its source names a plugin that is
 listed under `plugins:` on this machine:
 
 - a `local.yaml` collection with `plugin: <name>`, for all its skills and agents
+- a single object-form collection item with `plugin: <name>`, for just that item
 - an `external-skills.yaml` entry with `plugin: <name>`
 
 A machine that does not configure the plugin keeps those items in the views.

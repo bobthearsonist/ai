@@ -25,6 +25,8 @@ skills:
     branch: main
     path: skills/skill-creator
     target: skills/skill-creator
+    # Also the skill-creator plugin in claude-plugins-official.
+    plugin: skill-creator
 
   # === Internal skills (in-repo, no sync needed) ===
   - name: ai-client-config

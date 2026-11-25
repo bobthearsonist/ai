@@ -35,7 +35,7 @@ This links:
 | `agents` | empty | Agent files/directories to link into `~/AI/agents` |
 | `hooks` | empty | Hook files/directories to link into `~/AI/hooks` |
 | `links` | empty | Other root-level links to expose from the collection |
-| `plugin` | none | Plugin under `plugins:` that also delivers this collection's skills and agents (see below) |
+| `plugin` | none | Plugin under `plugins:` that also delivers this collection's skills and agents (see below). An object-form item can set its own `plugin` instead |
 
 Collections whose `path` does not exist are skipped. This lets the same `local.yaml` work on personal and work machines if only some source repos are available.
 
@@ -88,6 +88,14 @@ Object form with rename:
 skills:
   - source: reviewer
     name: code-review
+```
+
+Object form for one item that a plugin also ships, when the rest of the collection does not come from that plugin (see [Plugins](plugins.md)):
+
+```yaml
+skills:
+  - source: incident-response
+    plugin: incident-response
 ```
 
 Object form with external target:

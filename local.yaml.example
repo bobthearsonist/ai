@@ -88,6 +88,10 @@ collections:
   #     - company-api
   #     - source: dotnet
   #       name: company-dotnet
+  #     # One item that a plugin under `plugins:` also ships.
+  #     # CONSUMED: scripts/sync.sh reads .collections.<name>.<skills|agents>[].plugin
+  #     - source: incident-response
+  #       plugin: incident-response
   #   agents:
   #     - company-agent.md
 
