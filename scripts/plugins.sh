@@ -235,8 +235,22 @@ setup_claude() {
                 ;;
         esac
 
-        while IFS=$'\t' read -r id scope project; do
-            [[ -z "$id" ]] && continue
+        # Disable other copies one at a time, re-reading the list after each: two
+        # scopes can share a settings file (a project scope rooted at $HOME uses
+        # ~/.claude/settings.json), so one disable may already cover the next.
+        local attempted=$'\n' line candidate id scope project
+        while :; do
+            line=""
+            while IFS= read -r candidate; do
+                [[ -z "$candidate" || "$attempted" == *$'\n'"$candidate"$'\n'* ]] && continue
+                line="$candidate"
+                break
+            done < <(N="$name" W="$want" yq -p=json -o=tsv '.[]
+                | select((.id | split("@") | .[0]) == strenv(N) and .id != strenv(W) and .enabled == true)
+                | [.id, .scope, (.projectPath // "")]' <<< "$installed")
+            [[ -z "$line" ]] && break
+            attempted+="$line"$'\n'
+            IFS=$'\t' read -r id scope project <<< "$line"
             if [[ "$scope" == "user" ]]; then
                 attempt claude plugin disable "$id" --scope user
             else
@@ -245,9 +259,8 @@ setup_claude() {
                     failures+=("claude plugin disable $id --scope $scope in $project")
                 fi
             fi
-        done < <(N="$name" W="$want" yq -p=json -o=tsv '.[]
-            | select((.id | split("@") | .[0]) == strenv(N) and .id != strenv(W) and .enabled == true)
-            | [.id, .scope, (.projectPath // "")]' <<< "$installed")
+            $dry_run || installed=$(claude plugin list --json)
+        done
     done
 }
 
