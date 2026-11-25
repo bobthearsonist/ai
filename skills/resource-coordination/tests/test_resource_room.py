@@ -59,6 +59,9 @@ class CoordinatorCliTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = pathlib.Path(self.temp.name) / "rooms"
         self.environment = os.environ.copy()
+        # The runner may itself be an agent shell; keep harness session IDs out of the CLI.
+        for name in ("CLAUDE_CODE_SESSION_ID", "COPILOT_AGENT_SESSION_ID"):
+            self.environment.pop(name, None)
         self.first = self.action("join", {"client": "test", "purpose": "first", "name": "room"})["data"]
         self.second = self.action("join", {
             "client": "test", "purpose": "second", "roomId": self.first["roomId"]
@@ -166,6 +169,20 @@ class CoordinatorCliTests(unittest.TestCase):
         }, check=False)
         self.assertEqual(failure["code"], "Invalid")
         self.assertEqual(len(self.action("inspect")["data"]["state"]["sessions"]), count)
+
+    def test_join_defaults_client_session_from_the_harness_environment(self):
+        self.environment["CLAUDE_CODE_SESSION_ID"] = "claude-session-1"
+        self.environment["COPILOT_AGENT_SESSION_ID"] = "copilot-session-1"
+        claude = self.action("join", {"client": "test", "purpose": "claude", "name": "claude"})["data"]
+        explicit = self.action("join", {
+            "client": "test", "purpose": "explicit", "name": "explicit", "clientSession": "explicit-1",
+        })["data"]
+        del self.environment["CLAUDE_CODE_SESSION_ID"]
+        copilot = self.action("join", {"client": "test", "purpose": "copilot", "name": "copilot"})["data"]
+        sessions = {item["id"]: item for item in self.action("inspect")["data"]["state"]["sessions"]}
+        self.assertEqual(sessions[claude["sessionId"]]["clientSession"], "claude-session-1")
+        self.assertEqual(sessions[explicit["sessionId"]]["clientSession"], "explicit-1")
+        self.assertEqual(sessions[copilot["sessionId"]]["clientSession"], "copilot-session-1")
 
     def test_records_messages_readiness_cancellation_and_departure(self):
         record = self.action("record", {

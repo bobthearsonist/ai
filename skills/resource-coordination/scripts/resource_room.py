@@ -110,6 +110,18 @@ def required(value: dict[str, Any], name: str) -> Any:
     return value[name]
 
 
+# Session IDs that harnesses expose to an agent's shell commands, in priority order.
+HARNESS_SESSION_VARIABLES = ("CLAUDE_CODE_SESSION_ID", "COPILOT_AGENT_SESSION_ID")
+
+
+def harness_session() -> str | None:
+    for name in HARNESS_SESSION_VARIABLES:
+        value = os.environ.get(name, "").strip()
+        if value and len(value) <= 4096:
+            return value
+    return None
+
+
 def text(value: dict[str, Any], name: str) -> str:
     result = required(value, name)
     if not isinstance(result, str) or not result.strip() or len(result) > 4096:
@@ -1048,10 +1060,11 @@ def add_simple_action(state: dict[str, Any], action: str, request: dict[str, Any
         else:
             session = {"id": new_id(), "client": text(request, "client"), "purpose": text(request, "purpose"),
                        "joined": now(), "left": False}
-            if "clientSession" in request:
-                # The harness's own session ID, so guards outside the coordinator can tell
-                # which client session holds access.
-                session["clientSession"] = text(request, "clientSession")
+            # The harness's own session ID, so guards outside the coordinator can tell
+            # which client session holds access. An explicit value wins over the environment.
+            client_session = text(request, "clientSession") if "clientSession" in request else harness_session()
+            if client_session:
+                session["clientSession"] = client_session
             state["sessions"].append(session)
             owner = session["id"]
         room = None
