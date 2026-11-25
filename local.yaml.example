@@ -163,13 +163,20 @@ repos:
   base_path: /path/to/repositories
 
 obsidian:
-  # CONSUMED: run.sh line 13 reads .obsidian.vault_path into VAULT_PATH when
-  # indexing the vault. Only folders named under contexts: are indexed - the
-  # rest of the vault is deliberately left out.
-  # CONSUMED: the visual-notes agent plugin's hook reads vault_path and
-  # contexts when the visual-notes Obsidian plugin's "Agent config file"
-  # setting points at this file; it conforms sidecars only in those folders.
-  vault_path: /path/to/your/obsidian/vault
+  # Root folder that holds EVERY vault on this machine. Each vault is a folder
+  # directly under it containing .obsidian/. Skills resolve vaults through
+  # skills/obsidian-notes/scripts/vault.sh - never hardcode a vault path.
+  # (Legacy: with no default_vault, vault_path is treated as the vault itself.)
+  vault_path: /path/to/Obsidian
+
+  # Vault used when a context doesn't name one. CONSUMED: the qdrant indexer's
+  # run.sh exports vault_path/default_vault as VAULT_PATH. Only folders named
+  # under contexts: are indexed - the rest of the vault is deliberately left out.
+  # CONSUMED: the visual-notes agent plugin's hook reads vault_path,
+  # default_vault and contexts when the visual-notes Obsidian plugin's "Agent
+  # config file" setting points at this file; it conforms sidecars only in
+  # those folders.
+  default_vault: Main
 
   # User-defined contexts. Keys are free-form names you choose to match
   # how you mentally separate your notes (some users have one, others
@@ -179,6 +186,7 @@ obsidian:
   # daily-context Obsidian plugin's data.json so both stay in sync.
   contexts:
     default:
+      # vault: Main            # optional per-context vault, defaults to default_vault
       daily_folder: 0 Daily Notes
       ai_session_folders:
         - 0 AI Sessions
