@@ -166,6 +166,9 @@ obsidian:
   # CONSUMED: run.sh line 13 reads .obsidian.vault_path into VAULT_PATH when
   # indexing the vault. Only folders named under contexts: are indexed - the
   # rest of the vault is deliberately left out.
+  # CONSUMED: the visual-notes agent plugin's hook reads vault_path and
+  # contexts when the visual-notes Obsidian plugin's "Agent config file"
+  # setting points at this file; it conforms sidecars only in those folders.
   vault_path: /path/to/your/obsidian/vault
 
   # User-defined contexts. Keys are free-form names you choose to match

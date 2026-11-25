@@ -12,6 +12,15 @@
         "source": "url",
         "url": "https://github.com/bobthearsonist/ai-private.git"
       }
+    },
+    {
+      "name": "visual-notes",
+      "description": "Agent side of Visual Notes: concept-map sidecar skill, commands, and a hook that conforms and pins agent-written sidecars",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/bobthearsonist/visual-notes.git",
+        "path": "plugins/claude-code-plugin"
+      }
     }
   ]
 }
