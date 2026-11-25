@@ -153,6 +153,20 @@ class CoordinatorCliTests(unittest.TestCase):
         self.assertEqual(third["roomId"], fourth["roomId"])
         self.assertEqual(third["roomKey"], "CAF\u00c9")
 
+    def test_join_records_an_optional_client_session(self):
+        linked = self.action("join", {
+            "client": "test", "purpose": "linked", "name": "linked", "clientSession": "harness-session-1",
+        })["data"]
+        sessions = {item["id"]: item for item in self.action("inspect")["data"]["state"]["sessions"]}
+        self.assertEqual(sessions[linked["sessionId"]]["clientSession"], "harness-session-1")
+        self.assertNotIn("clientSession", sessions[self.first["sessionId"]])
+        count = len(sessions)
+        _, failure = self.action("join", {
+            "client": "test", "purpose": "blank", "name": "blank", "clientSession": " ",
+        }, check=False)
+        self.assertEqual(failure["code"], "Invalid")
+        self.assertEqual(len(self.action("inspect")["data"]["state"]["sessions"]), count)
+
     def test_records_messages_readiness_cancellation_and_departure(self):
         record = self.action("record", {
             "roomId": self.first["roomId"], "key": "candidate", "value": {"revision": 1},

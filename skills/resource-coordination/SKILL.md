@@ -27,6 +27,9 @@ to "it" or descriptor-only shorthand.
    explicitly across tool calls and elevation; a different root does not coordinate
    with this one. Keep live state off repositories and synchronized/network storage.
 2. Inspect, then join. Preserve the returned session/room IDs across commands.
+   Pass your harness session ID as `clientSession` when one is available (Claude
+   Code exposes `CLAUDE_CODE_SESSION_ID`), so guards outside the coordinator can
+   recognize the access your session holds.
    Use `join.roomKey` for atomic create-or-join of a canonical execution room;
    display `name` alone deliberately creates distinct rooms.    A session does not end when the CLI process exits.
 3. Declare actual physical resources, not just room labels. Acquire edit claims

@@ -635,6 +635,9 @@ class RoomStore:
             self._record(item, "session", ("client", "purpose", "joined", "left"))
             if not isinstance(item["left"], bool):
                 fail("State", "Invalid session departure flag.", 5)
+            client_session = item.get("clientSession")
+            if "clientSession" in item and (not isinstance(client_session, str) or not client_session.strip()):
+                fail("State", "Invalid session clientSession.", 5)
         room_keys: set[str] = set()
         for room in state["rooms"]:
             self._record(room, "room", ("owner", "members", "generation", "barrier"))
@@ -1045,6 +1048,10 @@ def add_simple_action(state: dict[str, Any], action: str, request: dict[str, Any
         else:
             session = {"id": new_id(), "client": text(request, "client"), "purpose": text(request, "purpose"),
                        "joined": now(), "left": False}
+            if "clientSession" in request:
+                # The harness's own session ID, so guards outside the coordinator can tell
+                # which client session holds access.
+                session["clientSession"] = text(request, "clientSession")
             state["sessions"].append(session)
             owner = session["id"]
         room = None

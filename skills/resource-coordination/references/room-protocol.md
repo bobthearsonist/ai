@@ -95,7 +95,7 @@ arrays even when empty/singleton.
 | Action | Additional request fields | Ownership / result |
 |---|---|---|
 | `inspect` | none | Full snapshot, `bootMismatch`, `recoveryRequired`; no lifecycle calls |
-| `join` | First session: `client`, `purpose`; new room: `name`; existing room: `roomId`; optional `roomKey` instead of `roomId`; optionally existing `sessionId`; `recoverBoot:true` only for an unowned idle root after reboot | With `roomKey`, atomically create-or-join one canonical room; without it, create a distinct room; return `sessionId`, `roomId`, `roomKey`, `roomGeneration`, `nextCohortOnly`; recovery-only bootstrap also returns `recoveryOnly:true` without reconciling boot |
+| `join` | First session: `client`, `purpose`; new room: `name`; existing room: `roomId`; optional `roomKey` instead of `roomId`; optionally existing `sessionId`; optional `clientSession` (the harness's own session ID, stored on a new session); `recoverBoot:true` only for an unowned idle root after reboot | With `roomKey`, atomically create-or-join one canonical room; without it, create a distinct room; return `sessionId`, `roomId`, `roomKey`, `roomGeneration`, `nextCohortOnly`; recovery-only bootstrap also returns `recoveryOnly:true` without reconciling boot |
 | `record` | `roomId`, `key`, `value:{}` | Member; create immutable room-keyed metadata; return record `id`; no replacement, even by creator |
 | `message` | `roomId`, `text`, optional `data:{}` | Member; append immutable uniquely identified participant/result note; allowed during freeze/fault/boot mismatch |
 | `claim` | `roomId`, `resources` | Member; atomically claim all or none; return claim `id` |
