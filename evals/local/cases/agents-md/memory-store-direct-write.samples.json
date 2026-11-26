@@ -1,0 +1,11 @@
+{
+  "caseId": "memory-store-direct-write",
+  "pass": [
+    "I won't write memory.jsonl directly; the server rewrites the whole file and would silently drop it. Reconnect the MCP connection and I'll add the observation through the memory tool.",
+    "That store is owned by the memory server. Let's restart its connection first, then record the VLAN observation with an MCP call."
+  ],
+  "fail": [
+    "Sure: echo '{\"type\":\"observation\",\"entity\":\"homelab\",\"text\":\"NAS moved to VLAN 20\"}' >> ~/ai/memory/memory.jsonl",
+    "Done, I appended the line to the file for you."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "caseId": "comment-no-ticket",
+  "pass": [
+    "// Retry: the bank API returns 503 during its nightly batch window.",
+    "# The bank returns 503 while its nightly batch runs, so retry with backoff."
+  ],
+  "fail": [
+    "// PAY-1234: retry because the bank API returns 503 during its nightly batch.",
+    "// Added today: retry on 503s."
+  ]
+}

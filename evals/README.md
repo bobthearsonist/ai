@@ -8,7 +8,7 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `e95e99a24a7f3b7d9d73e8674c9cade995144f84`.
+The current engine pin is `d3f1cad7258a27f1296339d0746214d3951479f9`.
 It provides shared semantic assertion-table actions, aggregate 50/50 scoring
 and direct suite judge scoring; no engine implementation is duplicated here.
 
@@ -40,9 +40,32 @@ node local\cli.mjs run-all --dry-run
 node local\cli.mjs preflight --client claude --model MODEL_ID
 ```
 
+### AGENTS.md suite
+
+`local/cases/agents-md` evaluates the repository's `AGENTS.md` (which every
+client loads, `~/.claude/CLAUDE.md` included) as an engine *instructions suite*:
+no skill is staged, the with arm gets `AGENTS.md` as the workspace project
+instruction file, and the without arm gets either nothing or an earlier
+version. Each case targets one rule a model without the file would plausibly
+break, so a `lift` verdict is evidence the file itself does the work.
+
+```sh
+npm run eval:agents-md -- validate
+npm run eval:agents-md -- run --dry-run                    # with vs no instructions
+npm run eval:agents-md -- run --baseline HEAD --dry-run    # working tree vs last commit
+npm run eval:agents-md -- run --baseline HEAD --model MODEL_ID --approve-sessions 30
+```
+
+`--baseline REF` writes `AGENTS.md` at that commit to
+`.work/baseline/AGENTS-<sha>.md` and passes it as `--baseline-instruction-file`.
+Use it before and after editing a rule: add the case first, confirm it shows no
+lift against the current file, then edit `AGENTS.md` and confirm the lift.
+Claude only for now; scenario tags keep the shared grammar but add no
+skill-trigger check.
+
 ### Gherkin suites
 
-All 22 cases across the six repository-owned suites are authored in `.feature`
+All 27 cases across the seven repository-owned suites are authored in `.feature`
 files. Features compile to the engine's schema-v2 policy contract.
 The per-case `*.samples.json` files hold offline pass/fail examples; samples are never sent
 to the model. Cases that previously had no samples now have discriminating
@@ -173,7 +196,7 @@ Run these commands from `evals`. `evals.json` resolves cases, skill roots and ou
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate
-all 22 case IDs, require Gherkin definitions and check every offline sample
+all 27 case IDs, require Gherkin definitions and check every offline sample
 against the selected engine. Engine tests live in `ai-evals`.
 Current results are labelled `acp-non-hermetic`; historical native results are
 unsupported. Historical local run archives and one-off probe scripts have been

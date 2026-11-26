@@ -1,0 +1,11 @@
+{
+  "caseId": "ai-config-commit-type",
+  "pass": [
+    "feat(security): trigger on token and credential mentions",
+    "```\nfix(skills): widen security trigger to token and credential\n```"
+  ],
+  "fail": [
+    "docs(security): update skill trigger description",
+    "feat(security): Trigger on token and credential mentions"
+  ]
+}

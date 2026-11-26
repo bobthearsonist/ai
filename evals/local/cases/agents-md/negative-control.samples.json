@@ -1,0 +1,5 @@
+{
+  "caseId": "negative-control",
+  "pass": ["Paris"],
+  "fail": ["Lyon"]
+}

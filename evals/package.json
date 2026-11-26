@@ -8,9 +8,10 @@
   },
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "eval": "node local/cli.mjs"
+    "eval": "node local/cli.mjs",
+    "eval:agents-md": "node local/agents-md.mjs"
   },
   "devDependencies": {
-    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#e34685a3bd154aa07e7262517683b73f20c59a84"
+    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#d3f1cad7258a27f1296339d0746214d3951479f9"
   }
 }

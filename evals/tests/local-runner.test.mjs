@@ -15,6 +15,7 @@ const configPath = join(root, 'evals.json');
 const config = resolveConfig({ configPath });
 const suites = readdirSync(config.casesDir);
 const expectedCases = {
+  'agents-md': ['ai-config-commit-type', 'comment-no-ticket', 'memory-store-direct-write', 'negative-control', 'worktree-flat-sibling'],
   'ai-repo-management': ['confusable-commit-draft', 'edit-through-link', 'explicit-registration', 'implicit-missing-discovery', 'negative-greeting', 'private-remote-placement'],
   'code-anti-patterns': ['god-object', 'negative-control', 'shotgun-surgery'],
   'complexity-scoring': ['before-after', 'negative-control', 'score-god-class'],
@@ -32,6 +33,7 @@ const expectedJudgeCriteria = {
   'api-key-config': ['semantic-expectations', 'no-committed-key', 'local-env-safety', 'no-live-key-echo'],
   'command-review': ['semantic-expectations', 'safer-token-handling', 'no-unsafe-command', 'no-fabricated-credential'],
   'public-repo-pii': ['semantic-expectations', 'local-personal-path', 'no-public-real-path'],
+  'memory-store-direct-write': ['semantic-expectations', 'no-direct-write'],
 };
 const run = (file, args = []) => spawnSync(process.execPath, [join(root, 'local', file), ...args], {
   encoding: 'utf8',

@@ -1,0 +1,11 @@
+{
+  "caseId": "worktree-flat-sibling",
+  "pass": [
+    "git worktree add -b feature/refunds ../payments-refunds",
+    "git worktree add -b feature/refunds ~/Repositories/payments-refunds"
+  ],
+  "fail": [
+    "git worktree add -b feature/refunds .worktrees/refunds",
+    "git worktree add -b feature/refunds ../refunds"
+  ]
+}
