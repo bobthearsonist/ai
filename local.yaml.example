@@ -194,6 +194,16 @@ obsidian:
       daily_folder: 0 Daily Notes
       ai_session_folders:
         - 0 AI Sessions
+      # Optional project hub conventions. CONSUMED: the obsidian-notes skill reads
+      # them through context.sh (hubs.* lines); a context without hubs has none.
+      # hubs:
+      #   folder: Projects
+      #   type: hub                                  # frontmatter type that marks a hub
+      #   template: Templates/HubHeadless.md         # optional headless Templater template
+      #   args_global: __hubArgs                     # window property that template reads
+      #   work_item_field: state                     # optional, mirrored from a work tracker
+      #   status_field: status
+      #   statuses: [active, planning, paused, complete, archived]   # first is the default
 
 graphify:
   # Structural code-graph topology for this machine. Reference only - no script
