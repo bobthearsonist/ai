@@ -28,7 +28,8 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Let task list go stale                                                    | Update status immediately after each step                                                     |
 | Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                                     |
 | Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                                   |
-| Remove an unmerged worktree or branch, or one another session owns, without asking | Ask first. Once your own branch is merged, remove its worktree (delete links inside it first) and delete the branch without asking |
+| Ask "want me to delete X?" about leftovers you created and no longer need | Clean them up yourself and report a **Removed:** list (see Session Cleanup)                   |
+| Delete branches, worktrees or files you did not create, or that hold unmerged work | Ask first - list exactly what and why                                                |
 | Guess at CLI/infrastructure commands                                      | Check skills first - they contain tested syntax                                               |
 | Run broad glob patterns (`**/*.ts` from root)                             | Ask user to narrow scope or use grep instead                                                  |
 | Tail or stream long-running commands (builds, tests, docker)              | Pipe to a temp file and read it after completion (see Long-Running Commands)                  |
@@ -306,6 +307,25 @@ Or with absolute paths:
 ```
 git worktree add /c/Repositories/matching-spike-container spike/container
 ```
+
+## Session Cleanup
+
+Before finishing, remove what **this session created** and no longer needs. Do not ask; the user has
+standing approval for this:
+
+- Local branches merged into, or identical to, the default branch (`git branch -d`, never `-D`)
+- Worktrees that are clean and whose branch is merged or abandoned by the user's decision (delete links
+  inside the worktree first)
+- Backups, `.bak` files, backup refs/branches, stashes, temp files and throwaway scripts whose purpose is
+  done (the change they protected is verified or merged)
+
+Verify before each delete (`git merge-base --is-ancestor`, `git status --porcelain` in the worktree), then
+end with a **Removed:** list of what went.
+
+**Still ask first** for: anything a previous session or the user created, unmerged or unpushed commits,
+a dirty worktree, remote branches, locked worktrees, and anything outside git that is not a temp file
+(NAS data, service state, config). Batch these into one question at the end, not one per item, and treat
+the answer as covering every item in the list.
 
 ---
 
