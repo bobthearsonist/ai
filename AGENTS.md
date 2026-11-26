@@ -28,7 +28,7 @@ This applies even if a session summary is provided. Summaries may be stale.
 | Let task list go stale                                                    | Update status immediately after each step                                                     |
 | Suggest `--interactive` or browser-spawning in elevated PowerShell        | These freeze the shell - use non-interactive alternatives                                     |
 | Repeat a failed approach                                                  | Stop after first failure, rethink, try a different approach                                   |
-| Delete branches or remove worktrees without user validation               | Ask the user to validate/confirm immediately before destructive cleanup                       |
+| Remove an unmerged worktree or branch, or one another session owns, without asking | Ask first. Once your own branch is merged, remove its worktree (delete links inside it first) and delete the branch without asking |
 | Guess at CLI/infrastructure commands                                      | Check skills first - they contain tested syntax                                               |
 | Run broad glob patterns (`**/*.ts` from root)                             | Ask user to narrow scope or use grep instead                                                  |
 | Tail or stream long-running commands (builds, tests, docker)              | Pipe to a temp file and read it after completion (see Long-Running Commands)                  |
