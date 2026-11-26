@@ -1,0 +1,113 @@
+{
+  "name": "claude-task-visualizer",
+  "displayName": "Claude Task Visualizer",
+  "description": "Visual dashboard for Claude Code todo/task lists and AI agent workflows",
+  "version": "0.2.0",
+  "publisher": "bobthearsonist",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "claude",
+    "ai",
+    "tasks",
+    "todo",
+    "agents",
+    "workflow",
+    "dashboard"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claude-dashboard",
+          "title": "Claude Dashboard",
+          "icon": "media/claude-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "claude-dashboard": [
+        {
+          "type": "webview",
+          "id": "claudeTaskVisualizer.dashboard",
+          "name": "Task Dashboard"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "claudeTaskVisualizer.refresh",
+        "title": "Refresh Dashboard",
+        "category": "Claude"
+      },
+      {
+        "command": "claudeTaskVisualizer.openSettings",
+        "title": "Open Settings",
+        "category": "Claude"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Task Visualizer",
+      "properties": {
+        "claudeTaskVisualizer.claudeDataPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Claude Code data directory (defaults to ~/.claude)"
+        },
+        "claudeTaskVisualizer.agentsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to agents directory (defaults to ~/ai/agents/opencode)"
+        },
+        "claudeTaskVisualizer.refreshInterval": {
+          "type": "number",
+          "default": 2000,
+          "description": "Refresh interval in milliseconds for live updates"
+        },
+        "claudeTaskVisualizer.showCompletedTasks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show completed tasks in the dashboard"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.56.0",
+    "glob": "^10.3.10",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "yaml": "^2.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bobthearsonist/ai",
+    "directory": "vscode-extensions/claude-task-visualizer"
+  },
+  "license": "MIT"
+}
