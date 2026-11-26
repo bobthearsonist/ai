@@ -37,3 +37,8 @@ graphify-out/
 # Timestamped hand-rolled backups (*.bak-YYYYMMDD) — a recurring local habit,
 # never source. Delete when the forensics are done.
 *.bak-*
+
+# VS Code extension build artifacts
+vscode-extensions/**/node_modules/
+vscode-extensions/**/out/
+vscode-extensions/**/*.vsix
