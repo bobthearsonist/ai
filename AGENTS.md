@@ -1,5 +1,9 @@
 # AI Agent Instructions
 
+This file is the core instruction set: every session loads it, directly or through a client
+entry file such as `CLAUDE.md` that adds only client-specific rules. Both hold rules that
+apply to every session, and neither is documentation.
+
 ## Session Startup (MANDATORY - every conversation)
 
 Complete these steps IN ORDER before responding to any request:
