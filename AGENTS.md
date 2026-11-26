@@ -289,6 +289,16 @@ developer with no knowledge of this session.**
 
 ---
 
+## Machine-local instructions
+
+This file is public and shared by every machine. Rules that are machine-specific or private
+(hostnames, private URLs, organizations, accounts) go in `~/.config/agents-local/AGENTS.md`,
+which lives in no repository. Claude Code loads it through the `~/.claude/rules/agents-local.md`
+symlink, OpenCode through the `instructions` array in `~/.config/opencode/opencode.json`, and
+Copilot CLI through `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` (exported by `init.zsh`).
+
+---
+
 ## Worktree Directory
 
 Create each worktree as a **flat sibling** to the repo — not nested inside it or inside a container directory. This avoids issues with relative paths, directory structure dependencies, and build tool assumptions.

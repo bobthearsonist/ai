@@ -4,6 +4,17 @@
 # NOTE: Standalone tooling — not part of the AI skills/sync system.
 
 ###############################################################################
+# Machine-local agent instructions
+# ~/.config/agents-local/AGENTS.md holds rules for this machine only, outside
+# every repository. Claude Code and OpenCode load it through their own config;
+# Copilot CLI only finds extra AGENTS.md files through this variable.
+###############################################################################
+
+if [[ -f "$HOME/.config/agents-local/AGENTS.md" ]]; then
+    export COPILOT_CUSTOM_INSTRUCTIONS_DIRS="$HOME/.config/agents-local${COPILOT_CUSTOM_INSTRUCTIONS_DIRS:+,$COPILOT_CUSTOM_INSTRUCTIONS_DIRS}"
+fi
+
+###############################################################################
 # OpenCode — local worktree build switcher
 # Usage: opencode --use [list|<number>|<name>|reset]
 ###############################################################################
