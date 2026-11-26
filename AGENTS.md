@@ -292,10 +292,13 @@ developer with no knowledge of this session.**
 ## Machine-local instructions
 
 This file is public and shared by every machine. Rules that are machine-specific or private
-(hostnames, private URLs, organizations, accounts) go in `~/.config/agents-local/AGENTS.md`,
-which lives in no repository. Claude Code loads it through the `~/.claude/rules/agents-local.md`
-symlink, OpenCode through the `instructions` array in `~/.config/opencode/opencode.json`, and
-Copilot CLI through `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` (exported by `init.zsh`).
+(hostnames, private URLs, organizations, accounts) go in
+`~/.config/agents-local/.github/instructions/agents-local.instructions.md` (frontmatter
+`applyTo: "**"`; `~/.config/agents-local/AGENTS.md` is a symlink to it), which lives in no
+repository. Claude Code loads it through the `~/.claude/rules/agents-local.md` symlink, OpenCode
+through the `instructions` array in `~/.config/opencode/opencode.json`, Copilot CLI through
+`COPILOT_CUSTOM_INSTRUCTIONS_DIRS` (exported by `init.zsh`), and Copilot in VS Code through
+`chat.instructionsFilesLocations`. Copilot CLI ignores a bare `AGENTS.md` in that directory.
 
 ---
 

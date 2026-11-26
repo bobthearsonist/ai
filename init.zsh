@@ -5,9 +5,10 @@
 
 ###############################################################################
 # Machine-local agent instructions
-# ~/.config/agents-local/AGENTS.md holds rules for this machine only, outside
-# every repository. Claude Code and OpenCode load it through their own config;
-# Copilot CLI only finds extra AGENTS.md files through this variable.
+# ~/.config/agents-local holds rules for this machine only, outside every
+# repository. Copilot CLI reads only .github/instructions/*.instructions.md
+# (with applyTo frontmatter) from the directories in this variable; a bare
+# AGENTS.md there is ignored. Other clients load it through their own config.
 ###############################################################################
 
 if [[ -f "$HOME/.config/agents-local/AGENTS.md" ]]; then
