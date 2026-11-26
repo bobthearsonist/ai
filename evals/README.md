@@ -8,7 +8,7 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `d3f1cad7258a27f1296339d0746214d3951479f9`.
+The current engine pin is `82ccdd45a874f484e43d45fc35b69b1077efa9ca`.
 It provides shared semantic assertion-table actions, aggregate 50/50 scoring
 and direct suite judge scoring; no engine implementation is duplicated here.
 
