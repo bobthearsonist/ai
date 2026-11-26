@@ -158,6 +158,25 @@ mcp_servers:
       - sign_in
       - update_config
 
+  fantastical:
+    description: >-
+      Fantastical calendar (events and tasks) via Flexibits' official FantasticalMCP
+      helper, reached via the gateways (mcpx + agentgateway); the backend is a
+      launchd host bridge on :7013, THIS MACHINE ONLY. See mcps/fantastical/.
+    auto_approve:
+      # Same naming split as amazon-orders: mcpx -> mcp__mcpx__fantastical__<tool>,
+      # agentgateway -> mcp__agentgateway__fantastical_<tool>. MCP rules never glob.
+      - queryCalendars
+      - queryCalendarSets
+      - queryCalendarItems
+      - findAvailableTimes
+      # Create auto-approves on purpose: a wrong new item is cheap to fix with
+      # modify or delete. Changing or removing existing items always prompts.
+      - createCalendarItem
+    ask:
+      - modifyCalendarItem
+      - deleteCalendarItem
+
 # =============================================================================
 # DIRECTORIES
 # =============================================================================
