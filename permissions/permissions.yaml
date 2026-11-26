@@ -285,8 +285,12 @@ commands:
   ask:
     - "gsudo*"
     - "sudo*"
-    - "rm*"
-    - "rmdir*"
+    # rm/rmdir: NOT synced to Claude Code. There an ask rule overrides auto mode's
+    # classifier and its working-directory scoping, so every temp-file delete
+    # prompts; the classifier still blocks irreversible deletes outside the project.
+    # Clients without such a check (OpenCode, Copilot, Kilo) keep the ask.
+    - "rm*"     # not-claude
+    - "rmdir*"  # not-claude
     - "del*"
     - "rd*"
     - "mv*"

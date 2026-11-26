@@ -36,6 +36,16 @@ The canonical configuration. Contains:
 - `disabled: true` to skip a server in certain clients
 - Pattern matching: `git status*` matches any command starting with "git status"
 
+### Per-client scope
+
+Syncing is done by an agent reading this file, so client scope is written as comments. Honour them
+when syncing:
+
+- `# not-claude` on an entry, or a `DO NOT sync … to Claude Code` block comment: skip it for Claude
+  Code and remove any matching rule already in `~/.claude/settings.json`.
+- Section headers such as `# --- Node.js (Claude, OpenCode, Copilot, Kilo) ---` list the clients a
+  group applies to; skip clients not named.
+
 ### Permission Levels
 
 | Level | Description |
