@@ -384,21 +384,43 @@ function formatCopilotIdentity(status) {
     return "";
   }
 
-  const billingOrganization = resolveBillingOrganization(
-    entitlement.organizations
+  const billing = resolveBillingOrganization(
+    entitlement.organizations,
+    process.env.COPILOT_BILLING_ORG
   );
 
-  return billingOrganization
-    ? `${login} bill:@${billingOrganization}`
+  if (billing.organization) {
+    return `${login} bill:@${billing.organization}`;
+  }
+
+  return billing.candidates.length > 0
+    ? `${login} orgs:${billing.candidates.join(",")}`
     : login;
 }
 
-function resolveBillingOrganization(organizations) {
-  if (!Array.isArray(organizations)) {
-    return "";
+// The entitlement API lists every org granting a seat in a fixed order and
+// does not expose which one is billed, so only claim a billing org when it is
+// unambiguous or explicitly configured.
+function resolveBillingOrganization(organizations, override) {
+  const candidates = Array.isArray(organizations)
+    ? organizations.filter(
+        organization => typeof organization === "string" && organization
+      )
+    : [];
+  const requested = typeof override === "string" ? override.trim() : "";
+
+  if (requested) {
+    const match = candidates.find(
+      organization => organization.toLowerCase() === requested.toLowerCase()
+    );
+    return { organization: match || requested, candidates };
   }
 
-  return firstString(...organizations);
+  if (candidates.length === 1) {
+    return { organization: candidates[0], candidates };
+  }
+
+  return { organization: "", candidates };
 }
 
 function queryCopilotEntitlement() {

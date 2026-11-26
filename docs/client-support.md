@@ -40,10 +40,13 @@ Copilot also discovers project-local skills from `.github/skills/<name>/SKILL.md
 
 For the repo-backed custom status line, point user settings at the script in this repo:
 
-The gray identity segment shows `<login> bill:@<organization>`. The script
-follows the organization ordering returned by the live Copilot entitlement,
-using the first organization instead of trying to infer billing from unrelated
-GitHub organization account tiers.
+The gray identity segment shows `<login> bill:@<organization>`. The Copilot
+entitlement API lists every organization that grants a seat, in a fixed order,
+and does not say which one is billed. With a single organization it is shown as
+billed; with several, the segment shows `<login> orgs:<a>,<b>` instead of
+guessing. Set `COPILOT_BILLING_ORG` (for example `export
+COPILOT_BILLING_ORG=Epyon-Ltd`) in the environment that launches Copilot CLI to
+name the billed organization explicitly.
 
 Entitlement data is cached for five minutes. Authenticate GitHub CLI with the
 same account used by Copilot CLI.

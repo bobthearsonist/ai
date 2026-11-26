@@ -17,18 +17,29 @@ const {
 
 const scriptPath = path.join(__dirname, "copilot-statusline-summary.js");
 
-test("uses the first organization returned by the Copilot entitlement", () => {
+test("does not guess a billing organization when several are entitled", () => {
+  assert.deepEqual(resolveBillingOrganization(["Profisee", "Epyon-Ltd"]), {
+    organization: "",
+    candidates: ["Profisee", "Epyon-Ltd"],
+  });
+});
+
+test("uses the configured billing organization override", () => {
   assert.equal(
-    resolveBillingOrganization(["Profisee", "Epyon-Ltd"]),
+    resolveBillingOrganization(["Profisee", "Epyon-Ltd"], "epyon-ltd")
+      .organization,
+    "Epyon-Ltd"
+  );
+});
+
+test("uses the only entitled organization and ignores empty values", () => {
+  assert.equal(
+    resolveBillingOrganization(["", "Profisee"]).organization,
     "Profisee"
   );
 });
 
-test("ignores empty organization values", () => {
-  assert.equal(resolveBillingOrganization(["", "Profisee"]), "Profisee");
-});
-
-test("renders the dynamically resolved billed organization", () => {
+test("renders the configured billed organization", () => {
   const root = mkdtempSync(path.join(os.tmpdir(), "copilot-statusline-test-"));
   const binDir = path.join(root, "bin");
   const cacheDir = path.join(root, "cache");
@@ -80,6 +91,7 @@ test("renders the dynamically resolved billed organization", () => {
       env: {
         ...process.env,
         NO_COLOR: "1",
+        COPILOT_BILLING_ORG: "Epyon-Ltd",
         PATH: `${binDir}${path.delimiter}${process.env.PATH || ""}`,
         TMPDIR: cacheDir,
         TEMP: cacheDir,
@@ -95,7 +107,7 @@ test("renders the dynamically resolved billed organization", () => {
     });
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /bobthearsonist bill:@Profisee/);
+    assert.match(result.stdout, /bobthearsonist bill:@Epyon-Ltd/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
