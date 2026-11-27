@@ -8,7 +8,7 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `82ccdd45a874f484e43d45fc35b69b1077efa9ca`.
+The current engine pin is `24d64c3186301b1adf62f3a989d29587ab10b5b1`.
 It provides shared semantic assertion-table actions, aggregate 50/50 scoring
 and direct suite judge scoring; no engine implementation is duplicated here.
 
@@ -53,8 +53,14 @@ break, so a `lift` verdict is evidence the file itself does the work.
 npm run eval:agents-md -- validate
 npm run eval:agents-md -- run --dry-run                    # with vs no instructions
 npm run eval:agents-md -- run --baseline HEAD --dry-run    # working tree vs last commit
-npm run eval:agents-md -- run --baseline HEAD --model MODEL_ID --approve-sessions 30
+npm run eval:agents-md -- run --baseline HEAD --model sonnet --approve-sessions 30
 ```
+
+`--model` must be a name the pinned Claude ACP adapter advertises (`sonnet`,
+`opus`, `haiku`, `fable`); a full ID such as `claude-sonnet-5-5` is refused
+because the adapter cannot confirm it. Local runs sign in with your existing
+Claude Code login (the macOS Keychain or `~/.claude/.credentials.json`); no
+token needs exporting.
 
 `--baseline REF` writes `AGENTS.md` at that commit to
 `.work/baseline/AGENTS-<sha>.md` and passes it as `--baseline-instruction-file`.
