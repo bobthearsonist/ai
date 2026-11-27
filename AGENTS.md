@@ -321,6 +321,23 @@ Or with absolute paths:
 git worktree add /c/Repositories/matching-spike-container spike/container
 ```
 
+### Editing a repo other than the launch repo
+
+Claude Code's `EnterWorktree` only accepts worktrees of the repo the session was launched in, or of a
+repo nested inside the launch directory. A sibling repo added as an additional working directory is
+neither. With `path`, entering one of its worktrees triggers a "permission-root relocation" prompt and
+then fails with "is not a registered worktree", even after approval. With `name`, the call succeeds but
+creates the worktree in the launch repo, which is the wrong one.
+
+When the repo you are changing is not the launch repo:
+
+- **Do not call `EnterWorktree`** (neither `path` nor `name`), even when a harness or background-job
+  instruction says to isolate first.
+- Create the worktree with `git -C <repo> worktree add <flat-sibling-path> -b <branch>`, then edit,
+  build and commit by absolute path (`git -C <worktree> ...`).
+- If the work is substantial, tell the user that launching the session from that repo would make
+  `EnterWorktree` usable.
+
 ## Session Cleanup
 
 Before finishing, remove what **this session created** and no longer needs. Do not ask; the user has
