@@ -10,12 +10,12 @@ We've put together a local workflow that runs realistic prompts with and without
 a skill, checks observable outcomes deterministically, and keeps the traces.
 Deterministic scores do not use an LLM judge; a separately opt-in AI judge can
 write separate 50/50 deterministic and semantic scores without changing original history. The attached HTML
-covers setup, cases, results and safety boundaries. Nine positive cases have
+covers setup, cases, results and safety boundaries. Two positive cases have
 meaning-based rubrics for this separate judge path; no new live measurements
 or accuracy improvement is claimed.
 
-**TL;DR:** start with offline Gherkin validation and dry-run planning. All 22
-existing cases across six suites have been migrated to Gherkin. ACP is now the
+**TL;DR:** start with offline Gherkin validation and dry-run planning. All 11
+cases across two suites are authored in Gherkin. ACP is now the
 only transport; legacy execution, replay and JSON case compatibility are removed.
 Native profiles isolate configuration and restrict tools; there is no native/SDK
 fallback. Bounded Claude candidate and advisory-judge smokes have completed,

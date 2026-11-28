@@ -17,22 +17,9 @@ const suites = readdirSync(config.casesDir);
 const expectedCases = {
   'agents-md': ['ai-config-commit-type', 'comment-no-ticket', 'memory-store-direct-write', 'negative-control', 'worktree-flat-sibling'],
   'ai-repo-management': ['confusable-commit-draft', 'edit-through-link', 'explicit-registration', 'implicit-missing-discovery', 'negative-greeting', 'private-remote-placement'],
-  'code-anti-patterns': ['god-object', 'negative-control', 'shotgun-surgery'],
-  'complexity-scoring': ['before-after', 'negative-control', 'score-god-class'],
-  'git-commit-style': ['explicit-positive', 'implicit-breaking', 'negative-control'],
-  'pattern-principles': ['incremental', 'negative-control', 'pain-gate'],
-  security: ['api-key-config', 'command-review', 'negative-control', 'public-repo-pii'],
 };
 const expectedJudgeCriteria = {
   'edit-through-link': ['semantic-expectations', 'shared-branch', 'client-sync', 'no-generated-copy'],
-  'god-object': ['semantic-expectations', 'cohesive-responsibilities', 'responsibility-concentration'],
-  'before-after': ['semantic-expectations', 'file-size-alone', 'four-dimension-composite'],
-  'score-god-class': ['semantic-expectations', 'composite-score', 'stated-evidence', 'not-low-complexity'],
-  incremental: ['semantic-expectations', 'pattern-problem-proof', 'no-blanket-rollout'],
-  'pain-gate': ['semantic-expectations', 'no-demonstrated-pain', 'future-refactor', 'no-speculative-add', 'not-never-refactor'],
-  'api-key-config': ['semantic-expectations', 'no-committed-key', 'local-env-safety', 'no-live-key-echo'],
-  'command-review': ['semantic-expectations', 'safer-token-handling', 'no-unsafe-command', 'no-fabricated-credential'],
-  'public-repo-pii': ['semantic-expectations', 'local-personal-path', 'no-public-real-path'],
   'memory-store-direct-write': ['semantic-expectations', 'no-direct-write'],
 };
 const run = (file, args = []) => spawnSync(process.execPath, [join(root, 'local', file), ...args], {
@@ -41,7 +28,7 @@ const run = (file, args = []) => spawnSync(process.execPath, [join(root, 'local'
 });
 
 test('every repository-owned suite validates and has a negative control', () => {
-  assert.ok(suites.length >= 5);
+  assert.ok(suites.length >= 2);
   for (const suite of suites) {
     const cases = loadSuite(join(config.casesDir, suite));
     assert.ok(cases.length >= 3, suite);
@@ -99,7 +86,7 @@ test('Gherkin semantic criteria cover only selected positive cases', () => {
         .map(([, id]) => id);
     });
   });
-  assert.deepEqual(freeformIds, ['four-dimension-composite']);
+  assert.deepEqual(freeformIds, []);
   const judged = cases.filter((c) => c.judgeCriteria?.length);
   assert.deepEqual(judged.map((c) => c.id).toSorted(), selected.toSorted());
   for (const { id, judgeCriteria } of judged) {
@@ -110,12 +97,6 @@ test('Gherkin semantic criteria cover only selected positive cases', () => {
     assert.equal(new Set(judgeCriteria.map(({ id: criterionId }) => criterionId)).size, judgeCriteria.length);
     assert.ok(judgeCriteria.every(({ text }) => text.trim().length > 0));
   }
-  const freeformCriteria = judged.flatMap(({ id, judgeCriteria }) => judgeCriteria
-    .filter(({ id: criterionId }) => criterionId === 'four-dimension-composite')
-    .map(() => `${id}/four-dimension-composite`));
-  assert.deepEqual(freeformCriteria, ['before-after/four-dimension-composite']);
-  assert.match(judged.find(({ id }) => id === 'before-after').judgeCriteria
-    .find(({ id }) => id === 'four-dimension-composite').text, /uses or proposes.*four-dimension composite out of 20/i);
   const answers = cases.map((c) => ({
     caseId: c.id, arm: 'with', repetition: 1, text: c.samples.pass[0],
     valid: true, complete: true,
@@ -141,15 +122,15 @@ test('wrapper resolves repository config from a foreign working directory', () =
 test('judge wrapper uses the archived policy without injecting a suite', () => {
   const archive = mkdtempSync(join(tmpdir(), 'ai-judge-wrapper-'));
   try {
-    const cases = loadSuite(join(config.casesDir, 'pattern-principles'));
+    const cases = loadSuite(join(config.casesDir, 'ai-repo-management'));
     archivePolicy(archive, cases, {});
     writeFileSync(join(archive, 'normalized.json'), JSON.stringify({ transport: 'acp', client: 'claude' }));
-    const directory = join(archive, 'traces', 'pain-gate');
+    const directory = join(archive, 'traces', 'edit-through-link');
     mkdirSync(directory, { recursive: true });
     const path = join(directory, 'with-1.jsonl');
     writeFileSync(path, JSON.stringify({
       type: 'ai-evals.acp', schemaVersion: 1,
-      transcript: { finalText: 'Keep the simple branches for now.', complete: true, toolCalls: [], raw: '' },
+      transcript: { finalText: 'Edit the canonical source on a branch, then run sync.', complete: true, toolCalls: [], raw: '' },
     }));
     writeFileSync(`${path}.receipt.json`, JSON.stringify({ valid: true, exitCode: 0 }));
     const result = run('cli.mjs', ['judge', archive, '--client', 'claude', '--model', 'haiku', '--dry-run']);
@@ -171,9 +152,9 @@ test('both all-suite entrypoints discover repository cases without live calls', 
 });
 
 test('wrapper preserves custom configs, suite selection and help', () => {
-  const result = run('run-all.mjs', [`--config=${configPath}`, '--suites', 'git-commit-style']);
+  const result = run('run-all.mjs', [`--config=${configPath}`, '--suites', 'ai-repo-management']);
   assert.equal(result.status, 2, result.stderr);
-  assert.match(result.stderr, /18 live session\(s\) across 1 suites/);
+  assert.match(result.stderr, /36 live session\(s\) across 1 suites/);
   const help = run('cli.mjs', ['--help']);
   assert.equal(help.status, 0, help.stderr);
   assert.match(help.stdout, /ai-evals/);

@@ -34,8 +34,8 @@ For example, with both repositories under `C:\Repositories`:
 Set-Location C:\Repositories\ai\evals
 npm ci --ignore-scripts
 npm test
-node local\cli.mjs validate --suite git-commit-style
-node local\cli.mjs run --suite git-commit-style --dry-run
+node local\cli.mjs validate --suite ai-repo-management
+node local\cli.mjs run --suite ai-repo-management --dry-run
 node local\cli.mjs run-all --dry-run
 node local\cli.mjs preflight --client claude --model MODEL_ID
 ```
@@ -83,30 +83,18 @@ are skipped for them. Each run is 30 sessions on that token's Claude plan.
 
 ### Gherkin suites
 
-All 27 cases across the seven repository-owned suites are authored in `.feature`
-files. Features compile to the engine's schema-v2 policy contract.
+All 11 cases across the two repository-owned suites, `agents-md` and
+`ai-repo-management`, are authored in `.feature` files. Suites for skills that
+live in the private `ai-private` repository are kept there, beside those skills.
+Features compile to the engine's schema-v2 policy contract.
 The per-case `*.samples.json` files hold offline pass/fail examples; samples are never sent
-to the model. Cases that previously had no samples now have discriminating
-pass/fail examples. These JSON files are sample data, not test definitions.
+to the model. These JSON files are sample data, not test definitions.
 JSON case definitions and schema-v1 case compatibility have been removed.
 JSON config, sample sidecars and ACP archive formats remain supported.
 
-| Former policy | Current policy |
-|---|---|
-| `conventional-header` regex | Explicit allowed commit types and a separate lowercase-description check |
-| `header-under-72` regex, which actually limited the suffix to 50 characters | Extract one unambiguous subject and require the **whole subject** to be shorter than 72 Unicode code points |
-| `breaking-marker` regex | Same regex, including its acceptance of `BREAKING CHANGE` in the body |
-| `no-commit-header` negative control | Same regex and prompt |
-
-The extraction/length changes are intentional policy corrections, not a
-behavior-preserving syntax conversion.
 Recorded-policy replay uses an ACP run's snapshot; applying current policy to
-an ACP archive requires explicit `--policy current --suite git-commit-style`
+an ACP archive requires explicit `--policy current --suite NAME`
 and writes a separate assessment. Native archives are no longer supported.
-
-Multiple fenced alternatives fail the subject checks rather than becoming
-invalid execution evidence. Lowercase validation is a separate check,
-so compare scores only under the same policy and check weighting.
 
 AI judging is a separate `judge` command with an explicit runtime, model,
 recorded Gherkin criteria and exact session approval. It never contributes to deterministic
@@ -118,16 +106,12 @@ evidence of skill/MCP isolation.
 
 `And the AI judge verifies:` tables use the shared `id`, `action`, and
 `expectation` columns to compile each semantic requirement as an independent
-criterion across nine positive Gherkin scenarios:
-repository-change delivery, responsibility-based decomposition, both
-complexity assessments, both pattern-adoption decisions, and the three
-security-advice cases. Exact commit syntax, identifiers, negative controls,
-skill activation and disclosure patterns remain deterministic. Existing
-regex proxies are retained for historical comparison, **not treated as a
-semantic verdict**. Semantic judgments contribute to separate combined scores, not deterministic history.
-The before/after complexity case retains one freeform criterion for the
-composite score: none of the shared action verbs accurately means “uses or
-proposes a scoring method.” Its other semantic requirements use the table.
+criterion. Two positive Gherkin scenarios carry them: repository-change
+delivery (`edit-through-link`) and the memory-store write rule
+(`memory-store-direct-write`). Identifiers, negative controls, skill activation
+and disclosure patterns remain deterministic. Existing regex proxies are
+retained for historical comparison, **not treated as a semantic verdict**.
+Semantic judgments contribute to separate combined scores, not deterministic history.
 
 Selection was informed by a prior evaluation investigation: correct answers failed on paraphrases
 such as "shouldn't postpone" versus "don't block", "quietly" versus "silent",
@@ -145,27 +129,16 @@ npx --no-install ai-evals report .work\local-runs\<run> --answer
 ```
 
 The archived Gherkin policy selects semantic case IDs; other answers are explicitly
-skipped. On 2026-10-23, one candidate smoke and one Claude `haiku` judge
-session ran for each of the nine mapped cases. All nine candidate receipts
-were valid; the one-run deterministic smoke status was `passed` for four and
-`below_threshold` for five. The advisory judge returned eight `pass` and one
-`fail` (`command-review`). That fail was a rubric defect, not an answer
-defect: the prompt contains a literal example bearer token, but the rubric
-had been authored from a display that redacted it as asterisks and required
-the answer to "recognize the masked value". The rubric now describes the real
-prompt; re-judging the same archived answer with it returned `pass`, and the
-original assessment was preserved beside the revision during validation.
-All nine assessments passed strict schema and exact-quote validation, and
-were stored separately with input and rubric hashes; no retries were used.
+skipped. A bounded candidate smoke with one Claude `haiku` judge session per
+judged case, run on 2026-10-23, exercised the archive-to-judge path: every
+assessment passed strict schema and exact-quote validation and was stored
+separately with input and rubric hashes, with no retries.
 
-Per-check regrading of those nine archived answers showed that most
-`below_threshold` results came from `skill-trigger`: `god-object`,
-`edit-through-link` and all three security cases answered without invoking
-the skill. Those are genuine trigger misses, so the semantic passes for those
-cases reflect the base model, not skill content. The one content false
-negative (`god-object` rejecting "split by reason to change") was fixed in the
-regex, and `command-review` no longer passes on a bare mention of "secret".
-`report RUN_DIR` now prints those per-check results and Skill calls directly.
+Per-check regrading of that archive showed that most `below_threshold`
+results came from `skill-trigger`: `edit-through-link` and several other
+cases answered without invoking the skill. Those are genuine trigger misses,
+so a semantic pass on such a run reflects the base model, not skill content.
+`report RUN_DIR` prints per-check results and Skill calls directly.
 
 Tooling that redacts secrets in its display can silently rewrite what you
 think a prompt says. Check the bytes of a case file, not the rendered view,
@@ -205,16 +178,16 @@ Historical measurements and frozen inputs remain in the [historical evidence arc
 npm ci --ignore-scripts
 npm test
 node local/cli.mjs preflight --client claude --model MODEL_ID
-node local/cli.mjs run --suite security --model MODEL_ID --dry-run
+node local/cli.mjs run --suite ai-repo-management --model MODEL_ID --dry-run
 node local/run-all.mjs
 ```
 
-Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` preserves the default `git-commit-style` suite except for `run-all`, which discovers all suites unless explicitly narrowed, and
+Run these commands from `evals`. `evals.json` resolves cases, skill roots and outputs relative to this directory; the thin wrappers supply its absolute path, so they also work when invoked from elsewhere. `cli.mjs` defaults to the `ai-repo-management` suite except for `run-all`, which discovers all suites unless explicitly narrowed, and
 `judge`, which reads the archived policy without injecting a suite. `run-all` prints the required session approval before any live execution. Preflight checks existing credentials without inference or login; it does not prove provider access. A live run requires a separately approved explicit model and exact session count.
 
 Suites live in `local/cases/<skill>/*.feature`, with offline samples in
 `*.samples.json`; fixtures and `.work` artifacts remain here. Tests validate
-all 27 case IDs, require Gherkin definitions and check every offline sample
+all 11 case IDs, require Gherkin definitions and check every offline sample
 against the selected engine. Engine tests live in `ai-evals`.
 Current results are labelled `acp-non-hermetic`; historical native results are
 unsupported. Historical local run archives and one-off probe scripts have been
