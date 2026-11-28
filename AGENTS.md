@@ -305,13 +305,19 @@ developer with no knowledge of this session.**
 ## Machine-local instructions
 
 This file is public and shared by every machine. Rules that are machine-specific or private
-(hostnames, private URLs, organizations, accounts) go in
-`~/.config/agents-local/.github/instructions/agents-local.instructions.md` (frontmatter
-`applyTo: "**"`; `~/.config/agents-local/AGENTS.md` is a symlink to it), which lives in no
-repository. Claude Code loads it through the `~/.claude/rules/agents-local.md` symlink, OpenCode
-through the `instructions` array in `~/.config/opencode/opencode.json`, Copilot CLI through
-`COPILOT_CUSTOM_INSTRUCTIONS_DIRS` (exported by `init.zsh`), and Copilot in VS Code through
-`chat.instructionsFilesLocations`. Copilot CLI ignores a bare `AGENTS.md` in that directory.
+(hostnames, private URLs, organizations, accounts) go in `~/.config/agents-local/.github/instructions/`,
+one `*.instructions.md` file per topic with frontmatter `applyTo: "**"`. That folder lives in no
+repository, and every client loads all of it, so a new file needs no extra wiring: Claude Code
+through the `~/.claude/rules/agents-local` directory symlink, OpenCode through a
+`*.instructions.md` glob in the `instructions` array of `~/.config/opencode/opencode.json`,
+Copilot CLI through `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` (exported by `init.zsh`), and Copilot in
+VS Code through `chat.instructionsFilesLocations`. Copilot CLI ignores a bare `AGENTS.md` in that
+directory; `~/.config/agents-local/AGENTS.md` is only a symlink to `agents-local.instructions.md`
+that `init.zsh` checks for.
+
+Never put real rule files in a client's own config. The only rules that go directly into
+`~/.claude/` are Claude Desktop rules, because Claude Desktop cannot use this stack; Claude Code
+reaches everything else through links like the one above.
 
 ---
 
