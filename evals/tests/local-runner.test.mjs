@@ -129,10 +129,12 @@ test('Gherkin semantic criteria cover only selected positive cases', () => {
 });
 
 
+// Uses the instructions suite because it stages no skill: skills/ is synced per
+// machine and absent from a fresh clone such as a CI runner.
 test('wrapper resolves repository config from a foreign working directory', () => {
-  const result = run('cli.mjs', ['run', '--exe', process.execPath]);
+  const result = run('cli.mjs', ['run', '--suite', 'agents-md', '--exe', process.execPath]);
   assert.equal(result.status, 2, result.stderr);
-  assert.match(result.stderr, /--approve-sessions 18/);
+  assert.match(result.stderr, /--approve-sessions 30/);
 });
 
 

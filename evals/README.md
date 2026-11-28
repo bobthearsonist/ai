@@ -69,6 +69,18 @@ lift against the current file, then edit `AGENTS.md` and confirm the lift.
 Claude only for now; scenario tags keep the shared grammar but add no
 skill-trigger check.
 
+**In GitHub Actions** (`.github/workflows/agents-md-evals.yml`), the suite runs
+on pull requests to `main` and after pushes to `main`, whenever `AGENTS.md`,
+`evals/` or the workflow changes; otherwise the job passes without running
+anything. A pull request compares its `AGENTS.md` with the base branch's; a
+push compares with the commit before it. `local/gate.mjs` then fails the job
+when `shouldBlock` finds a `regression` verdict, an invalid run or an
+unmeasured case, and writes the per-case table to the job summary. The run
+archive is kept as the `agents-md-evals` artifact for 30 days. The job signs in
+with the `CLAUDE_CODE_OAUTH_TOKEN` repository secret (from
+`claude setup-token`), which fork pull requests never receive, so live evals
+are skipped for them. Each run is 30 sessions on that token's Claude plan.
+
 ### Gherkin suites
 
 All 27 cases across the seven repository-owned suites are authored in `.feature`
