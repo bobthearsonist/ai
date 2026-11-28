@@ -350,6 +350,9 @@ commands:
     - "docker compose rm*"
     - "docker-compose down*"
     - "docker-compose rm*"
+    # --- Docker (compose config prints .env and env_file values in plain text) ---
+    - "docker compose config*"
+    - "docker-compose config*"
 
   # ---------------------------------------------------------------------------
   # ALLOW - Union from all configs
