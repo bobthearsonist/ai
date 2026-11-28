@@ -1,5 +1,0 @@
-{
-  "caseId": "negative-control",
-  "pass": ["The Observer pattern lets subscribers receive notifications when a subject changes."],
-  "fail": ["Strategy encapsulates interchangeable algorithms behind an interface."]
-}

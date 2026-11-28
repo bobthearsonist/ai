@@ -6,6 +6,6 @@ if (!hasOption('--config')) {
   process.argv.push('--config', fileURLToPath(new URL('../evals.json', import.meta.url)));
 }
 if (!['run-all', 'judge'].includes(process.argv[2]) && !hasOption('--suite')) {
-  process.argv.push('--suite', 'git-commit-style');
+  process.argv.push('--suite', 'ai-repo-management');
 }
 await import('@bobthearsonist/ai-evals/cli');

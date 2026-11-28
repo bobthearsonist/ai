@@ -81,10 +81,9 @@
             profiles use temporary homes, read-only tools and controlled skill workspaces.
             Active machine-managed Claude policy is refused.
             Fake-server integration is not live native acceptance.</td></tr>
-          <tr><th scope="row">Gherkin</th><td>All 22 existing consumer cases across
-            six suites are Gherkin scenarios, with separate offline sample data.
-            Nine positive scenarios use shared action-table judge criteria; the
-            before/after complexity case retains one freeform composite-score criterion.
+          <tr><th scope="row">Gherkin</th><td>All 11 cases across this repository's
+            two suites are Gherkin scenarios, with separate offline sample data.
+            Two positive scenarios use shared action-table judge criteria.
             The commit-pinned engine dependency supports them. Authored JSON cases
             and schema-v1 compatibility are removed; JSON samples, config,
             rubrics and protocol records remain supported.</td></tr>
@@ -115,7 +114,7 @@
     <p>The model output is variable; deterministic checks are repeatable. The same captured
       transcript receives the same supported check results under the same policy.
       A separately approved AI judge archives semantic assessments and combined scores, but never
-      changes these deterministic scores. Nine positive cases now have per-case
+      changes these deterministic scores. Two positive cases have per-case
       semantic criteria in Gherkin that accept equivalent reasoning instead of
       relying on keywords or short proximity windows. The shared top-level
       <a href="https://github.com/bobthearsonist/ai-evals/blob/main/JUDGE_PROMPT.md">JUDGE_PROMPT.md</a>
@@ -130,14 +129,14 @@
     <pre><code>Set-Location C:\Repositories\ai\evals
 npm ci --ignore-scripts
 npm test
-node local\cli.mjs validate --suite git-commit-style
-node local\cli.mjs run --suite git-commit-style --dry-run
+node local\cli.mjs validate --suite ai-repo-management
+node local\cli.mjs run --suite ai-repo-management --dry-run
 node local\cli.mjs run-all --dry-run</code></pre>
     <p>Any additional live acceptance needs a separately approved run.
       Preflight verifies local runtime/policy and credential readiness, not provider access.
       Do not provide API-key overrides, copy credentials or treat a custom ACP
       profile as proof of native isolation.</p>
-    <p>This suite has three cases: 3 cases x 3 repeats x 2 arms = 18 live sessions
+    <p>This suite has six cases: 6 cases x 3 repeats x 2 arms = 36 live sessions
       for one runner. Each additional runner increases that count. Use
       the installed engine's <code>run-all --dry-run</code> to inspect the planned
       count before running all suites. Do not copy an approval count blindly.</p>

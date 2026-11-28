@@ -1,5 +1,0 @@
-{
-  "caseId": "negative-control",
-  "pass": ["Paris is the capital of France."],
-  "fail": ["Berlin is the capital of France."]
-}

@@ -1,15 +1,10 @@
 {
   "casesDir": "local/cases",
-  "skillsRoots": ["../skills", "../../ai-private/skills"],
+  "skillsRoots": ["../skills"],
   "outputDir": ".work/local-runs",
   "resultsDir": ".work/results",
   "suites": {
     "agents-md": { "subject": "instructions", "instructions": "../AGENTS.md", "baselineInstructions": null },
-    "ai-repo-management": {},
-    "code-anti-patterns": {},
-    "complexity-scoring": {},
-    "git-commit-style": {},
-    "pattern-principles": {},
-    "security": {}
+    "ai-repo-management": {}
   }
 }

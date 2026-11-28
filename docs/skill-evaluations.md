@@ -5,8 +5,9 @@ The shared engine lives in [ai-evals](https://github.com/bobthearsonist/ai-evals
 Run `npm ci --ignore-scripts` in `evals`
 before using the local wrappers. Cases, fixtures and `.work` outputs stay here.
 
-All 27 repository-owned cases use Gherkin, supported by the pinned dependency
+All 11 repository-owned cases use Gherkin, supported by the pinned dependency
 described in the [evals README](../evals/README.md#engine-dependency).
+Suites for skills in the private `ai-private` repository live there, beside those skills.
 The engine routes Claude and Copilot exclusively through ACP; candidate profiles
 isolate configuration and stage paired skill workspaces. Bounded Claude ACP
 candidate and judge smokes have completed; cross-client live acceptance remains
@@ -39,8 +40,8 @@ Use `--dry-run` to inspect all planned sessions without launching a client.
   Samples are never sent to the model. Write them from the skill's contract,
   never from live output.
 - Runs with no final result (session ended after the skill loaded) are excluded from scores and counted as `invalidRuns`.
-- Guard cases (e.g. the comment above the god-object scenario) are expected to
-  show no lift; they catch regressions, not value.
+- Guard cases, marked by a `# guard:` comment above the scenario, are expected
+  to show no lift; they catch regressions, not value.
 
 ## Results, traces and verdicts
 

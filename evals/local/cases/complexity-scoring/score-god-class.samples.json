@@ -1,8 +1,0 @@
-{
-  "caseId": "score-god-class",
-  "pass": ["18/20: high size and coupling, poor cohesion and difficult testability."],
-  "fail": [
-    "18/20: this is a very large class.",
-    "Coupling is high and cohesion is poor, but no composite score is available."
-  ]
-}
