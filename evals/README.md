@@ -8,9 +8,11 @@ current evidence and limitations; [Teams draft](docs/ai-guild-teams-blurb.md).
 
 ### Engine dependency
 
-The current engine pin is `24d64c3186301b1adf62f3a989d29587ab10b5b1`.
-It provides shared semantic assertion-table actions, aggregate 50/50 scoring
-and direct suite judge scoring; no engine implementation is duplicated here.
+The current engine pin is `5334b851734fa94c308293bb9e85e4e1ed3a6626`.
+It provides shared semantic assertion-table actions, aggregate 50/50 scoring,
+direct suite judge scoring and parallel ACP sessions (up to `--concurrency`,
+each reading the current Claude sign-in); no engine implementation is
+duplicated here.
 
 `package.json` pins `@bobthearsonist/ai-evals` to a commit on the engine's
 repository, which provides multi-runner selection, Gherkin authoring, shared v2

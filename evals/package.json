@@ -12,6 +12,6 @@
     "eval:agents-md": "node local/agents-md.mjs"
   },
   "devDependencies": {
-    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#24d64c3186301b1adf62f3a989d29587ab10b5b1"
+    "@bobthearsonist/ai-evals": "git+https://github.com/bobthearsonist/ai-evals.git#5334b851734fa94c308293bb9e85e4e1ed3a6626"
   }
 }
