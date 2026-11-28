@@ -285,19 +285,22 @@ commands:
   ask:
     - "gsudo*"
     - "sudo*"
-    # rm/rmdir: NOT synced to Claude Code. There an ask rule overrides auto mode's
-    # classifier and its working-directory scoping, so every temp-file delete
-    # prompts; the classifier still blocks irreversible deletes outside the project.
-    # Clients without such a check (OpenCode, Copilot, Kilo) keep the ask.
+    # Entries tagged not-claude are NOT synced to Claude Code. There an ask rule
+    # overrides auto mode's classifier and its working-directory scoping, so these
+    # everyday commands would prompt on every use: temp-file deletes, copies, new
+    # directories, and Obsidian note writes through `obsidian eval`, which the
+    # note-taking skills run constantly. The classifier still blocks irreversible
+    # actions outside the project. Clients without such a check (OpenCode,
+    # Copilot, Kilo) keep the ask.
     - "rm*"     # not-claude
     - "rmdir*"  # not-claude
     - "del*"
     - "rd*"
     - "mv*"
     - "move*"
-    - "cp*"
+    - "cp*"     # not-claude
     - "copy*"
-    - "mkdir*"
+    - "mkdir*"  # not-claude
     - "touch*"
     - "chmod*"
     - "chown*"
@@ -310,7 +313,7 @@ commands:
     - "obsidian delete*"
     - "obsidian move*"
     - "obsidian rename*"
-    - "obsidian eval*"
+    - "obsidian eval*"  # not-claude
     - "obsidian command*"
     - "obsidian plugin:disable*"
     - "obsidian plugin:enable*"
