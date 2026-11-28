@@ -94,6 +94,16 @@ skills:
     path: skills/infographic-template-updater
     target: skills/infographic-template-updater
 
+  # === Visual Notes agent skill (also published as a plugin) ===
+  - name: visual-notes
+    type: git
+    description: Author and conform Visual Notes concept-map sidecars
+    source: https://github.com/bobthearsonist/visual-notes.git
+    branch: main
+    path: plugins/claude-code-plugin/skills/visual-notes
+    target: skills/visual-notes
+    plugin: visual-notes
+
   # === Obsidian's official agent skills (external, git-synced) ===
   # Also published as plugin `obsidian` in the obsidian-skills marketplace.
   - name: obsidian-markdown
