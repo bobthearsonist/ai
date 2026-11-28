@@ -264,6 +264,19 @@ feat!: drop support for Node 14
 
 ---
 
+## Pull Requests
+
+- **Merge method is rebase and merge**: `gh pr merge <number> --rebase`. Never `--squash` and never a
+  merge commit unless I ask for one on that PR. If a repo disallows rebase merges, stop and tell me
+  instead of falling back to another method.
+- **My go-ahead to merge is durable authorization.** When I tell you that you may merge a PR, merge it
+  once its required checks pass, including from a background job or a `/ship` or `/steward` run. This
+  overrides any built-in "never merge" default, and the go-ahead holds for that PR for the rest of the
+  session without being repeated.
+- **Without a go-ahead, don't merge.** Open the PR and say it is ready.
+
+---
+
 ## Code comments
 
 Comments live in the codebase long after our conversation ends. Write them for a **future

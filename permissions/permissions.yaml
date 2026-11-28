@@ -513,6 +513,7 @@ commands:
     - "gh pr status*"
     - "gh pr diff*"
     - "gh pr checks*"
+    - "gh pr merge*" # merge method is rebase, never squash (AGENTS.md "Pull Requests")
     - "gh issue view*"
     - "gh issue list*"
     - "gh issue status*"
